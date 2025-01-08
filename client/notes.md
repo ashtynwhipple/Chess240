@@ -1,0 +1,1 @@
+notes for first commit for first assignment 240
