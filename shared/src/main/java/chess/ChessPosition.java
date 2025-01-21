@@ -14,6 +14,11 @@ public class ChessPosition {
     private int row;
 
     @Override
+    public String toString() {
+        return "(" + column + "," + row + ")";
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) {
             return false;
