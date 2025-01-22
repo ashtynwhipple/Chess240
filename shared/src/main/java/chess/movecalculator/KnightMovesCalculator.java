@@ -11,8 +11,8 @@ import java.util.List;
 
 public class KnightMovesCalculator {
 
-    private ChessBoard board;
-    private ChessPosition position;
+    private final ChessBoard board;
+    private final ChessPosition position;
 
     public KnightMovesCalculator(ChessBoard board, ChessPosition position) {
         this.board = board;
@@ -43,11 +43,11 @@ public class KnightMovesCalculator {
         int[] dy = {2,2,-2,-2,1,-1,1,-1};
 
         for (int i = 0; i < 8; i++){
-            int newx = position.getRow() + dx[i];
-            int newy = position.getColumn() + dy[i];
+            int new_x = position.getRow() + dx[i];
+            int new_y = position.getColumn() + dy[i];
 
-            if (valid_move(newx, newy)) {
-                ChessPosition new_place = new ChessPosition(newx, newy);
+            if (valid_move(new_x, new_y)) {
+                ChessPosition new_place = new ChessPosition(new_x, new_y);
                 viable_moves.add(new ChessMove(position, new_place, null));
             }
         }

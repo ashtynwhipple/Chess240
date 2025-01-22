@@ -8,8 +8,8 @@ import java.util.List;
 
 public class PawnMovesCalculator {
 
-    private ChessBoard board;
-    private ChessPosition position;
+    private final ChessBoard board;
+    private final ChessPosition position;
 
     public PawnMovesCalculator(ChessBoard board, ChessPosition position) {
         this.board = board;
@@ -45,9 +45,9 @@ public class PawnMovesCalculator {
         }
     }
 
-    public void add_to_list(int newx, int newy, List<ChessMove> viable_moves){
-        if (valid_move(newx, newy)) {
-            ChessPosition new_place = new ChessPosition(newx, newy);
+    public void add_to_list(int new_x, int new_y, List<ChessMove> viable_moves){
+        if (valid_move(new_x, new_y)) {
+            ChessPosition new_place = new ChessPosition(new_x, new_y);
             viable_moves.add(new ChessMove(position, new_place, null));
         }
     }
@@ -71,29 +71,29 @@ public class PawnMovesCalculator {
 
         ChessGame.TeamColor color = board.getPiece(position).getTeamColor();
 
-        int newx;
-        int newy = position.getColumn();
+        int new_x;
+        int new_y = position.getColumn();
 
         //logic to go one space
         if (color == ChessGame.TeamColor.WHITE){ //don't add this space if there is something blocking it
-            newx = position.getRow() + 1;
-            if (valid_move(newx,newy)){
-                add_to_list(newx,newy, viable_moves);
+            new_x = position.getRow() + 1;
+            if (valid_move(new_x,new_y)){
+                add_to_list(new_x,new_y, viable_moves);
                 if (position.getRow() == 2){
-                    newx = position.getRow() + 2;
-                    if (valid_move(newx,newy)){
-                        add_to_list(newx,newy, viable_moves);
+                    new_x = position.getRow() + 2;
+                    if (valid_move(new_x,new_y)){
+                        add_to_list(new_x,new_y, viable_moves);
                     }
             }
                 }
         } else{
-            newx = position.getRow() -1;
-            if (valid_move(newx,newy)){
-                add_to_list(newx,newy, viable_moves);
+            new_x = position.getRow() -1;
+            if (valid_move(new_x,new_y)){
+                add_to_list(new_x,new_y, viable_moves);
                 if (position.getRow() == 7 ){
-                    newx = position.getRow() -2;
-                    if (valid_move(newx,newy)){
-                        add_to_list(newx,newy, viable_moves);
+                    new_x = position.getRow() -2;
+                    if (valid_move(new_x,new_y)){
+                        add_to_list(new_x,new_y, viable_moves);
                     }
                 }
             }

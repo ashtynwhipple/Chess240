@@ -13,8 +13,8 @@ import java.util.Objects;
  */
 public class ChessPiece {
 
-    private ChessGame.TeamColor pieceColor;
-    private ChessPiece.PieceType type;
+    private final ChessGame.TeamColor pieceColor;
+    private final ChessPiece.PieceType type;
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
         this.pieceColor = pieceColor;
@@ -78,7 +78,7 @@ public class ChessPiece {
         }else if (type == PieceType.PAWN) { //currently in progress
             PawnMovesCalculator calculator = new PawnMovesCalculator(board, myPosition);
             return calculator.get_viable_moves();
-        }else if (type == PieceType.ROOK) { //PASSED but idk why, I had to change the bounds
+        }else if (type == PieceType.ROOK) { //PASSED but I don't know why, I had to change the bounds
             RookMovesCalculator calculator = new RookMovesCalculator(board, myPosition);
             return calculator.get_viable_moves();
         }else if (type == PieceType.BISHOP) { //PASSED

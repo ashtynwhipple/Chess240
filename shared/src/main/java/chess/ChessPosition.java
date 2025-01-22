@@ -10,8 +10,8 @@ import java.util.Objects;
  */
 public class ChessPosition {
 
-    private int column;
-    private int row;
+    private final int column;
+    private final int row;
 
     @Override
     public String toString() {

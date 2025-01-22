@@ -11,8 +11,8 @@ import java.util.List;
 
 public class BishopMovesCalculator {
 
-    private ChessBoard board;
-    private ChessPosition position;
+    private final ChessBoard board;
+    private final ChessPosition position;
 
     public BishopMovesCalculator(ChessBoard board, ChessPosition position) {
         this.board = board;

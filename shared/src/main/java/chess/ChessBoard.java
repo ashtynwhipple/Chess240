@@ -1,7 +1,5 @@
 package chess;
 
-import org.junit.jupiter.params.provider.NullAndEmptySource;
-
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -26,7 +24,7 @@ public class ChessBoard {
         return Arrays.deepHashCode(board);
     }
 
-    private ChessPiece[][] board;
+    private final ChessPiece[][] board;
 
 
     public ChessBoard() {
