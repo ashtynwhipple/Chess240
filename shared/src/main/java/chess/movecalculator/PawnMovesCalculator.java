@@ -37,10 +37,14 @@ public class PawnMovesCalculator {
         return !piece.getTeamColor().equals(board.getPiece(position).getTeamColor());
     }
 
+    // public // create function to loop through promotion pieces and then return void after adding to collection
+
     public Collection<ChessMove> get_viable_moves(){
         List<ChessMove> viable_moves = new ArrayList<>();
 
         ChessGame.TeamColor color = board.getPiece(position).getTeamColor();
+
+        // create a new variable for direction for white and black
 
         if ((position.getRow() == 1 && color == ChessGame.TeamColor.WHITE) || (position.getRow() == 6 && color == ChessGame.TeamColor.BLACK)){
             int newx;
@@ -68,9 +72,12 @@ public class PawnMovesCalculator {
 
             if (isinbounds(newx,newy) && is_opponent(newx,newy)){
                 ChessPosition new_place = new ChessPosition(newx, newy);
-                viable_moves.add(new ChessMove(position, new_place, null));
+                viable_moves.add(new ChessMove(position, new_place, null)); // loop through possible promotion
             }
         }
+
+        // do the same for black pieces
+        // change the method for
 
         return viable_moves;
     }

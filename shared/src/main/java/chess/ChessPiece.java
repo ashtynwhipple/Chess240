@@ -1,6 +1,6 @@
 package chess;
 
-import chess.movecalculator.KingMovesCalculator;
+import chess.movecalculator.*;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -69,9 +69,27 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        if(getPieceType() == PieceType.KING) {
+
+        PieceType type = getPieceType();
+
+        if(type == PieceType.KING) { //PASSED
             KingMovesCalculator calculator = new KingMovesCalculator(board, myPosition);
             return calculator.get_viable_moves();
+//        }else if (type == PieceType.PAWN) {
+//            PawnMovesCalculator calculator = new PawnMovesCalculator(board, myPosition);
+//            return calculator.get_viable_moves();
+        }else if (type == PieceType.ROOK) { //PASSED but idk why, I had to change the bounds
+            RookMovesCalculator calculator = new RookMovesCalculator(board, myPosition);
+            return calculator.get_viable_moves();
+//        }else if (type == PieceType.BISHOP) { //next to do
+//            BishopMovesCalculator calculator = new BishopMovesCalculator(board, myPosition);
+//            return calculator.get_viable_moves();
+        }else if (type == PieceType.KNIGHT) { //PASSED
+            KnightMovesCalculator calculator = new KnightMovesCalculator(board, myPosition);
+            return calculator.get_viable_moves();
+//        }else if (type == PieceType.QUEEN) {
+//            QueenMovesCalculator calculator = new QueenMovesCalculator(board, myPosition);
+//            return calculator.get_viable_moves();
         }
         return null;
     }

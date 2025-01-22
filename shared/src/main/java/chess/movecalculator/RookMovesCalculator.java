@@ -20,7 +20,7 @@ public class RookMovesCalculator {
     }
 
     public boolean valid_move(int x, int y){
-        if ( x >= 0 && x < 8 && y >= 0 && y < 8){ //if in bounds
+        if ( x >= 1 && x < 9 && y >= 1 && y < 9){ //if in bounds
             ChessPosition place_piece_position = new ChessPosition(x,y); //get piece position
             ChessPiece piece = board.getPiece(place_piece_position); //find piece at position
             return piece == null || is_opponent(x,y); //return true if there is no piece there or if the opponent is there
@@ -33,66 +33,41 @@ public class RookMovesCalculator {
     public boolean is_opponent(int x,int y){
         ChessPosition place_piece_position = new ChessPosition(x,y);
         ChessPiece piece = board.getPiece(place_piece_position);
-        return !piece.getTeamColor().equals(board.getPiece(position).getTeamColor());
+        return piece != null && !piece.getTeamColor().equals(board.getPiece(position).getTeamColor()); //take into account if it is null
     }
 
     public Collection<ChessMove> get_viable_moves(){
         List<ChessMove> viable_moves = new ArrayList<>();
 
-        for (int i = position.getRow(); i <= 7 - position.getRow(); i++) {
-            int newx = i;
-            int newy = position.getColumn();
+        int[][] directions = {
+                {1, 0},//up
+                {-1, 0},//down
+                {0, 1},//right
+                {0, -1},//left
+        };
 
-            if (!valid_move(newx, newy)){
-                break;
-            }
-            ChessPosition new_place = new ChessPosition(newx, newy);
-            viable_moves.add(new ChessMove(position, new_place, null));
-            if (is_opponent(newx, newy)){
-                break;
-            }
-        }
+        for (int[] direction: directions){
 
+            int col = position.getColumn();
+            int row = position.getRow();
 
-        for (int i = position.getRow(); i >= 0; i--){
-            int newx = i;
-            int newy = position.getColumn();
+            while (true){
 
-            if (!valid_move(newx, newy)){
-                break;
-            }
-            ChessPosition new_place = new ChessPosition(newx, newy);
-            viable_moves.add(new ChessMove(position, new_place, null));
-            if (is_opponent(newx, newy)){
-                break;
-            }
-        }
+                row += direction[0];
+                col += direction[1];
 
-        for (int i = position.getColumn(); i <= 7 - position.getColumn(); i++){
-            int newx = position.getRow();
-            int newy = i;
+                if (!valid_move(row,col)){
+                    break;
+                }
 
-            if (!valid_move(newx, newy)){
-                break;
-            }
-            ChessPosition new_place = new ChessPosition(newx, newy);
-            viable_moves.add(new ChessMove(position, new_place, null));
-            if (is_opponent(newx, newy)){
-                break;
-            }
-        }
+                ChessPosition new_place = new ChessPosition(row, col);
 
-        for (int i = position.getColumn(); i >= 0; i--){
-            int newx = position.getRow();
-            int newy = i;
+                viable_moves.add(new ChessMove(position, new_place, null));
 
-            if (!valid_move(newx, newy)){
-                break;
-            }
-            ChessPosition new_place = new ChessPosition(newx, newy);
-            viable_moves.add(new ChessMove(position, new_place, null));
-            if (is_opponent(newx, newy)){
-                break;
+                if (is_opponent(row, col)){
+                    break;
+                }
+
             }
 
         }
