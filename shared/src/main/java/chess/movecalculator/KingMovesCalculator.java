@@ -20,7 +20,7 @@ public class KingMovesCalculator {
     }
 
     public boolean valid_move(int x, int y){
-        if ( x >= 0 && x < 8 && y >= 0 && y < 8){ //if in bounds
+        if ( x >= 1 && x < 9 && y >= 1 && y < 9){ //if in bounds
             ChessPosition place_piece_position = new ChessPosition(x,y); //get piece position
             ChessPiece piece = board.getPiece(place_piece_position); //find piece at position
             return piece == null || is_opponent(x,y); //return true if there is no piece there or if the opponent is there
