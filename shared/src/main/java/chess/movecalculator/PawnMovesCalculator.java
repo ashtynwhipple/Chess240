@@ -125,6 +125,8 @@ public class PawnMovesCalculator {
         }
         viable_moves.addAll(promotionMoves);
 
+        viable_moves.removeIf(move -> move.getEndPosition().getRow() == 1 && move.getPromotionPiece() == null || move.getEndPosition().getRow() == 8 && move.getPromotionPiece() == null);
+
         return viable_moves;
     }
 
