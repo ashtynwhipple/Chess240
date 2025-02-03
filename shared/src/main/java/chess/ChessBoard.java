@@ -105,4 +105,18 @@ public class ChessBoard {
         board[8][3] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
         board[8][6] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
     }
+
+    public ChessPosition find_king(ChessGame.TeamColor teamColor){
+        for (int row = 0; row < 9; row++){
+            for (int col = 0; col < 9; col++){
+                ChessPosition new_position = new ChessPosition(row, col);
+                ChessPiece new_piece = getPiece(new_position);
+                if(new_piece != null && new_piece.getPieceType() == ChessPiece.PieceType.KING && new_piece.getTeamColor() == teamColor){
+                    return new_position;
+                }
+            }
+        }
+        return null;
+    }
+
 }

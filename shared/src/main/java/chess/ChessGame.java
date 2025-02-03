@@ -79,7 +79,7 @@ public class ChessGame {
             board.addPiece(move.getEndPosition(), new ChessPiece(teamTurn, move.getPromotionPiece()));
         }
 
-        //do i need to change the team color here?
+        //do I need to change the team color here?
 
     }
 
@@ -91,8 +91,8 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
         // get king position
-        ChessPosition king_position = board.findking(teamColor); //write find king method
-        return board.issquareattacked(king_position, teamColor); //write is square attacked method
+        ChessPosition king_position = board.find_king(teamColor);
+        return board.is_square_attacked(king_position, teamColor); //write is square attacked method
     }
 
     /**
@@ -106,7 +106,7 @@ public class ChessGame {
             return false;
         }
         // write method to check if for all positions and possible moves by player, the king is still in position to be killed
-        ChessPosition king_position = board.findking(teamColor);
+        ChessPosition king_position = board.find_king(teamColor);
 
         for (ChessPosition position: board.getallpostions(teamColor)){ // I think I need to for loops here, one to go through the possible positions and another one to go move through the moves and see if king is still in danger.
             Collection<ChessMove> valid_moves = validMoves(position);
@@ -114,7 +114,7 @@ public class ChessGame {
 
                 //somehow make the moves without actually making them or at least go back right away
 
-                if (!board.issquareattacked(king_position, teamColor)) { //check if king is still in danger
+                if (!board.is_square_attacked(king_position, teamColor)) { //check if king is still in danger
                     return false;
             }
             }
