@@ -108,7 +108,7 @@ public class ChessGame {
         // write method to check if for all positions and possible moves by player, the king is still in position to be killed
         ChessPosition king_position = board.find_king(teamColor);
 
-        for (ChessPosition position: board.getallpostions(teamColor)){ // I think I need to for loops here, one to go through the possible positions and another one to go move through the moves and see if king is still in danger.
+        for (ChessPosition position: board.get_all_postions(teamColor)){ // I think I need to for loops here, one to go through the possible positions and another one to go move through the moves and see if king is still in danger.
             Collection<ChessMove> valid_moves = validMoves(position);
             for (ChessMove move: valid_moves){
 
@@ -131,7 +131,7 @@ public class ChessGame {
      */
     public boolean isInStalemate(TeamColor teamColor) {
         // check for all positions and pieces possible if the valid moves is empty. if so, return true
-        for (ChessPosition position: board.getallpositions(teamColor)){ // write this method
+        for (ChessPosition position: board.get_all_positions(teamColor)){ // write this method
             Collection<ChessMove> valid_moves = validMoves(position);
             if (!valid_moves.isEmpty()){
                 return false;

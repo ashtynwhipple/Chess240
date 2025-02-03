@@ -1,7 +1,6 @@
 package chess;
 
-import java.util.Arrays;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * A chessboard that can hold and rearrange chess pieces.
@@ -117,6 +116,32 @@ public class ChessBoard {
             }
         }
         return null;
+    }
+
+    public boolean is_square_attacked(ChessPosition position, ChessGame.TeamColor teamColor) {
+        // Implementation for checking if a square is under attack
+
+        // check for all valid moves in the opponents moves
+        // if any of the valid moves are the position then return true
+
+        return false;
+    }
+
+    public Collection<ChessPosition> get_all_positions(ChessGame.TeamColor teamColor) {
+        // Implementation for getting all positions occupied by a team
+
+        Collection<ChessPosition> positions = new ArrayList<>();
+
+        for (int row = 0; row < 9; row++){
+            for (int col = 0; col < 9; col++){
+                ChessPosition new_pos = new ChessPosition(row, col);
+                if (getPiece(new_pos) != null && getPiece(new_pos).getTeamColor() == teamColor){
+                    positions.add(new_pos);
+                }
+            }
+        }
+
+        return positions;
     }
 
 }
