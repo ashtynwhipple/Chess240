@@ -110,9 +110,14 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
-
         // check for all positions and pieces possible if the valid moves is empty. if so, return true
+        for (ChessPosition position: board.getallpositions(teamColor)){ // write this method
+            Collection<ChessMove> valid_moves = validMoves(position);
+            if (!valid_moves.isEmpty()){
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
