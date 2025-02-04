@@ -54,6 +54,11 @@ public class ChessGame {
 
         // there are so many more things I need to impelement here for this method but for now this will work
 
+        // throw invalidmoveexception if isincheck
+        if (isInCheck(teamTurn)){
+            return null;
+        }
+
         ChessPiece piece = board.getPiece(startPosition);
         if (piece == null) {
             return null;
