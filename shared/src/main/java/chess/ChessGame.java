@@ -13,8 +13,9 @@ public class ChessGame {
     private ChessBoard board;
     private TeamColor teamTurn;
 
-    public ChessGame(ChessBoard board) {
-        this.board = board;
+    public ChessGame() {
+        this.board = new ChessBoard();
+        board.resetBoard();
         this.teamTurn = TeamColor.WHITE;
     }
 
@@ -50,6 +51,9 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
+
+        // there are so many more things I need to impelement here for this method but for now this will work
+
         ChessPiece piece = board.getPiece(startPosition);
         if (piece == null) {
             return null;
@@ -64,13 +68,18 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
+
+        ChessPiece piece = board.getPiece(move.getStartPosition());
+
+        if (piece != null && piece.getTeamColor() != teamTurn){
+            throw new InvalidMoveException("wrong team color");
+        }
+
         Collection<ChessMove> valid_moves = validMoves(move.getStartPosition());
 
         if (valid_moves == null || !valid_moves.contains(move)){
             throw new InvalidMoveException("Move is not Valid");
         }
-
-        ChessPiece piece = board.getPiece(move.getStartPosition());
 
         board.addPiece(move.getEndPosition(), piece); //add piece
         board.addPiece(move.getStartPosition(), null);
@@ -79,8 +88,12 @@ public class ChessGame {
             board.addPiece(move.getEndPosition(), new ChessPiece(teamTurn, move.getPromotionPiece()));
         }
 
-        //do I need to change the team color here?
-
+        // change team color
+        if (teamTurn == TeamColor.WHITE){
+            teamTurn = TeamColor.BLACK;
+        } else{
+            teamTurn = TeamColor.WHITE;
+        }
     }
 
     /**
@@ -90,9 +103,8 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        // get king position
         ChessPosition king_position = board.find_king(teamColor);
-        return board.is_square_attacked(king_position, teamColor); //write is square attacked method
+        return board.is_square_attacked(king_position, teamColor);
     }
 
     /**
@@ -104,17 +116,32 @@ public class ChessGame {
     public boolean isInCheckmate(TeamColor teamColor) {
         if (!isInCheck(teamColor)) {
             return false;
+
         }
+
+        // this feels suuuuper inefficient, I am going to try and think of a different way to do this
+
         // write method to check if for all positions and possible moves by player, the king is still in position to be killed
         ChessPosition king_position = board.find_king(teamColor);
 
-        for (ChessPosition position: board.get_all_postions(teamColor)){ // I think I need to for loops here, one to go through the possible positions and another one to go move through the moves and see if king is still in danger.
+        for (ChessPosition position: board.get_all_positions(teamColor)){ // I think I need to for loops here, one to go through the possible positions and another one to go move through the moves and see if king is still in danger.
             Collection<ChessMove> valid_moves = validMoves(position);
             for (ChessMove move: valid_moves){
-
+                ChessBoard copy = new ChessBoard();
+                for (int row = 1; row <= 8; row++) {
+                    for (int col = 1; col <= 8; col++) {
+                        ChessPosition new_pos = new ChessPosition(row, col);
+                        ChessPiece piece = board.getPiece(new_pos);
+                        if (piece != null) {
+                            copy.addPiece(new_pos, new ChessPiece(piece.getTeamColor(), piece.getPieceType()));
+                        }
+                    }
+                }
                 //somehow make the moves without actually making them or at least go back right away
 
-                if (!board.is_square_attacked(king_position, teamColor)) { //check if king is still in danger
+                // I think I can also do a way where I actually make the move, see what happens, then put it back... might be more efficient
+
+                if (!copy.is_square_attacked(king_position, teamColor)) { //check if king is still in danger
                     return false;
             }
             }
@@ -131,7 +158,7 @@ public class ChessGame {
      */
     public boolean isInStalemate(TeamColor teamColor) {
         // check for all positions and pieces possible if the valid moves is empty. if so, return true
-        for (ChessPosition position: board.get_all_positions(teamColor)){ // write this method
+        for (ChessPosition position: board.get_all_positions(teamColor)){
             Collection<ChessMove> valid_moves = validMoves(position);
             if (!valid_moves.isEmpty()){
                 return false;

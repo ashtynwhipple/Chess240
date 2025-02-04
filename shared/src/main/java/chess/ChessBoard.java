@@ -119,18 +119,26 @@ public class ChessBoard {
     }
 
     public boolean is_square_attacked(ChessPosition position, ChessGame.TeamColor teamColor) {
-        // Implementation for checking if a square is under attack
-
-        // check for all valid moves in the opponents moves
-        // if any of the valid moves are the position then return true
-
+        for (int row = 1; row <= 8; row++) {
+            for (int col = 1; col <= 8; col++) {
+                ChessPosition opp_position = new ChessPosition(row, col);
+                ChessPiece piece = getPiece(opp_position);
+                if (piece != null && piece.getTeamColor() != teamColor) {
+                    Collection<ChessMove> moves = piece.pieceMoves(this, opp_position);
+                    for (ChessMove move : moves) {
+                        if (move.getEndPosition().equals(position)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
         return false;
     }
 
     public Collection<ChessPosition> get_all_positions(ChessGame.TeamColor teamColor) {
-        // Implementation for getting all positions occupied by a team
-
-        Collection<ChessPosition> positions = new ArrayList<>();
+        //get all positions occupied by a team
+        List<ChessPosition> positions = new ArrayList<>();
 
         for (int row = 0; row < 9; row++){
             for (int col = 0; col < 9; col++){
