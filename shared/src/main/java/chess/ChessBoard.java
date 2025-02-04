@@ -121,7 +121,6 @@ public class ChessBoard {
 
 
     public Collection<ChessPosition> get_all_positions(ChessGame.TeamColor teamColor) {
-        //get all positions occupied by a team
         List<ChessPosition> positions = new ArrayList<>();
 
         for (int row = 0; row < 9; row++){
