@@ -53,40 +53,25 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
 
-        // there are so many more things I need to impelement here for this method but for now this will work
-
-        // throw invalidmoveexception if isincheck
-        if (isInCheck(teamTurn)){
-            //if none of the moves of the other players will protect king...
-
-                return null;
-        }
-
         ChessPiece piece = board.getPiece(startPosition);
 
-        if (piece == null || piece.getTeamColor() != teamTurn) {
+        if (piece == null) {
             return null;
         }
 
         Collection<ChessMove> possibleMoves = piece.pieceMoves(board, startPosition);
         Collection<ChessMove> validMoves = new ArrayList<>();
 
-        ChessBoard copy = new ChessBoard();
-        for (int row = 1; row <= 8; row++) {
-            for (int col = 1; col <= 8; col++) {
-                ChessPosition new_pos = new ChessPosition(row, col);
-                ChessPiece piece2 = board.getPiece(new_pos);
-                if (piece2 != null) {
-                    copy.addPiece(new_pos, new ChessPiece(piece2.getTeamColor(), piece2.getPieceType()));
-                }
-            }
-        }
-
         for (ChessMove move : possibleMoves) {
-            copy.addPiece(move.getEndPosition(), board.getPiece(move.getStartPosition()));
-            if (!copy.is_square_attacked(copy.find_king(teamTurn), teamTurn)) {
+            ChessPiece replaced = board.getPiece(move.getEndPosition());
+            ChessPiece original = board.getPiece(move.getStartPosition());
+            board.addPiece(move.getEndPosition(), board.getPiece(move.getStartPosition()));
+            board.addPiece(move.getStartPosition(), null);
+            if (!is_square_attacked(board.find_king(piece.getTeamColor()), piece.getTeamColor())) {
                 validMoves.add(move); // Only keep moves that don't leave the king in check
             }
+            board.addPiece(move.getEndPosition(), replaced);
+            board.addPiece(move.getStartPosition(), original);
         }
 
         return validMoves;
@@ -127,6 +112,26 @@ public class ChessGame {
         }
     }
 
+
+    public boolean is_square_attacked(ChessPosition position, ChessGame.TeamColor teamColor) {
+        for (int row = 1; row <= 8; row++) {
+            for (int col = 1; col <= 8; col++) {
+                ChessPosition opp_position = new ChessPosition(row, col);
+                ChessPiece piece = board.getPiece(opp_position);
+                if (piece != null && piece.getTeamColor() != teamColor) {
+                    Collection<ChessMove> moves = piece.pieceMoves(board, opp_position);
+                    for (ChessMove move : moves) {
+                        if (move.getEndPosition().equals(position)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+
     /**
      * Determines if the given team is in check
      *
@@ -135,7 +140,7 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
         ChessPosition king_position = board.find_king(teamColor);
-        return board.is_square_attacked(king_position, teamColor);
+        return is_square_attacked(king_position, teamColor);
     }
 
     /**
@@ -149,36 +154,11 @@ public class ChessGame {
             return false;
 
         }
-
-        // this feels suuuuper inefficient, I am going to try and think of a different way to do this
-
-        // write method to check if for all positions and possible moves by player, the king is still in position to be killed
-        ChessPosition king_position = board.find_king(teamColor);
-
         for (ChessPosition position: board.get_all_positions(teamColor)){
             Collection<ChessMove> valid_moves = validMoves(position);
-            if (!(valid_moves == null)){
-                for (ChessMove move: valid_moves){
-                    ChessBoard copy = new ChessBoard();
-                    for (int row = 1; row <= 8; row++) {
-                        for (int col = 1; col <= 8; col++) {
-                            ChessPosition new_pos = new ChessPosition(row, col);
-                            ChessPiece piece = board.getPiece(new_pos);
-                            if (piece != null) {
-                                copy.addPiece(new_pos, new ChessPiece(piece.getTeamColor(), piece.getPieceType()));
-                            }
-                        }
-                    }
-                    //somehow make the moves without actually making them or at least go back right away
-
-                    // I think I can also do a way where I actually make the move, see what happens, then put it back... might be more efficient
-
-                    if (!copy.is_square_attacked(king_position, teamColor)) { //check if king is still in danger
-                        return false;
-                    }
-                }
+            if (!valid_moves.isEmpty()){
+                return false;
             }
-
         }
         return true;
     }
@@ -192,9 +172,13 @@ public class ChessGame {
      */
     public boolean isInStalemate(TeamColor teamColor) {
         // check for all positions and pieces possible if the valid moves is empty. if so, return true
+        if (isInCheck(teamColor)){
+            return false;
+        }
+
         for (ChessPosition position: board.get_all_positions(teamColor)){
             Collection<ChessMove> valid_moves = validMoves(position);
-            if (valid_moves == null){
+            if (!(valid_moves.isEmpty())){
                 return false;
             }
         }

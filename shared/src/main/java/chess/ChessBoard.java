@@ -118,23 +118,7 @@ public class ChessBoard {
         return null;
     }
 
-    public boolean is_square_attacked(ChessPosition position, ChessGame.TeamColor teamColor) {
-        for (int row = 1; row <= 8; row++) {
-            for (int col = 1; col <= 8; col++) {
-                ChessPosition opp_position = new ChessPosition(row, col);
-                ChessPiece piece = getPiece(opp_position);
-                if (piece != null && piece.getTeamColor() != teamColor) {
-                    Collection<ChessMove> moves = piece.pieceMoves(this, opp_position);
-                    for (ChessMove move : moves) {
-                        if (move.getEndPosition().equals(position)) {
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-        return false;
-    }
+
 
     public Collection<ChessPosition> get_all_positions(ChessGame.TeamColor teamColor) {
         //get all positions occupied by a team
