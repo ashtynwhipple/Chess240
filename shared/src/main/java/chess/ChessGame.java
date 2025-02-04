@@ -131,25 +131,28 @@ public class ChessGame {
 
         for (ChessPosition position: board.get_all_positions(teamColor)){ // I think I need to for loops here, one to go through the possible positions and another one to go move through the moves and see if king is still in danger.
             Collection<ChessMove> valid_moves = validMoves(position);
-            for (ChessMove move: valid_moves){
-                ChessBoard copy = new ChessBoard();
-                for (int row = 1; row <= 8; row++) {
-                    for (int col = 1; col <= 8; col++) {
-                        ChessPosition new_pos = new ChessPosition(row, col);
-                        ChessPiece piece = board.getPiece(new_pos);
-                        if (piece != null) {
-                            copy.addPiece(new_pos, new ChessPiece(piece.getTeamColor(), piece.getPieceType()));
+            if (!(valid_moves == null)){
+                for (ChessMove move: valid_moves){
+                    ChessBoard copy = new ChessBoard();
+                    for (int row = 1; row <= 8; row++) {
+                        for (int col = 1; col <= 8; col++) {
+                            ChessPosition new_pos = new ChessPosition(row, col);
+                            ChessPiece piece = board.getPiece(new_pos);
+                            if (piece != null) {
+                                copy.addPiece(new_pos, new ChessPiece(piece.getTeamColor(), piece.getPieceType()));
+                            }
                         }
                     }
+                    //somehow make the moves without actually making them or at least go back right away
+
+                    // I think I can also do a way where I actually make the move, see what happens, then put it back... might be more efficient
+
+                    if (!copy.is_square_attacked(king_position, teamColor)) { //check if king is still in danger
+                        return false;
+                    }
                 }
-                //somehow make the moves without actually making them or at least go back right away
-
-                // I think I can also do a way where I actually make the move, see what happens, then put it back... might be more efficient
-
-                if (!copy.is_square_attacked(king_position, teamColor)) { //check if king is still in danger
-                    return false;
             }
-            }
+
         }
         return true;
     }
