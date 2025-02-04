@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -56,14 +57,39 @@ public class ChessGame {
 
         // throw invalidmoveexception if isincheck
         if (isInCheck(teamTurn)){
-            return null;
+            //if none of the moves of the other players will protect king...
+
+                return null;
         }
 
         ChessPiece piece = board.getPiece(startPosition);
-        if (piece == null) {
+
+        if (piece == null || piece.getTeamColor() != teamTurn) {
             return null;
         }
-        return piece.pieceMoves(board, startPosition);
+
+        Collection<ChessMove> possibleMoves = piece.pieceMoves(board, startPosition);
+        Collection<ChessMove> validMoves = new ArrayList<>();
+
+        ChessBoard copy = new ChessBoard();
+        for (int row = 1; row <= 8; row++) {
+            for (int col = 1; col <= 8; col++) {
+                ChessPosition new_pos = new ChessPosition(row, col);
+                ChessPiece piece2 = board.getPiece(new_pos);
+                if (piece2 != null) {
+                    copy.addPiece(new_pos, new ChessPiece(piece2.getTeamColor(), piece2.getPieceType()));
+                }
+            }
+        }
+
+        for (ChessMove move : possibleMoves) {
+            copy.addPiece(move.getEndPosition(), board.getPiece(move.getStartPosition()));
+            if (!copy.is_square_attacked(copy.find_king(teamTurn), teamTurn)) {
+                validMoves.add(move); // Only keep moves that don't leave the king in check
+            }
+        }
+
+        return validMoves;
     }
 
     /**
@@ -129,7 +155,7 @@ public class ChessGame {
         // write method to check if for all positions and possible moves by player, the king is still in position to be killed
         ChessPosition king_position = board.find_king(teamColor);
 
-        for (ChessPosition position: board.get_all_positions(teamColor)){ // I think I need to for loops here, one to go through the possible positions and another one to go move through the moves and see if king is still in danger.
+        for (ChessPosition position: board.get_all_positions(teamColor)){
             Collection<ChessMove> valid_moves = validMoves(position);
             if (!(valid_moves == null)){
                 for (ChessMove move: valid_moves){
@@ -168,7 +194,7 @@ public class ChessGame {
         // check for all positions and pieces possible if the valid moves is empty. if so, return true
         for (ChessPosition position: board.get_all_positions(teamColor)){
             Collection<ChessMove> valid_moves = validMoves(position);
-            if (!valid_moves.isEmpty()){
+            if (valid_moves == null){
                 return false;
             }
         }
