@@ -97,7 +97,7 @@ public class ChessGame {
             throw new InvalidMoveException("Move is not Valid");
         }
 
-        board.addPiece(move.getEndPosition(), piece); //add piece
+        board.addPiece(move.getEndPosition(), piece);
         board.addPiece(move.getStartPosition(), null);
 
         if (move.getPromotionPiece() != null) {
