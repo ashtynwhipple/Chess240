@@ -1,10 +1,13 @@
 package server;
 
 import dataaccess.DataAccessException;
+import dataaccess.MemoryUserDAO;
+import dataaccess.UserDAO;
+import handler.RegisterHandler;
 import spark.*;
-import exception.ResponseException;
-import com.google.gson.Gson;
-import Model.UserData;
+import handler.exceptionHandler;
+import handler.loginHandler;
+
 
 
 public class Server {
@@ -16,9 +19,9 @@ public class Server {
 
         // Register your endpoints and handle exceptions here.
 //
-        Spark.post("/user", this::register);
+        Spark.post("/user", RegisterHandler::register);
 
-        Spark.post("/session", this::login);
+        Spark.post("/session", loginHandler::login);
         Spark.delete("/session", this::logout);
 
         Spark.get("/game", this::listGames);
@@ -27,7 +30,7 @@ public class Server {
 
         Spark.delete("/db", this::clear);
 
-        Spark.exception(DataAccessException.class, this::exceptionHandler);
+        Spark.exception(DataAccessException.class, exceptionHandler::exception);
 
         //This line initializes the server and can be removed once you have a functioning endpoint
         Spark.init();
@@ -36,17 +39,6 @@ public class Server {
         return Spark.port();
     }
 
-    private void exceptionHandler(ResponseException ex, Request req, Response res) {
-        res.status(ex.StatusCode());
-        res.body(ex.toJson());
-    }
-
-    private Object register(Request req, Response res) throws ResponseException {
-        var pet = new Gson().fromJson(req.body(), UserData.class);
-        pet = service.addPet(pet);
-        webSocketHandler.makeNoise(pet.name(), pet.sound());
-        return new Gson().toJson(pet);
-    }
 
     public void stop() {
         Spark.stop();

@@ -1,0 +1,27 @@
+package handler;
+
+import Model.AuthData;
+import Model.UserData;
+import com.google.gson.Gson;
+import dataaccess.MemoryAuthDAO;
+import dataaccess.MemoryUserDAO;
+import spark.Request;
+
+public class logoutHandler {
+
+    private static final MemoryUserDAO userDAO = new MemoryUserDAO();
+
+    private static final MemoryAuthDAO authDAO = new MemoryAuthDAO();
+
+    public static Object logout(Request req, Response res){
+
+        UserData userdata = new Gson().fromJson(req.body(), UserData.class);
+
+        String auth = String.valueOf(authDAO.getAuth(userdata.username()));
+
+        if (auth == null)
+
+
+    }
+
+}
