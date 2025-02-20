@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryUserDAO;
 import spark.Request;
+import spark.Response;
 
 public class logoutHandler {
 
@@ -19,8 +20,19 @@ public class logoutHandler {
 
         String auth = String.valueOf(authDAO.getAuth(userdata.username()));
 
-        if (auth == null)
+        if (auth == null){
+            res.status(401);
+        }
 
+        authDAO.deleteAuth(userdata.username());
+
+        if (authDAO.getAuth(userdata.username()) != null){
+            res.status(500);
+        }
+
+        res.status(200);
+
+        return null;
 
     }
 
