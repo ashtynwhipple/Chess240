@@ -7,6 +7,8 @@ import handler.RegisterHandler;
 import spark.*;
 import handler.exceptionHandler;
 import handler.loginHandler;
+import handler.logoutHandler;
+import handler.listGamesHandler;
 
 
 
@@ -22,9 +24,9 @@ public class Server {
         Spark.post("/user", RegisterHandler::register);
 
         Spark.post("/session", loginHandler::login);
-        Spark.delete("/session", this::logout);
+        Spark.delete("/session", logoutHandler::logout);
 
-        Spark.get("/game", this::listGames);
+        Spark.get("/game", listGamesHandler::listGames);
         Spark.post("/game", this::createGame);
         Spark.put("/game", this::joinGame);
 
