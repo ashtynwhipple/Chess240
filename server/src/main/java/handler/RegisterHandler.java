@@ -2,44 +2,38 @@ package handler;
 
 import Model.AuthData;
 import Model.UserData;
+import Service.RegisterService;
 import com.google.gson.Gson;
-import dataaccess.MemoryAuthDAO;
+import dataaccess.*;
+import exception.StatusException;
 import spark.Request;
 import spark.Response;
-import dataaccess.MemoryUserDAO;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class RegisterHandler {
 
-    private static final MemoryUserDAO userDAO = new MemoryUserDAO();
-    private static final MemoryAuthDAO authDAO = new MemoryAuthDAO();
+    private UserDAO userDAO;
+    private AuthDAO authDAO;
 
+    private RegisterHandler(UserDAO userDAO, AuthDAO authDAO){
+        this.userDAO = userDAO;
+        this.authDAO = authDAO;
+    }
 
-    public static Object register(Request req, Response res) throws ResponseException {
+    public static Object register(Request req, Response res) {
 
-        UserData userdata = new Gson().fromJson(req.body(), UserData.class);
+        UserData registerRequest = new Gson().fromJson(req.body(), UserData.class);
 
-        if (userdata == null || userdata.username() == null || userdata.password() == null) {
-            res.status(403);
-            // throw exception here
+        try {
+            RegisterService service_instance = new RegisterService(userDAO);
+            res.status(200);
+            return new Gson().toJson(service_instance.register(registerRequest));
+        } catch (StatusException e) {
+            res.status(e.get_status());
+            return null;
         }
 
-        assert userdata != null; //can I do this??
-        if (userDAO.getUser(userdata.username()) != null) {
-            res.status(403);
-            // throw exception here
-        }
-
-        userDAO.createUser(userdata.username(), userdata.password(), userdata.email());
-
-        res.status(200);
-
-        String auth = String.valueOf(authDAO.createAuth(userdata.username()));
-
-        AuthData authdata = new AuthData(auth, userdata.username());
-
-        return new Gson().toJson(authdata);
     }
 }

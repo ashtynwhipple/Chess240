@@ -1,8 +1,6 @@
 package server;
 
-import dataaccess.DataAccessException;
-import dataaccess.MemoryUserDAO;
-import dataaccess.UserDAO;
+import dataaccess.*;
 import handler.RegisterHandler;
 import spark.*;
 import handler.exceptionHandler;
@@ -14,6 +12,10 @@ import handler.listGamesHandler;
 
 public class Server {
 
+    private final MemoryUserDAO userDAO = new MemoryUserDAO();
+    private final MemoryAuthDAO authDAO = new MemoryAuthDAO();
+    private final MemoryGameDAO gameDAO = new MemoryGameDAO();
+
     public int run(int desiredPort) {
         Spark.port(desiredPort);
 
@@ -21,9 +23,9 @@ public class Server {
 
         // Register your endpoints and handle exceptions here.
 //
-        Spark.post("/user", RegisterHandler::register);
+        Spark.post("/user", RegisterHandler::register(userDAO, authDAO));
 
-        Spark.post("/session", loginHandler::login);
+        Spark.post("/session", loginHandler::login(authDAO));
         Spark.delete("/session", logoutHandler::logout);
 
         Spark.get("/game", listGamesHandler::listGames);
