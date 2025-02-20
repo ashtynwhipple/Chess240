@@ -2,18 +2,20 @@ package Service;
 
 import Model.AuthData;
 import Model.UserData;
-import com.google.gson.Gson;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryUserDAO;
+import dataaccess.AuthDAO;
+import dataaccess.UserDAO;
 import exception.StatusException;
-import spark.Request;
-import spark.Response;
+
 
 public class RegisterService {
 
-    private static final MemoryUserDAO userDAO = new MemoryUserDAO();
+    private final UserDAO userDAO;
+    private final AuthDAO authDAO;
 
-    private static final MemoryAuthDAO authDAO = new MemoryAuthDAO();
+    public RegisterService(UserDAO userDAO, AuthDAO authDAO){
+        this.userDAO = userDAO;
+        this.authDAO = authDAO;
+    }
 
     public AuthData register(UserData userdata) throws StatusException {
 

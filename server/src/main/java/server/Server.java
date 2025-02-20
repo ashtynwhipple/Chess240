@@ -25,16 +25,16 @@ public class Server {
 //
         Spark.post("/user", RegisterHandler::register(userDAO, authDAO));
 
-        Spark.post("/session", loginHandler::login(authDAO));
-        Spark.delete("/session", logoutHandler::logout);
+//        Spark.post("/session", loginHandler::login(authDAO));
+//        Spark.delete("/session", logoutHandler::logout);
+//
+//        Spark.get("/game", listGamesHandler::listGames);
+//        Spark.post("/game", this::createGame);
+//        Spark.put("/game", this::joinGame);
+//
+//        Spark.delete("/db", this::clear);
 
-        Spark.get("/game", listGamesHandler::listGames);
-        Spark.post("/game", this::createGame);
-        Spark.put("/game", this::joinGame);
-
-        Spark.delete("/db", this::clear);
-
-        Spark.exception(DataAccessException.class, exceptionHandler::exception);
+//        Spark.exception(DataAccessException.class, exceptionHandler::exception);
 
         //This line initializes the server and can be removed once you have a functioning endpoint
         Spark.init();
