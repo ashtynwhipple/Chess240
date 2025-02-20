@@ -10,7 +10,7 @@ public class MemoryAuthDAO implements AuthDAO {
     public HashMap<String, AuthData> hash = new HashMap<>();
 
     public void clearAuth(){
-
+        hash.clear();
     }
 
     public AuthData createAuth(String username){

@@ -1,19 +1,23 @@
 package dataaccess;
 
 import Model.GameData;
+import chess.ChessGame;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public interface GameDAO {
 
     void clearGames();
 
-    GameData createGame();
+    void createGame(int gameID, String whiteUsername, String blackUsername, String gameName, ChessGame game);
 
-    GameData getGame();
+    GameData getGame(int gameID);
 
-    GameData listGames();
+    HashMap<Integer, GameData> listGames();
 
-    GameData updateGame();
+    void updateGame(int gameID, GameData new_game);
 
-    boolean is_clear();
+    boolean is_empty();
 
 }
