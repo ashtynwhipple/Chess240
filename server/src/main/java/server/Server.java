@@ -1,38 +1,41 @@
 package server;
 
 import dataaccess.*;
-import handler.RegisterHandler;
+import handler.*;
+import handler.UserHandlerclasses.LoginHandler;
+import handler.UserHandlerclasses.LogoutHandler;
+import handler.UserHandlerclasses.RegisterHandler;
 import spark.*;
-import handler.exceptionHandler;
-import handler.loginHandler;
-import handler.logoutHandler;
-import handler.listGamesHandler;
-
 
 
 public class Server {
 
-    private final MemoryUserDAO userDAO = new MemoryUserDAO();
-    private final MemoryAuthDAO authDAO = new MemoryAuthDAO();
-    private final MemoryGameDAO gameDAO = new MemoryGameDAO();
+    private final ClearHandler clear;
+    private final UserHandler user_handler;
+
+    public Server(){
+        MemoryUserDAO userDAO = new MemoryUserDAO();
+        MemoryAuthDAO authDAO = new MemoryAuthDAO();
+        MemoryGameDAO gameDAO = new MemoryGameDAO();
+        this.clear = new ClearHandler(userDAO, authDAO, gameDAO);
+        this.user_handler = new UserHandler(userDAO, authDAO);
+    }
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
 
-        // Register your endpoints and handle exceptions here.
-//
-        Spark.post("/user", RegisterHandler::register(userDAO, authDAO));
+        Spark.post("/user", user_handler::register);
 
-//        Spark.post("/session", loginHandler::login(authDAO));
-//        Spark.delete("/session", logoutHandler::logout);
-//
+        Spark.post("/session", user_handler::login);
+        Spark.delete("/session", user_handler::logout);
+
 //        Spark.get("/game", listGamesHandler::listGames);
 //        Spark.post("/game", this::createGame);
 //        Spark.put("/game", this::joinGame);
 //
-//        Spark.delete("/db", this::clear);
+        Spark.delete("/db", clear::clear);
 
 //        Spark.exception(DataAccessException.class, exceptionHandler::exception);
 
@@ -42,7 +45,6 @@ public class Server {
         Spark.awaitInitialization();
         return Spark.port();
     }
-
 
     public void stop() {
         Spark.stop();

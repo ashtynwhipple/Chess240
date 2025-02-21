@@ -38,4 +38,8 @@ public class MemoryGameDAO implements GameDAO{
         return hash.isEmpty();
     }
 
+    public void clear_all(){
+        hash.clear();
+    }
+
 }

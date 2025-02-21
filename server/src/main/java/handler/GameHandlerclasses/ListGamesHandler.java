@@ -1,4 +1,4 @@
-package handler;
+package handler.GameHandlerclasses;
 
 import Model.GameData;
 import Model.UserData;
@@ -10,7 +10,7 @@ import spark.Response;
 
 import java.util.HashMap;
 
-public class listGamesHandler {
+public class ListGamesHandler {
 
     private static final MemoryAuthDAO authDAO = new MemoryAuthDAO();
 

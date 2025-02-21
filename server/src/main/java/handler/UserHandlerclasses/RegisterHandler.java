@@ -1,4 +1,4 @@
-package handler;
+package handler.UserHandlerclasses;
 import Model.UserData;
 import Service.RegisterService;
 import com.google.gson.Gson;
@@ -12,7 +12,7 @@ public class RegisterHandler {
     private final UserDAO userDAO;
     private final AuthDAO authDAO;
 
-    private RegisterHandler(UserDAO userDAO, AuthDAO authDAO){
+    public RegisterHandler(UserDAO userDAO, AuthDAO authDAO){
         this.userDAO = userDAO;
         this.authDAO = authDAO;
     }

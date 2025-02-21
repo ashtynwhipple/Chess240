@@ -34,5 +34,8 @@ public class MemoryAuthDAO implements AuthDAO {
         return hash.isEmpty();
     }
 
+    public void clear_all(){
+        hash.clear();
+    }
 
 }

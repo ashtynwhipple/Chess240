@@ -20,4 +20,9 @@ public class MemoryUserDAO implements UserDAO{
     public boolean is_empty() {
         return hash.isEmpty();
     }
+
+    public void clear_all(){
+        hash.clear();
+    }
+
 }

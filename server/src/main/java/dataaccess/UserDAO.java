@@ -10,4 +10,6 @@ public interface UserDAO {
 
     boolean is_empty();
 
+    void clear_all();
+
 }

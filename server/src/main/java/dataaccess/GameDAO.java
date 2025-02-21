@@ -20,4 +20,6 @@ public interface GameDAO {
 
     boolean is_empty();
 
+    void clear_all();
+
 }

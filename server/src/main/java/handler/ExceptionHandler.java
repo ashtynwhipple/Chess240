@@ -3,7 +3,7 @@ package handler;
 import spark.Request;
 import spark.Response;
 
-public class exceptionHandler {
+public class ExceptionHandler {
 
     public void exception(ResponseException ex, Request req, Response res) {
 

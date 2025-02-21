@@ -14,4 +14,6 @@ public interface AuthDAO {
 
     boolean is_empty();
 
+    void clear_all();
+
 }
