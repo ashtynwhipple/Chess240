@@ -1,6 +1,6 @@
 package handler.UserHandlerclasses;
 import Model.UserData;
-import Service.LoginService;
+import Service.UserService.LoginService;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.UserDAO;

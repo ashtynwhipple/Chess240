@@ -15,12 +15,14 @@ public class MemoryAuthDAO implements AuthDAO {
 
     public AuthData createAuth(String username){
         String token = generate_token();
-        AuthData data = new AuthData(username, token);
-        hash.put(username, data);
+        AuthData data = new AuthData(token, username);
+        hash.put(token, data);
         return data;
     }
 
-    public void deleteAuth(String username){}
+    public void deleteAuth(String token){
+        hash.remove(token);
+    }
 
     public AuthData getAuth(String username){
         return hash.get(username);
@@ -37,5 +39,9 @@ public class MemoryAuthDAO implements AuthDAO {
     public void clear_all(){
         hash.clear();
     }
+
+//    public boolean is_auth_token_valid(String auth_token){
+//        return hash.containsValue(auth_token);
+//    }
 
 }

@@ -5,15 +5,30 @@ import spark.Response;
 
 public class ExceptionHandler {
 
-    public void exception(ResponseException ex, Request req, Response res) {
+    public void exception(Request req, Response res) {
+        int statusCode = res.status();
+        String message = res.body();
 
-        switch (res.status() == 403){
-            throw
-        } (res.status() == 500)
-
+        switch (statusCode) {
+            case 400:
+                res.body("Error: bad request");
+                break;
+            case 403:
+                res.body("Error: Already taken");
+                break;
+            case 401:
+                res.body(message + ": Error: unauthorized");
+                break;
+            case 500:
+                res.body("Error: " + message);
+                break;
+            default:
+                res.body(statusCode + " Error: An unknown error occurred.");
+                break;
+        }
+    }
 
 //        res.status(ex.StatusCode());
 //        res.body(ex.toJson());
-    }
 
 }

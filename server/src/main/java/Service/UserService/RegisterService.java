@@ -1,4 +1,4 @@
-package Service;
+package Service.UserService;
 
 import Model.AuthData;
 import Model.UserData;

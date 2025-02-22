@@ -16,4 +16,6 @@ public interface AuthDAO {
 
     void clear_all();
 
+//    boolean is_authtoken_valid();
+
 }

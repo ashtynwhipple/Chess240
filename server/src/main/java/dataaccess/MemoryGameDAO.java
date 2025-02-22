@@ -4,6 +4,7 @@ import Model.AuthData;
 import Model.GameData;
 import chess.ChessGame;
 
+import java.util.Collection;
 import java.util.HashMap;
 
 import java.util.ArrayList;
@@ -26,8 +27,8 @@ public class MemoryGameDAO implements GameDAO{
         return hash.get(gameID);
     }
 
-    public HashMap<Integer, GameData> listGames(){
-        return hash;
+    public Collection<GameData> listGames(){
+        return hash.values();
     }
 
     public void updateGame(int gameID, GameData new_game) {

@@ -12,6 +12,7 @@ public class Server {
 
     private final ClearHandler clear;
     private final UserHandler user_handler;
+    private final GameHandler gameHandler;
 
     public Server(){
         MemoryUserDAO userDAO = new MemoryUserDAO();
@@ -19,6 +20,7 @@ public class Server {
         MemoryGameDAO gameDAO = new MemoryGameDAO();
         this.clear = new ClearHandler(userDAO, authDAO, gameDAO);
         this.user_handler = new UserHandler(userDAO, authDAO);
+        this.gameHandler = new GameHandler(authDAO, gameDAO);
     }
 
     public int run(int desiredPort) {
@@ -31,9 +33,9 @@ public class Server {
         Spark.post("/session", user_handler::login);
         Spark.delete("/session", user_handler::logout);
 
-//        Spark.get("/game", listGamesHandler::listGames);
-//        Spark.post("/game", this::createGame);
-//        Spark.put("/game", this::joinGame);
+        Spark.get("/game", gameHandler::list_games);
+        Spark.post("/game", gameHandler::create_game);
+//        Spark.put("/game", gameHandler::joinGame);
 //
         Spark.delete("/db", clear::clear);
 

@@ -12,26 +12,22 @@ import java.util.HashMap;
 
 public class ListGamesHandler {
 
-    private static final MemoryAuthDAO authDAO = new MemoryAuthDAO();
 
-    private static final MemoryGameDAO gameDAO = new MemoryGameDAO();
-
-
-    public static Object listGames(Request req, Response res){
-        UserData userdata = new Gson().fromJson(req.body(), UserData.class);
-
-        String auth = String.valueOf(authDAO.getAuth(userdata.username()));
-
-        if (auth == null){
-            res.status(401);
-        }
-
-        HashMap<Integer, GameData> games = gameDAO.listGames();
-
-        res.status(200);
-
-        return new Gson().toJson(games);
-
-    }
+//    public  Object listGames(Request req, Response res){
+//        UserData userdata = new Gson().fromJson(req.body(), UserData.class);
+//
+//        String auth = String.valueOf(authDAO.getAuth(userdata.username()));
+//
+//        if (auth == null){
+//            res.status(401);
+//        }
+//
+//        HashMap<Integer, GameData> games = gameDAO.listGames();
+//
+//        res.status(200);
+//
+//        return new Gson().toJson(games);
+//
+//    }
 
 }

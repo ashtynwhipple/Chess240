@@ -4,6 +4,7 @@ import Model.GameData;
 import chess.ChessGame;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 public interface GameDAO {
@@ -14,7 +15,7 @@ public interface GameDAO {
 
     GameData getGame(int gameID);
 
-    HashMap<Integer, GameData> listGames();
+    Collection<GameData> listGames();
 
     void updateGame(int gameID, GameData new_game);
 

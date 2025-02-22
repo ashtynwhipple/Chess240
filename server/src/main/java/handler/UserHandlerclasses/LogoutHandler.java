@@ -1,6 +1,6 @@
 package handler.UserHandlerclasses;
 import Model.UserData;
-import Service.LogoutService;
+import Service.UserService.LogoutService;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import exception.StatusException;

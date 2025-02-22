@@ -1,6 +1,6 @@
 package handler.UserHandlerclasses;
 import Model.UserData;
-import Service.RegisterService;
+import Service.UserService.RegisterService;
 import com.google.gson.Gson;
 import dataaccess.*;
 import exception.StatusException;

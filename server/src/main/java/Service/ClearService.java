@@ -22,8 +22,12 @@ public class ClearService {
         userDAO.clear_all();
         gameDAO.clear_all();
 
-        if (!authDAO.is_empty() || !userDAO.is_empty() || !gameDAO.is_empty()){
-            throw new StatusException("could not clear", 500);
+        if (!authDAO.is_empty()){
+            throw new StatusException("could not clear AuthDAO", 500);
+        } else if (!userDAO.is_empty()){
+            throw new StatusException("could not clear UserDAO", 500);
+        } else if (!gameDAO.is_empty()) {
+            throw new StatusException("could not clear GameDAO", 500);
         }
 
     }
