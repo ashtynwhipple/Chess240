@@ -1,11 +1,9 @@
 package handler;
 import Model.AuthData;
 import Model.GameData;
-import Model.UserData;
+import Model.JoinData;
 import Service.GameService;
-import Service.UserService.RegisterService;
 import com.google.gson.Gson;
-import dataaccess.*;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
 import exception.StatusException;
@@ -57,22 +55,23 @@ public class GameHandler {
 
     }
 
-    public Object join_game(Request req, Response res) throws StatusException {
+    public Object joinGame(Request req, Response res) throws StatusException {
 
         if (!req.body().contains("\"gameID\":")) {
             throw new StatusException("Error: bad request", 400);
         }
 
-        GameData gameData = new Gson().fromJson(req.body(), GameData.class);
+        JoinData joinData = new Gson().fromJson(req.body(), JoinData.class);
 
         try{
             GameService service_instance = new GameService(authDAO, gameDAO);
             String authToken = req.headers("authorization");
             res.status(200);
-            service_instance.join_game(authToken, gameData.gameID());
+            service_instance.join_game(authToken, joinData.gameID(), joinData.color());
             return "{}";
-        } catch (){
-
+        } catch (StatusException e) {
+            res.status(e.get_status());
+            return null;
         }
 
     }

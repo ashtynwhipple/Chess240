@@ -1,17 +1,10 @@
 package Service;
-
 import Model.AuthData;
 import Model.GameData;
-import Model.UserData;
-import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
-import dataaccess.UserDAO;
 import exception.StatusException;
-import spark.Request;
-import spark.Response;
-
-import java.util.HashMap;
+import java.util.Objects;
 
 public class GameService {
 
@@ -47,7 +40,7 @@ public class GameService {
 
     }
 
-    public void join_game(String authToken, int gameID) throws StatusException {
+    public void join_game(String authToken, int gameID, String color) throws StatusException {
         if (authDAO.getAuth(authToken) == null){
             throw new StatusException("Error: unauthorized", 401);
         }
@@ -57,11 +50,27 @@ public class GameService {
         }
 
         GameData gamedata = gameDAO.getGame(gameID);
+        AuthData authdata = authDAO.getAuth(authToken);
 
         String white = gamedata.whiteUsername();
         String black = gamedata.blackUsername();
 
-//        if ()
+        if (Objects.equals(color, "WHITE")) {
+            if (white != null && !Objects.equals(authdata.username(), gamedata.whiteUsername())){
+                throw new StatusException("space already taken by another user", 403);
+            } else {white = authdata.username();}
+        } else if (Objects.equals(color, "BLACK")) {
+            if (black != null && !Objects.equals(authdata.username(), gamedata.blackUsername())){
+                throw new StatusException("space already taken by another user", 403);
+            } else {black = authdata.username();}
+        } else if (color != null) throw new StatusException("not a valid team color", 400);
+
+
+        gameDAO.updateGame(gameID, new GameData(gameID, white, black, gamedata.gameName(), gamedata.game()));
+
+//        if (gameDAO.getGame(gameID) == null){
+//            throw new StatusException("game could not update", 400);
+//        } else if (gameDAO.getGame(gameID).whiteUsername() != )
 
     }
 

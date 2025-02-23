@@ -1,13 +1,9 @@
 package dataaccess;
-
-import Model.AuthData;
 import Model.GameData;
 import chess.ChessGame;
-
 import java.util.Collection;
 import java.util.HashMap;
 
-import java.util.ArrayList;
 
 public class MemoryGameDAO implements GameDAO{
 
@@ -32,6 +28,7 @@ public class MemoryGameDAO implements GameDAO{
     }
 
     public void updateGame(int gameID, GameData new_game) {
+        hash.remove(gameID);
         hash.put(gameID, new_game);
     }
 

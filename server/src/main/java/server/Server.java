@@ -1,10 +1,6 @@
 package server;
-
 import dataaccess.*;
 import handler.*;
-import handler.UserHandlerclasses.LoginHandler;
-import handler.UserHandlerclasses.LogoutHandler;
-import handler.UserHandlerclasses.RegisterHandler;
 import spark.*;
 
 
@@ -35,7 +31,7 @@ public class Server {
 
         Spark.get("/game", gameHandler::list_games);
         Spark.post("/game", gameHandler::create_game);
-//        Spark.put("/game", gameHandler::joinGame);
+        Spark.put("/game", gameHandler::joinGame);
 //
         Spark.delete("/db", clear::clear);
 
