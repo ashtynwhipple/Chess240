@@ -1,11 +1,7 @@
 package MyUnitTests;
-
 import Model.AuthData;
 import dataaccess.MemoryAuthDAO;
 import org.junit.jupiter.api.*;
-
-import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
