@@ -29,8 +29,6 @@ public class UserHandler {
             RegisterService service_instance = new RegisterService(userDAO, authDAO);
             res.status(200);
             return new Gson().toJson(service_instance.register(registerRequest));
-//            AuthData new_authData = service_instance.register(registerRequest);
-//            return "Username: " + new Gson().toJson(new_authData.username()) + "authToken: " + new Gson().toJson(new_authData.authToken());
         } catch (StatusException e) {
             res.status(e.get_status());
             return "{ \"message\": \"Error: already taken\" }";

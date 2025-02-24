@@ -26,10 +26,6 @@ public class LoginService {
             throw new StatusException("Error password does not match or User DNE", 401);
         }
 
-//        String auth = String.valueOf(authDAO.createAuth(userdata.username()));
-//
-//        return new AuthData(auth, userdata.username());
-
         return authDAO.createAuth(userdata.username());
 
     }
