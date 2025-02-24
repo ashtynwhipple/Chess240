@@ -1,6 +1,7 @@
 package Service;
 import Model.AuthData;
 import Model.GameData;
+import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
 import exception.StatusException;
@@ -18,6 +19,10 @@ public class GameService {
     }
 
     public Object listGames(AuthData authData) throws StatusException {
+        if (authData == null){
+            throw new StatusException("authdata invalid", 401);
+        }
+
         String auth = String.valueOf(authDAO.getUsername(authData.username()));
 
         if (auth == null){
@@ -47,7 +52,7 @@ public class GameService {
 
     public void join_game(String authToken, int gameID, String color) throws StatusException {
         if (authToken == null){
-            throw new StatusException("Error: unauthorized", 401);
+            throw new StatusException("Error: unauthorized", 403);
         }
 
         if (gameDAO.getGame(gameID) == null){
@@ -59,6 +64,10 @@ public class GameService {
 
         String white = gamedata.whiteUsername();
         String black = gamedata.blackUsername();
+
+        if (authdata == null){
+            throw new StatusException("authdata not valid", 403);
+        }
 
         if (Objects.equals(color, "WHITE")) {
             if (white != null && !Objects.equals(authdata.username(), gamedata.whiteUsername())){
