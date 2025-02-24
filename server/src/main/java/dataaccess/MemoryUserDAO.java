@@ -11,7 +11,7 @@ public class MemoryUserDAO implements UserDAO{
     }
 
     public UserData getUser(String username) {
-        return hash.get(username);
+        return hash.getOrDefault(username, null);
     }
 
     public boolean is_empty() {

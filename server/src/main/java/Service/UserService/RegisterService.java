@@ -21,7 +21,7 @@ public class RegisterService {
 
 
         if (userdata == null || userdata.username() == null || userdata.password() == null) {
-            throw new StatusException("", 403);
+            throw new StatusException("", 400);
         }
 
         if (userDAO.getUser(userdata.username()) != null) {

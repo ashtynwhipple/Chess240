@@ -20,7 +20,7 @@ public class UserHandler {
         this.authDAO = authDAO;
     }
 
-    public Object register(Request req, Response res) {
+    public Object register(Request req, Response res) throws StatusException {
 
         UserData registerRequest = new Gson().fromJson(req.body(), UserData.class);
 
@@ -30,13 +30,13 @@ public class UserHandler {
             return new Gson().toJson(service_instance.register(registerRequest));
         } catch (StatusException e) {
             res.status(e.get_status());
-            return null;
+            return "{ \"message\": \"Error: already taken\" }";
         }
 
     }
 
     public Object logout(Request req, Response res) {
-        UserData logout_request = new Gson().fromJson(req.body(), UserData.class);
+        String logout_request = req.headers("authorization");
 
         try {
             LogoutService service_instance = new LogoutService(authDAO);
@@ -45,11 +45,11 @@ public class UserHandler {
             return "{}";
         } catch (StatusException e) {
             res.status(e.get_status());
-            return null;
+            return "{ \"message\": \"Error: unauthorized\" }";
         }
     }
 
-    public Object login(Request req, Response res) {
+    public Object login(Request req, Response res) throws StatusException {
 
         UserData loginRequest = new Gson().fromJson(req.body(), UserData.class);
 
@@ -59,7 +59,7 @@ public class UserHandler {
             return new Gson().toJson(service_instance.login(loginRequest));
         } catch (StatusException e) {
             res.status(e.get_status());
-            return null;
+            return "{ \"message\": \"Error: unauthorized\" }";
         }
 
     }

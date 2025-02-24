@@ -20,8 +20,10 @@ public class LoginService {
 
     public AuthData login(UserData userdata) throws StatusException {
 
-        if (userdata == null || !Objects.equals(userdata.password(), userDAO.getUser(userdata.username()).password())){
-            throw new StatusException("Error password does not match or User DNE", 403);
+        if (userdata == null || userdata.username() == null || userDAO.getUser(userdata.username()) == null){
+            throw new StatusException("no username found", 401);
+        } else if (!Objects.equals(userdata.password(), userDAO.getUser(userdata.username()).password())){
+            throw new StatusException("Error password does not match or User DNE", 401);
         }
 
         String auth = String.valueOf(authDAO.createAuth(userdata.username()));

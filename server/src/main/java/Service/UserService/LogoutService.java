@@ -11,17 +11,15 @@ public class LogoutService {
         this.authDAO = authDAO;
     }
 
-    public void logout(UserData userdata) throws StatusException {
+    public void logout(String token) throws StatusException {
 
-        String auth = String.valueOf(authDAO.getAuth(userdata.username()));
-
-        if (auth == null){
-            throw new StatusException("auth DNE when trying to logout", 403);
+        if (token == null){
+            throw new StatusException("not valid user data or username DNE", 400);
         }
 
-        authDAO.deleteAuth(userdata.username());
+        authDAO.deleteAuth(token);
 
-        if (authDAO.getAuth(userdata.username()) != null){
+        if (authDAO.getAuth(token) != null){
             throw new StatusException("auth was not deleted", 500);
         }
 
