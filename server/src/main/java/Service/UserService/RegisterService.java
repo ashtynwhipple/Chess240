@@ -30,9 +30,11 @@ public class RegisterService {
 
         userDAO.createUser(userdata.username(), userdata.password(), userdata.email());
 
-        String auth = String.valueOf(authDAO.createAuth(userdata.username()));
+//        String auth = String.valueOf(authDAO.createAuth(userdata.username()));
 
-        return new AuthData(auth, userdata.username());
+//        return new AuthData(auth, userdata.username());
+
+        return authDAO.createAuth(userdata.username());
     }
 
 }

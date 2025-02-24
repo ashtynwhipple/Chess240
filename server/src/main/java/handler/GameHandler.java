@@ -23,12 +23,12 @@ public class GameHandler {
     }
 
     public Object list_games(Request req, Response res){
-        AuthData registerRequest = new Gson().fromJson(req.body(), AuthData.class);
+        String authToken = req.headers("authorization");
 
         try {
             GameService service_instance = new GameService(authDAO, gameDAO);
             res.status(200);
-            return new Gson().toJson(service_instance.listGames(registerRequest));
+            return new Gson().toJson(service_instance.listGames(authToken));
         } catch (StatusException e) {
             res.status(e.get_status());
             return "{ \"message\": \"Error: unauthorized\" }";
