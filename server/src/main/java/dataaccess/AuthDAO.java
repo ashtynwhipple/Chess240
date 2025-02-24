@@ -10,7 +10,7 @@ public interface AuthDAO {
 
     void deleteAuth(String username);
 
-    AuthData getAuth(String username);
+    AuthData getUsername(String username);
 
     boolean is_empty();
 

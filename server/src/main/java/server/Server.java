@@ -32,7 +32,7 @@ public class Server {
         Spark.get("/game", gameHandler::list_games);
         Spark.post("/game", gameHandler::create_game);
         Spark.put("/game", gameHandler::joinGame);
-//
+
         Spark.delete("/db", clear::clear);
 
 //        Spark.exception(DataAccessException.class, exceptionHandler::exception);

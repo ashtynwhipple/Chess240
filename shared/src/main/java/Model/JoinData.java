@@ -1,3 +1,3 @@
 package Model;
 
-public record JoinData (String color, int gameID){ }
+public record JoinData(String playerColor, int gameID) {}

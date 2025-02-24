@@ -5,6 +5,7 @@ import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
 import exception.StatusException;
 import java.util.Objects;
+import java.util.Random;
 
 public class GameService {
 
@@ -17,7 +18,7 @@ public class GameService {
     }
 
     public Object listGames(AuthData authData) throws StatusException {
-        String auth = String.valueOf(authDAO.getAuth(authData.username()));
+        String auth = String.valueOf(authDAO.getUsername(authData.username()));
 
         if (auth == null){
             throw new StatusException("Error not valid auth token", 403);
@@ -27,21 +28,25 @@ public class GameService {
 
     }
 
-    public void createGame(String auth_token, GameData gameData) throws StatusException {
-        if (authDAO.getAuth(auth_token) == null){
+    public int createGame(String auth_token, GameData gameData) throws StatusException {
+        if (auth_token == null || gameData == null){
             throw new StatusException("Error: unauthorized", 401);
         }
 
-        gameDAO.createGame(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), gameData.game());
+        Random random = new Random();
+        int gameID = random.nextInt(1_000_000);
 
-        if (gameDAO.getGame(gameData.gameID()) == null){
-            throw new StatusException("Error: bad request", 400);
+        gameDAO.createGame(gameID, gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), gameData.game());
+
+        if (gameDAO.getGame(gameID) == null || gameDAO.getGame(gameID).gameID() != gameID){
+            throw new StatusException("Error: bad request", 401);
         }
 
+        return gameID;
     }
 
     public void join_game(String authToken, int gameID, String color) throws StatusException {
-        if (authDAO.getAuth(authToken) == null){
+        if (authToken == null){
             throw new StatusException("Error: unauthorized", 401);
         }
 
@@ -50,7 +55,7 @@ public class GameService {
         }
 
         GameData gamedata = gameDAO.getGame(gameID);
-        AuthData authdata = authDAO.getAuth(authToken);
+        AuthData authdata = authDAO.getUsername(authToken);
 
         String white = gamedata.whiteUsername();
         String black = gamedata.blackUsername();

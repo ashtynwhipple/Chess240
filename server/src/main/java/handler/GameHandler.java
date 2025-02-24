@@ -10,6 +10,8 @@ import exception.StatusException;
 import spark.Request;
 import spark.Response;
 
+import java.util.Map;
+
 public class GameHandler {
 
     private final AuthDAO authDAO;
@@ -29,7 +31,7 @@ public class GameHandler {
             return new Gson().toJson(service_instance.listGames(registerRequest));
         } catch (StatusException e) {
             res.status(e.get_status());
-            return null;
+            return "{ \"message\": \"Error: unauthorized\" }";
         }
 
     }
@@ -46,20 +48,17 @@ public class GameHandler {
             GameService service_instance = new GameService(authDAO, gameDAO);
             String authToken = req.headers("authorization");
             res.status(200);
-            service_instance.createGame(authToken, gameData);
-            return "gameID: " + gameData.gameID();
+            int new_game_ID = service_instance.createGame(authToken, gameData);
+            Gson gson = new Gson();
+            return gson.toJson(Map.of("gameID", new_game_ID));
         } catch (StatusException e) {
             res.status(e.get_status());
-            return null;
+            return "{ \"message\": \"Error: unauthorized\" }";
         }
 
     }
 
     public Object joinGame(Request req, Response res) throws StatusException {
-
-        if (!req.body().contains("\"gameID\":")) {
-            throw new StatusException("Error: bad request", 400);
-        }
 
         JoinData joinData = new Gson().fromJson(req.body(), JoinData.class);
 
@@ -67,11 +66,11 @@ public class GameHandler {
             GameService service_instance = new GameService(authDAO, gameDAO);
             String authToken = req.headers("authorization");
             res.status(200);
-            service_instance.join_game(authToken, joinData.gameID(), joinData.color());
+            service_instance.join_game(authToken, joinData.gameID(), joinData.playerColor());
             return "{}";
         } catch (StatusException e) {
             res.status(e.get_status());
-            return null;
+            return "{ \"message\": \"Error: unauthorized\" }";
         }
 
     }

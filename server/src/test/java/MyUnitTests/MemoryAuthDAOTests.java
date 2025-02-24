@@ -35,7 +35,7 @@ public class MemoryAuthDAOTests {
     @Order(2)
     @DisplayName("Retrieve Authentication Data")
     public void retrieveAuthData() {
-        AuthData retrievedAuth = authDAO.getAuth(testAuth.authToken());
+        AuthData retrievedAuth = authDAO.getUsername(testAuth.authToken());
         assertNotNull(retrievedAuth, "Retrieved AuthData should not be null");
         assertEquals(testAuth.username(), retrievedAuth.username(), "Username should match");
         assertEquals(testAuth.authToken(), retrievedAuth.authToken(), "Auth token should match");
@@ -46,7 +46,7 @@ public class MemoryAuthDAOTests {
     @DisplayName("Delete Authentication Token")
     public void deleteAuthToken() {
         authDAO.deleteAuth(testAuth.authToken());
-        assertNull(authDAO.getAuth(testAuth.authToken()), "AuthData should be null after deletion");
+        assertNull(authDAO.getUsername(testAuth.authToken()), "AuthData should be null after deletion");
     }
 
     @Test

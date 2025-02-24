@@ -50,7 +50,7 @@ public class UserService {
 
     public void logout(UserData userdata) throws StatusException {
 
-        String auth = String.valueOf(authDAO.getAuth(userdata.username()));
+        String auth = String.valueOf(authDAO.getUsername(userdata.username()));
 
         if (auth == null){
             throw new StatusException("auth DNE when trying to logout", 403);
@@ -58,7 +58,7 @@ public class UserService {
 
         authDAO.deleteAuth(userdata.username());
 
-        if (authDAO.getAuth(userdata.username()) != null){
+        if (authDAO.getUsername(userdata.username()) != null){
             throw new StatusException("auth was not deleted", 500);
         }
 

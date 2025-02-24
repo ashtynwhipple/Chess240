@@ -24,8 +24,8 @@ public class MemoryAuthDAO implements AuthDAO {
         hash.remove(token);
     }
 
-    public AuthData getAuth(String username){
-        return hash.get(username);
+    public AuthData getUsername(String token){
+        return hash.get(token);
     }
 
     private String generate_token(){
@@ -39,9 +39,5 @@ public class MemoryAuthDAO implements AuthDAO {
     public void clear_all(){
         hash.clear();
     }
-
-//    public boolean is_auth_token_valid(String auth_token){
-//        return hash.containsValue(auth_token);
-//    }
 
 }

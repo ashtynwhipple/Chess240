@@ -1,5 +1,4 @@
 package Service.UserService;
-import Model.UserData;
 import dataaccess.AuthDAO;
 import exception.StatusException;
 
@@ -13,13 +12,13 @@ public class LogoutService {
 
     public void logout(String token) throws StatusException {
 
-        if (token == null || authDAO.getAuth(token) == null){
+        if (token == null || authDAO.getUsername(token) == null){
             throw new StatusException("not valid user data or username DNE", 401);
         }
 
         authDAO.deleteAuth(token);
 
-        if (authDAO.getAuth(token) != null){
+        if (authDAO.getUsername(token) != null){
             throw new StatusException("auth was not deleted", 500);
         }
 
