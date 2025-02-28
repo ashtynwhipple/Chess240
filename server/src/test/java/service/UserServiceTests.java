@@ -99,4 +99,21 @@ public class UserServiceTests {
         Assertions.assertThrows(StatusException.class, () -> logoutService.logout("invalidAuthToken"));
     }
 
+    @Test
+    @Order(6)
+    @DisplayName("Clear positive")
+    void ClearTestPositive() throws StatusException {
+        registerService.register(testUser);
+        loginService.login(testUser);
+
+        assert (!mockUserDAO.is_empty());
+        assert (!mockAuthDAO.is_empty());
+
+        mockUserDAO.clear_all();
+        mockAuthDAO.clear_all();
+
+        assert(mockAuthDAO.is_empty());
+        assert(mockUserDAO.is_empty());
+    }
+
 }

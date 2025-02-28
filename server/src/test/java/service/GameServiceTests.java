@@ -115,4 +115,21 @@ public class GameServiceTests {
 
     }
 
+    @Test
+    @Order(6)
+    @DisplayName("Clear positive")
+    void ClearTestPositive() throws StatusException {
+
+        AuthData result = registerService.register(user);
+        gameService.createGame(result.authToken(), testGame);
+
+        assert (!mockGameDAO.is_empty());
+        assert (!mockAuthDAO.is_empty());
+
+        mockAuthDAO.clear_all();
+        mockGameDAO.clear_all();
+
+        assert(mockGameDAO.is_empty());
+    }
+
 }
