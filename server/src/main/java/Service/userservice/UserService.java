@@ -1,7 +1,7 @@
-package Service.UserService;
+package Service.userservice;
 
-import Model.AuthData;
-import Model.UserData;
+import model.AuthData;
+import model.UserData;
 import dataaccess.AuthDAO;
 import dataaccess.UserDAO;
 import exception.StatusException;

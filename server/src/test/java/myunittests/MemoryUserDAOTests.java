@@ -1,5 +1,5 @@
-package MyUnitTests;
-import Model.UserData;
+package myunittests;
+import model.UserData;
 import dataaccess.MemoryUserDAO;
 import org.junit.jupiter.api.*;
 import passoff.model.*;

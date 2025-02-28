@@ -1,6 +1,6 @@
 package dataaccess;
 
-import Model.UserData;
+import model.UserData;
 
 public interface UserDAO {
 

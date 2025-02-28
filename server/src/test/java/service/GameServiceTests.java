@@ -1,9 +1,9 @@
 package service;
-import Model.AuthData;
-import Model.GameData;
-import Model.UserData;
+import model.AuthData;
+import model.GameData;
+import model.UserData;
 import Service.GameService;
-import Service.UserService.RegisterService;
+import Service.userservice.RegisterService;
 import chess.ChessGame;
 import dataaccess.*;
 import exception.StatusException;

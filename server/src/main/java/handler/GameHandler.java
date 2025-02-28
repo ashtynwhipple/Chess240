@@ -1,7 +1,6 @@
 package handler;
-import Model.AuthData;
-import Model.GameData;
-import Model.JoinData;
+import model.GameData;
+import model.JoinData;
 import Service.GameService;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;

@@ -1,5 +1,5 @@
-package MyUnitTests;
-import Model.GameData;
+package myunittests;
+import model.GameData;
 import chess.ChessGame;
 import dataaccess.MemoryGameDAO;
 import org.junit.jupiter.api.*;
@@ -7,11 +7,7 @@ import passoff.model.*;
 import passoff.server.TestServerFacade;
 import server.Server;
 
-import java.net.HttpURLConnection;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Comparator;
-import java.util.Locale;
 //import Model.GameData;
 //import chess.ChessGame;
 //import dataaccess.MemoryGameDAO;

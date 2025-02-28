@@ -1,7 +1,7 @@
 package Service;
-import Model.AuthData;
-import Model.GameData;
-import Model.ListGameData;
+import model.AuthData;
+import model.GameData;
+import model.ListGameData;
 import chess.ChessGame;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;

@@ -1,4 +1,4 @@
-package Service.UserService;
+package Service.userservice;
 import dataaccess.AuthDAO;
 import exception.StatusException;
 

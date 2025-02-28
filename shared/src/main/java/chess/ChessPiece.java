@@ -77,7 +77,7 @@ public class ChessPiece {
             return calculator.get_viable_moves();
         }else if (type == PieceType.PAWN) { //currently in progress
             PawnMovesCalculator calculator = new PawnMovesCalculator(board, myPosition);
-            return calculator.get_viable_moves();
+            return calculator.getViableMoves();
         }else if (type == PieceType.ROOK) { //PASSED but I don't know why, I had to change the bounds
             RookMovesCalculator calculator = new RookMovesCalculator(board, myPosition);
             return calculator.get_viable_moves();
@@ -86,7 +86,7 @@ public class ChessPiece {
             return calculator.get_viable_moves();
         }else if (type == PieceType.KNIGHT) { //PASSED
             KnightMovesCalculator calculator = new KnightMovesCalculator(board, myPosition);
-            return calculator.get_viable_moves();
+            return calculator.getViableMoves();
         }else if (type == PieceType.QUEEN) { //PASSED
             QueenMovesCalculator calculator = new QueenMovesCalculator(board, myPosition);
             return calculator.get_viable_moves();

@@ -1,9 +1,8 @@
 package handler;
-import Model.AuthData;
-import Model.UserData;
-import Service.UserService.LoginService;
-import Service.UserService.LogoutService;
-import Service.UserService.RegisterService;
+import model.UserData;
+import Service.userservice.LoginService;
+import Service.userservice.LogoutService;
+import Service.userservice.RegisterService;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.UserDAO;

@@ -1,5 +1,5 @@
 package dataaccess;
-import Model.UserData;
+import model.UserData;
 import java.util.HashMap;
 
 public class MemoryUserDAO implements UserDAO{

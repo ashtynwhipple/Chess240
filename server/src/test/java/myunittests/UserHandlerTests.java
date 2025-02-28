@@ -1,4 +1,4 @@
-package MyUnitTests;
+package myunittests;
 
 public class UserHandlerTests {
 }

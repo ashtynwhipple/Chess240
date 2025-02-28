@@ -1,9 +1,9 @@
 package service;
-import Model.AuthData;
-import Model.UserData;
-import Service.UserService.LoginService;
-import Service.UserService.LogoutService;
-import Service.UserService.RegisterService;
+import model.AuthData;
+import model.UserData;
+import Service.userservice.LoginService;
+import Service.userservice.LogoutService;
+import Service.userservice.RegisterService;
 import dataaccess.*;
 import exception.StatusException;
 import org.junit.jupiter.api.*;

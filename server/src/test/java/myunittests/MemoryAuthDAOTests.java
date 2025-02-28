@@ -1,5 +1,5 @@
-package MyUnitTests;
-import Model.AuthData;
+package myunittests;
+import model.AuthData;
 import dataaccess.MemoryAuthDAO;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
