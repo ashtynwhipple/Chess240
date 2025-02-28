@@ -1,7 +1,6 @@
-package MyUnitTests;
+package service;
 import Model.AuthData;
 import Model.GameData;
-import Model.ListGameData;
 import Model.UserData;
 import Service.GameService;
 import Service.UserService.RegisterService;
@@ -12,7 +11,6 @@ import org.junit.jupiter.api.*;
 import server.Server;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 
 public class GameServiceTests {
