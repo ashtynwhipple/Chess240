@@ -106,14 +106,14 @@ public class UserServiceTests {
         registerService.register(testUser);
         loginService.login(testUser);
 
-        assert (!mockUserDAO.is_empty());
-        assert (!mockAuthDAO.is_empty());
+        assert (!mockUserDAO.isEmpty());
+        assert (!mockAuthDAO.isEmpty());
 
-        mockUserDAO.clear_all();
-        mockAuthDAO.clear_all();
+        mockUserDAO.clearAll();
+        mockAuthDAO.clearAll();
 
-        assert(mockAuthDAO.is_empty());
-        assert(mockUserDAO.is_empty());
+        assert(mockAuthDAO.isEmpty());
+        assert(mockUserDAO.isEmpty());
     }
 
 }

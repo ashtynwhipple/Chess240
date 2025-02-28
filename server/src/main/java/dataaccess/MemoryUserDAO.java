@@ -14,11 +14,11 @@ public class MemoryUserDAO implements UserDAO{
         return hash.getOrDefault(username, null);
     }
 
-    public boolean is_empty() {
+    public boolean isEmpty() {
         return hash.isEmpty();
     }
 
-    public void clear_all(){
+    public void clearAll(){
         hash.clear();
     }
 

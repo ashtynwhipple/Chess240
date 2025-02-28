@@ -54,7 +54,7 @@ public class MemoryAuthDAOTests {
     @DisplayName("Check if Auth Storage is Empty")
     public void checkEmptyAuthStorage() {
         authDAO.clearAuth();
-        assertTrue(authDAO.is_empty(), "Auth storage should be empty after clearing");
+        assertTrue(authDAO.isEmpty(), "Auth storage should be empty after clearing");
     }
 
     @Test
@@ -62,7 +62,7 @@ public class MemoryAuthDAOTests {
     @DisplayName("Clear All Auth Data")
     public void clearAllAuthData() {
         authDAO.createAuth("anotherUser");
-        authDAO.clear_all();
-        assertTrue(authDAO.is_empty(), "Auth storage should be empty after clear_all()");
+        authDAO.clearAll();
+        assertTrue(authDAO.isEmpty(), "Auth storage should be empty after clear_all()");
     }
 }

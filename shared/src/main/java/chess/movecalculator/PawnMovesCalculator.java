@@ -53,7 +53,6 @@ public class PawnMovesCalculator extends PieceMovesCalculator{
         int new_x;
         int new_y = position.getColumn();
 
-        //logic to go one space
         if (color == ChessGame.TeamColor.WHITE){ //don't add this space if there is something blocking it
             new_x = position.getRow() + 1;
             if (validMove(new_x,new_y) && !isOpponent(new_x,new_y)){
@@ -88,14 +87,12 @@ public class PawnMovesCalculator extends PieceMovesCalculator{
                 {-1,-1,},
         };
 
-        //add places if they want to kill and go diagonal
         if(color == ChessGame.TeamColor.WHITE) {
             directionsLoop(w_directions,viable_moves);
         }else if(color == ChessGame.TeamColor.BLACK) {
             directionsLoop(b_directions,viable_moves);
         }
 
-        //add promotion pieces
         List<ChessMove> promotionMoves = new ArrayList<>();
         for (ChessMove move: viable_moves){
             if (move.getEndPosition().getRow() == 1 || move.getEndPosition().getRow() == 8) {

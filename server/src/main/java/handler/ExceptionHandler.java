@@ -28,7 +28,4 @@ public class ExceptionHandler {
         }
     }
 
-//        res.status(ex.StatusCode());
-//        res.body(ex.toJson());
-
 }

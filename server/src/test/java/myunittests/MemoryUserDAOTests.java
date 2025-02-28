@@ -84,7 +84,7 @@ public class MemoryUserDAOTests {
     @Order(3)
     @DisplayName("Check if User Storage is Empty")
     public void checkEmptyUserStorage() {
-        userDAO.clear_all();
-        Assertions.assertTrue(userDAO.is_empty(), "User storage should be empty after clearing");
+        userDAO.clearAll();
+        Assertions.assertTrue(userDAO.isEmpty(), "User storage should be empty after clearing");
     }
 }

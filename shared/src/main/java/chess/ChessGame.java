@@ -67,7 +67,7 @@ public class ChessGame {
             ChessPiece original = board.getPiece(move.getStartPosition());
             board.addPiece(move.getEndPosition(), board.getPiece(move.getStartPosition()));
             board.addPiece(move.getStartPosition(), null);
-            if (!is_square_attacked(board.find_king(piece.getTeamColor()), piece.getTeamColor())) {
+            if (!isSquareAttacked(board.findKing(piece.getTeamColor()), piece.getTeamColor())) {
                 validMoves.add(move); // Only keep moves that don't leave the king in check
             }
             board.addPiece(move.getEndPosition(), replaced);
@@ -113,7 +113,7 @@ public class ChessGame {
     }
 
 
-    public boolean is_square_attacked(ChessPosition position, ChessGame.TeamColor teamColor) {
+    public boolean isSquareAttacked(ChessPosition position, ChessGame.TeamColor teamColor) {
         for (int row = 1; row <= 8; row++) {
             for (int col = 1; col <= 8; col++) {
                 ChessPosition opp_position = new ChessPosition(row, col);
@@ -146,8 +146,8 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        ChessPosition king_position = board.find_king(teamColor);
-        return is_square_attacked(king_position, teamColor);
+        ChessPosition king_position = board.findKing(teamColor);
+        return isSquareAttacked(king_position, teamColor);
     }
 
     /**
@@ -161,7 +161,7 @@ public class ChessGame {
             return false;
 
         }
-        for (ChessPosition position: board.get_all_positions(teamColor)){
+        for (ChessPosition position: board.getAllPositions(teamColor)){
             Collection<ChessMove> valid_moves = validMoves(position);
             if (!valid_moves.isEmpty()){
                 return false;
@@ -183,7 +183,7 @@ public class ChessGame {
             return false;
         }
 
-        for (ChessPosition position: board.get_all_positions(teamColor)){
+        for (ChessPosition position: board.getAllPositions(teamColor)){
             Collection<ChessMove> valid_moves = validMoves(position);
             if (!(valid_moves.isEmpty())){
                 return false;

@@ -12,9 +12,9 @@ public interface AuthDAO {
 
     AuthData getUsername(String username);
 
-    boolean is_empty();
+    boolean isEmpty();
 
-    void clear_all();
+    void clearAll();
 
 
 }

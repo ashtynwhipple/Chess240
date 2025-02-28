@@ -45,7 +45,7 @@ public class GameService {
         return gameID;
     }
 
-    public void join_game(String authToken, int gameID, String color) throws StatusException {
+    public void joinGame(String authToken, int gameID, String color) throws StatusException {
         if (authToken == null){
             throw new StatusException("Error: unauthorized", 403);
         }

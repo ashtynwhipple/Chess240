@@ -110,7 +110,7 @@ public class MemoryGameDAOTests {
     @DisplayName("Check if Game Storage is Empty")
     public void checkEmptyGameStorage() {
         gameDAO.clearGames();
-        Assertions.assertTrue(gameDAO.is_empty(), "Game storage should be empty after clearing");
+        Assertions.assertTrue(gameDAO.isEmpty(), "Game storage should be empty after clearing");
     }
 
     @Test
@@ -118,7 +118,7 @@ public class MemoryGameDAOTests {
     @DisplayName("Clear All Games")
     public void clearAllGames() {
         gameDAO.createGame(2, "ExtraWhite", "ExtraBlack", "ExtraGame", new ChessGame());
-        gameDAO.clear_all();
-        Assertions.assertTrue(gameDAO.is_empty(), "Game storage should be empty after clear_all()");
+        gameDAO.clearAll();
+        Assertions.assertTrue(gameDAO.isEmpty(), "Game storage should be empty after clear_all()");
     }
 }

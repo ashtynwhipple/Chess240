@@ -15,8 +15,8 @@ public interface GameDAO {
 
     void updateGame(int gameID, GameData new_game);
 
-    boolean is_empty();
+    boolean isEmpty();
 
-    void clear_all();
+    void clearAll();
 
 }

@@ -2,7 +2,6 @@ package chess.movecalculator;
 
 import chess.ChessBoard;
 import chess.ChessMove;
-import chess.ChessPiece;
 import chess.ChessPosition;
 
 import java.util.ArrayList;
@@ -16,14 +15,14 @@ public class RookMovesCalculator extends PieceMovesCalculator{
         super(board, position);
     }
 
-    public Collection<ChessMove> get_viable_moves(){
+    public Collection<ChessMove> getViableMoves(){
         List<ChessMove> viable_moves = new ArrayList<>();
 
         int[][] directions = {
-                {1, 0},//up
-                {-1, 0},//down
-                {0, 1},//right
-                {0, -1},//left
+                {1, 0},
+                {-1, 0},
+                {0, 1},
+                {0, -1},
         };
 
         for (int[] direction: directions){

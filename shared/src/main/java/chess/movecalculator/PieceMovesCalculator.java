@@ -26,10 +26,10 @@ public abstract class PieceMovesCalculator {
     }
 
     public boolean validMove(int x, int y){
-        if ( x >= 1 && x < 9 && y >= 1 && y < 9){ //if in bounds
-            ChessPosition place_piece_position = new ChessPosition(x,y); //get piece position
-            ChessPiece piece = board.getPiece(place_piece_position); //find piece at position
-            return piece == null || isOpponent(x,y); //return true if there is no piece there or if the opponent is there
+        if ( x >= 1 && x < 9 && y >= 1 && y < 9){
+            ChessPosition place_piece_position = new ChessPosition(x,y);
+            ChessPiece piece = board.getPiece(place_piece_position);
+            return piece == null || isOpponent(x,y);
         }
         else{
             return false;

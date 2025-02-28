@@ -21,7 +21,7 @@ public class GameHandler {
         this.gameDAO = gameDAO;
     }
 
-    public Object list_games(Request req, Response res){
+    public Object listGames(Request req, Response res){
         String authToken = req.headers("authorization");
 
         try {
@@ -35,7 +35,7 @@ public class GameHandler {
 
     }
 
-    public Object create_game(Request req, Response res) throws StatusException {
+    public Object createGame(Request req, Response res) throws StatusException {
 
         if (!req.body().contains("\"gameName\":")) {
             throw new StatusException("Error: bad request", 400);
@@ -65,7 +65,7 @@ public class GameHandler {
             GameService service_instance = new GameService(authDAO, gameDAO);
             String authToken = req.headers("authorization");
             res.status(200);
-            service_instance.join_game(authToken, joinData.gameID(), joinData.playerColor());
+            service_instance.joinGame(authToken, joinData.gameID(), joinData.playerColor());
             return "{}";
         } catch (StatusException e) {
             res.status(e.get_status());

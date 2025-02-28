@@ -105,7 +105,7 @@ public class ChessBoard {
         board[8][6] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
     }
 
-    public ChessPosition find_king(ChessGame.TeamColor teamColor){
+    public ChessPosition findKing(ChessGame.TeamColor teamColor){
         for (int row = 0; row < 9; row++){
             for (int col = 0; col < 9; col++){
                 ChessPosition new_position = new ChessPosition(row, col);
@@ -120,7 +120,7 @@ public class ChessBoard {
 
 
 
-    public Collection<ChessPosition> get_all_positions(ChessGame.TeamColor teamColor) {
+    public Collection<ChessPosition> getAllPositions(ChessGame.TeamColor teamColor) {
         List<ChessPosition> positions = new ArrayList<>();
 
         for (int row = 0; row < 9; row++){

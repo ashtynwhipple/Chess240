@@ -8,8 +8,8 @@ public interface UserDAO {
 
     UserData getUser(String username);
 
-    boolean is_empty();
+    boolean isEmpty();
 
-    void clear_all();
+    void clearAll();
 
 }

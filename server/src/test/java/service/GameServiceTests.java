@@ -97,7 +97,7 @@ public class GameServiceTests {
         AuthData result = registerService.register(user);
         int ID = gameService.createGame(result.authToken(), testGame);
 
-        gameService.join_game(result.authToken(), ID, "WHITE");
+        gameService.joinGame(result.authToken(), ID, "WHITE");
 
         Assertions.assertEquals(mockGameDAO.getGame(ID).whiteUsername(), mockAuthDAO.getUsername(result.authToken()).username());
 
@@ -109,7 +109,7 @@ public class GameServiceTests {
         AuthData result = registerService.register(user);
         int ID = gameService.createGame(result.authToken(), testGame);
 
-        gameService.join_game(result.authToken(), ID, "BLACK");
+        gameService.joinGame(result.authToken(), ID, "BLACK");
 
         Assertions.assertNotEquals(mockGameDAO.getGame(ID).whiteUsername(), mockAuthDAO.getUsername(result.authToken()).username());
 
@@ -123,13 +123,13 @@ public class GameServiceTests {
         AuthData result = registerService.register(user);
         gameService.createGame(result.authToken(), testGame);
 
-        assert (!mockGameDAO.is_empty());
-        assert (!mockAuthDAO.is_empty());
+        assert (!mockGameDAO.isEmpty());
+        assert (!mockAuthDAO.isEmpty());
 
-        mockAuthDAO.clear_all();
-        mockGameDAO.clear_all();
+        mockAuthDAO.clearAll();
+        mockGameDAO.clearAll();
 
-        assert(mockGameDAO.is_empty());
+        assert(mockGameDAO.isEmpty());
     }
 
 }

@@ -14,7 +14,7 @@ public class MemoryAuthDAO implements AuthDAO {
     }
 
     public AuthData createAuth(String username){
-        String token = generate_token();
+        String token = generateToken();
         AuthData data = new AuthData(token, username);
         hash.put(token, data);
         return data;
@@ -28,15 +28,15 @@ public class MemoryAuthDAO implements AuthDAO {
         return hash.get(token);
     }
 
-    private String generate_token(){
+    private String generateToken(){
         return UUID.randomUUID().toString();
     }
 
-    public boolean is_empty(){
+    public boolean isEmpty(){
         return hash.isEmpty();
     }
 
-    public void clear_all(){
+    public void clearAll(){
         hash.clear();
     }
 
