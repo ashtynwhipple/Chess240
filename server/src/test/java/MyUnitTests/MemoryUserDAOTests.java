@@ -1,50 +1,83 @@
 package MyUnitTests;
-
 import Model.UserData;
 import dataaccess.MemoryUserDAO;
 import org.junit.jupiter.api.*;
-
-import static org.junit.jupiter.api.Assertions.*;
+import passoff.model.*;
+import passoff.server.TestServerFacade;
+import server.Server;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class MemoryUserDAOTests {
 
+    private static TestUser existingUser;
+
+    private static TestUser newUser;
+
+    private static TestCreateRequest createRequest;
+
+    private static TestServerFacade serverFacade;
+    private static Server server;
+
+    private String existingAuth;
+
     private static MemoryUserDAO userDAO;
-    private static final String TEST_USERNAME = "testUser";
-    private static final String TEST_PASSWORD = "testPass";
-    private static final String TEST_EMAIL = "test@example.com";
+
+    @AfterAll
+    static void stopServer() {
+        server.stop();
+    }
 
     @BeforeAll
     public static void init() {
+        server = new Server();
+        var port = server.run(0);
+        System.out.println("Started test HTTP server on " + port);
+
+        serverFacade = new TestServerFacade("localhost", Integer.toString(port));
+
+        existingUser = new TestUser("ExistingUser", "existingUserPassword", "eu@mail.com");
+
+        newUser = new TestUser("NewUser", "newUserPassword", "nu@mail.com");
+
+        createRequest = new TestCreateRequest("testGame");
+
         userDAO = new MemoryUserDAO();
+
+
     }
 
     @BeforeEach
     public void setup() {
-        userDAO.clear_all();
-        userDAO.createUser(TEST_USERNAME, TEST_PASSWORD, TEST_EMAIL);
+        serverFacade.clear();
+
+        //one user already logged in
+        TestAuthResult regResult = serverFacade.register(existingUser);
+        existingAuth = regResult.getAuthToken();
+        userDAO.createUser(existingUser.getUsername(), existingUser.getPassword(), existingUser.getEmail());
+
     }
 
     @Test
     @Order(1)
     @DisplayName("Create User")
     public void createUser() {
-        UserData user = userDAO.getUser(TEST_USERNAME);
-        assertNotNull(user, "UserData should not be null");
-        assertEquals(TEST_USERNAME, user.username(), "Username should match");
-        assertEquals(TEST_PASSWORD, user.password(), "Password should match");
-        assertEquals(TEST_EMAIL, user.email(), "Email should match");
+        Assertions.assertNotNull(existingAuth, "Auth token should not be null");
+        UserData user = userDAO.getUser(existingAuth);
+        Assertions.assertNotNull(user, "UserData should not be null");
+        Assertions.assertEquals(existingUser.getUsername(), user.username(), "Username should match");
+        Assertions.assertEquals(existingUser.getPassword(), user.password(), "Password should match");
+        Assertions.assertEquals(existingUser.getEmail(), user.email(), "Email should match");
     }
 
     @Test
     @Order(2)
     @DisplayName("Retrieve User Data")
     public void retrieveUserData() {
-        UserData retrievedUser = userDAO.getUser(TEST_USERNAME);
-        assertNotNull(retrievedUser, "Retrieved UserData should not be null");
-        assertEquals(TEST_USERNAME, retrievedUser.username(), "Username should match");
-        assertEquals(TEST_PASSWORD, retrievedUser.password(), "Password should match");
-        assertEquals(TEST_EMAIL, retrievedUser.email(), "Email should match");
+        UserData retrievedUser = userDAO.getUser(existingAuth);
+        Assertions.assertNotNull(retrievedUser, "Retrieved UserData should not be null");
+        Assertions.assertEquals(existingUser.getUsername(), retrievedUser.username(), "Username should match");
+        Assertions.assertEquals(existingUser.getPassword(), retrievedUser.password(), "Password should match");
+        Assertions.assertEquals(existingUser.getEmail(), retrievedUser.email(), "Email should match");
     }
 
     @Test
@@ -52,6 +85,6 @@ public class MemoryUserDAOTests {
     @DisplayName("Check if User Storage is Empty")
     public void checkEmptyUserStorage() {
         userDAO.clear_all();
-        assertTrue(userDAO.is_empty(), "User storage should be empty after clearing");
+        Assertions.assertTrue(userDAO.is_empty(), "User storage should be empty after clearing");
     }
 }
