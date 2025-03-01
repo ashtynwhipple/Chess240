@@ -14,42 +14,15 @@ public class BishopMovesCalculator extends PieceMovesCalculator{
         super(board, position);
     }
 
-    public Collection<ChessMove> getViableMoves(){
-        List<ChessMove> viableMoves = new ArrayList<>();
-
-        int[][] directions = {
+    int[][] directions = {
                 {1, 1},
                 {-1, -1},
                 {-1, 1},
                 {1, -1},
         };
 
-        for (int[] direction: directions){
-
-            int col = position.getColumn();
-            int row = position.getRow();
-
-            while (true){
-
-                row += direction[0];
-                col += direction[1];
-
-                if (!validMove(row,col)){
-                    break;
-                }
-
-                ChessPosition new_place = new ChessPosition(row, col);
-                viableMoves.add(new ChessMove(position, new_place, null));
-
-                if (isOpponent(row, col)){
-                    break;
-                }
-
-            }
-
-        }
-
-        return viableMoves;
+    public Collection<ChessMove> getViableMoves(){
+        return bishopQueenGetViableMoves(directions);
     }
 
 }

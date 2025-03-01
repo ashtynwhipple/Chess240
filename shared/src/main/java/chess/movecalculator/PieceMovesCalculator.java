@@ -1,8 +1,13 @@
 package chess.movecalculator;
 
 import chess.ChessBoard;
+import chess.ChessMove;
 import chess.ChessPiece;
 import chess.ChessPosition;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public abstract class PieceMovesCalculator {
 
@@ -13,7 +18,35 @@ public abstract class PieceMovesCalculator {
         this.board = board;
         this.position = position;
     }
+    public Collection<ChessMove> bishopQueenGetViableMoves(int[][] directions) {
+        List<ChessMove> viableMoves = new ArrayList<>();
 
+        for (int[] direction : directions) {
+
+            int col = position.getColumn();
+            int row = position.getRow();
+
+            while (true) {
+
+                row += direction[0];
+                col += direction[1];
+
+                if (!validMove(row, col)) {
+                    break;
+                }
+
+                ChessPosition newPlace = new ChessPosition(row, col);
+                viableMoves.add(new ChessMove(position, newPlace, null));
+
+                if (isOpponent(row, col)) {
+                    break;
+                }
+
+            }
+
+        }
+        return viableMoves;
+    }
     public boolean isOpponent(int x, int y){
         ChessPosition placePiecePosition = new ChessPosition(x,y);
         ChessPiece piece = board.getPiece(placePiecePosition);

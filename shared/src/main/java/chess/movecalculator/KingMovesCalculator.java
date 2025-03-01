@@ -19,8 +19,6 @@ public class KingMovesCalculator extends PieceMovesCalculator{
         int[] dx = {-1,-1,-1,0,0,1,1,1};
         int[] dy = {-1,0,1,-1,1,-1,0,1};
 
-//        List<Integer> dx2 = new int[]{};
-
         for (int i = 0; i < 8; i++){
             int newX = position.getRow() + dx[i];
             int newY = position.getColumn() + dy[i];

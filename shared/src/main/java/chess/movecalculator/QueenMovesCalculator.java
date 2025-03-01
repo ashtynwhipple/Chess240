@@ -13,46 +13,19 @@ public class QueenMovesCalculator extends PieceMovesCalculator{
         super(board, position);
     }
 
+    int[][] directions = {
+            {1, 1},
+            {-1, -1},
+            {-1, 1},
+            {1, -1},
+            {1, 0},
+            {-1, 0},
+            {0, 1},
+            {0, -1},
+    };
+
     public Collection<ChessMove> getViableMoves(){
-        List<ChessMove> viable_moves = new ArrayList<>();
-
-        int[][] directions = {
-                {1, 1},
-                {-1, -1},
-                {-1, 1},
-                {1, -1},
-                {1, 0},
-                {-1, 0},
-                {0, 1},
-                {0, -1},
-        };
-
-        for (int[] direction: directions){
-
-            int col = position.getColumn();
-            int row = position.getRow();
-
-            while (true){
-
-                row += direction[0];
-                col += direction[1];
-
-                if (!validMove(row,col)){
-                    break;
-                }
-
-                ChessPosition new_place = new ChessPosition(row, col);
-                viable_moves.add(new ChessMove(position, new_place, null));
-
-                if (isOpponent(row, col)){
-                    break;
-                }
-
-            }
-
-        }
-
-        return viable_moves;
+        return bishopQueenGetViableMoves(directions);
     }
 
 }
