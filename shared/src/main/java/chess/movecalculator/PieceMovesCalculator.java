@@ -15,8 +15,8 @@ public abstract class PieceMovesCalculator {
     }
 
     public boolean isOpponent(int x, int y){
-        ChessPosition place_piece_position = new ChessPosition(x,y);
-        ChessPiece piece = board.getPiece(place_piece_position);
+        ChessPosition placePiecePosition = new ChessPosition(x,y);
+        ChessPiece piece = board.getPiece(placePiecePosition);
         if (piece != null){
             return !piece.getTeamColor().equals(board.getPiece(position).getTeamColor());
         }
@@ -27,8 +27,8 @@ public abstract class PieceMovesCalculator {
 
     public boolean validMove(int x, int y){
         if ( x >= 1 && x < 9 && y >= 1 && y < 9){
-            ChessPosition place_piece_position = new ChessPosition(x,y);
-            ChessPiece piece = board.getPiece(place_piece_position);
+            ChessPosition placePiecePosition = new ChessPosition(x,y);
+            ChessPiece piece = board.getPiece(placePiecePosition);
             return piece == null || isOpponent(x,y);
         }
         else{

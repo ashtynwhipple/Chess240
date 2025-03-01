@@ -1,8 +1,8 @@
 package handler;
 import model.UserData;
-import Service.userservice.LoginService;
-import Service.userservice.LogoutService;
-import Service.userservice.RegisterService;
+import service.userservice.LoginService;
+import service.userservice.LogoutService;
+import service.userservice.RegisterService;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.UserDAO;
@@ -25,26 +25,26 @@ public class UserHandler {
         UserData registerRequest = new Gson().fromJson(req.body(), UserData.class);
 
         try {
-            RegisterService service_instance = new RegisterService(userDAO, authDAO);
+            RegisterService serviceInstance = new RegisterService(userDAO, authDAO);
             res.status(200);
-            return new Gson().toJson(service_instance.register(registerRequest));
+            return new Gson().toJson(serviceInstance.register(registerRequest));
         } catch (StatusException e) {
-            res.status(e.get_status());
+            res.status(e.getStatus());
             return "{ \"message\": \"Error: already taken\" }";
         }
 
     }
 
     public Object logout(Request req, Response res) {
-        String logout_request = req.headers("authorization");
+        String logoutRequest = req.headers("authorization");
 
         try {
-            LogoutService service_instance = new LogoutService(authDAO);
+            LogoutService serviceInstance = new LogoutService(authDAO);
             res.status(200);
-            service_instance.logout(logout_request);
+            serviceInstance.logout(logoutRequest);
             return "{}";
         } catch (StatusException e) {
-            res.status(e.get_status());
+            res.status(e.getStatus());
             return "{ \"message\": \"Error: unauthorized\" }";
         }
     }
@@ -54,11 +54,11 @@ public class UserHandler {
         UserData loginRequest = new Gson().fromJson(req.body(), UserData.class);
 
         try {
-            LoginService service_instance = new LoginService(userDAO, authDAO);
+            LoginService serviceInstance = new LoginService(userDAO, authDAO);
             res.status(200);
-            return new Gson().toJson(service_instance.login(loginRequest));
+            return new Gson().toJson(serviceInstance.login(loginRequest));
         } catch (StatusException e) {
-            res.status(e.get_status());
+            res.status(e.getStatus());
             return "{ \"message\": \"Error: unauthorized\" }";
         }
 

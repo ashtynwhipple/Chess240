@@ -89,7 +89,7 @@ public class ChessPiece {
             return calculator.getViableMoves();
         }else if (type == PieceType.QUEEN) { //PASSED
             QueenMovesCalculator calculator = new QueenMovesCalculator(board, myPosition);
-            return calculator.get_viable_moves();
+            return calculator.getViableMoves();
         }
         return null;
     }

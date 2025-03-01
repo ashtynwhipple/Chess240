@@ -1,5 +1,5 @@
 package handler;
-import Service.ClearService;
+import service.ClearService;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
@@ -22,12 +22,12 @@ public class ClearHandler {
     public Object clear(Request req, Response res){
 
         try {
-            ClearService service_instance = new ClearService(userDAO, authDAO, gameDAO);
+            ClearService serviceInstance = new ClearService(userDAO, authDAO, gameDAO);
             res.status(200);
-            service_instance.clear();
+            serviceInstance.clear();
             return "{}";
         } catch (StatusException e) {
-            res.status(e.get_status());
+            res.status(e.getStatus());
             return null;
         }
     }

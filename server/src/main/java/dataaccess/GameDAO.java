@@ -13,7 +13,7 @@ public interface GameDAO {
 
     Collection<GameData> listGames();
 
-    void updateGame(int gameID, GameData new_game);
+    void updateGame(int gameID, GameData newGame);
 
     boolean isEmpty();
 

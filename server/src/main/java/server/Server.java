@@ -7,7 +7,7 @@ import spark.*;
 public class Server {
 
     private final ClearHandler clear;
-    private final UserHandler user_handler;
+    private final UserHandler userHandler;
     private final GameHandler gameHandler;
 
     public Server(){
@@ -15,7 +15,7 @@ public class Server {
         MemoryAuthDAO authDAO = new MemoryAuthDAO();
         MemoryGameDAO gameDAO = new MemoryGameDAO();
         this.clear = new ClearHandler(userDAO, authDAO, gameDAO);
-        this.user_handler = new UserHandler(userDAO, authDAO);
+        this.userHandler = new UserHandler(userDAO, authDAO);
         this.gameHandler = new GameHandler(authDAO, gameDAO);
     }
 
@@ -24,10 +24,10 @@ public class Server {
 
         Spark.staticFiles.location("web");
 
-        Spark.post("/user", user_handler::register);
+        Spark.post("/user", userHandler::register);
 
-        Spark.post("/session", user_handler::login);
-        Spark.delete("/session", user_handler::logout);
+        Spark.post("/session", userHandler::login);
+        Spark.delete("/session", userHandler::logout);
 
         Spark.get("/game", gameHandler::listGames);
         Spark.post("/game", gameHandler::createGame);

@@ -2,8 +2,7 @@ package service;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
-import Service.GameService;
-import Service.userservice.RegisterService;
+import service.userservice.RegisterService;
 import chess.ChessGame;
 import dataaccess.*;
 import exception.StatusException;
@@ -118,7 +117,7 @@ public class GameServiceTests {
     @Test
     @Order(6)
     @DisplayName("Clear positive")
-    void ClearTestPositive() throws StatusException {
+    void clearTestPositive() throws StatusException {
 
         AuthData result = registerService.register(user);
         gameService.createGame(result.authToken(), testGame);

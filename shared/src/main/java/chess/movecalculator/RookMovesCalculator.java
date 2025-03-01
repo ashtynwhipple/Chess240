@@ -16,7 +16,7 @@ public class RookMovesCalculator extends PieceMovesCalculator{
     }
 
     public Collection<ChessMove> getViableMoves(){
-        List<ChessMove> viable_moves = new ArrayList<>();
+        List<ChessMove> viableMoves = new ArrayList<>();
 
         int[][] directions = {
                 {1, 0},
@@ -39,9 +39,9 @@ public class RookMovesCalculator extends PieceMovesCalculator{
                     break;
                 }
 
-                ChessPosition new_place = new ChessPosition(row, col);
+                ChessPosition newPlace = new ChessPosition(row, col);
 
-                viable_moves.add(new ChessMove(position, new_place, null));
+                viableMoves.add(new ChessMove(position, newPlace, null));
 
                 if (isOpponent(row, col)){
                     break;
@@ -51,7 +51,7 @@ public class RookMovesCalculator extends PieceMovesCalculator{
 
         }
 
-        return viable_moves;
+        return viableMoves;
     }
 
 }

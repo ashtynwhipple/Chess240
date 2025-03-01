@@ -15,8 +15,8 @@ public class MemoryGameDAO implements GameDAO{
 
     public void createGame(int gameID, String whiteUsername, String blackUsername, String gameName, ChessGame game){
 
-        GameData new_game = new GameData(gameID, whiteUsername, blackUsername, gameName, game);
-        hash.put(gameID, new_game);
+        GameData newGame = new GameData(gameID, whiteUsername, blackUsername, gameName, game);
+        hash.put(gameID, newGame);
     }
 
     public GameData getGame(int gameID){
@@ -27,9 +27,9 @@ public class MemoryGameDAO implements GameDAO{
         return hash.values();
     }
 
-    public void updateGame(int gameID, GameData new_game) {
+    public void updateGame(int gameID, GameData newGame) {
         hash.remove(gameID);
-        hash.put(gameID, new_game);
+        hash.put(gameID, newGame);
     }
 
     public boolean isEmpty(){

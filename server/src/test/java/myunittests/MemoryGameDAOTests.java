@@ -3,35 +3,16 @@ import model.GameData;
 import chess.ChessGame;
 import dataaccess.MemoryGameDAO;
 import org.junit.jupiter.api.*;
-import passoff.model.*;
 import passoff.server.TestServerFacade;
 import server.Server;
-
 import java.util.Collection;
-//import Model.GameData;
-//import chess.ChessGame;
-//import dataaccess.MemoryGameDAO;
-//import org.junit.jupiter.api.*;
-//
-//import java.util.Collection;
-//
-//import static org.junit.jupiter.api.Assertions.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class MemoryGameDAOTests {
 
     private static MemoryGameDAO gameDAO;
-
-    private static TestUser existingUser;
-
-    private static TestUser newUser;
-
-    private static TestCreateRequest createRequest;
-
     private static TestServerFacade serverFacade;
     private static Server server;
-
-    private String existingAuth;
     private static final int TEST_GAME_ID = 1;
     private static final String WHITE_USERNAME = "WhitePlayer";
     private static final String BLACK_USERNAME = "BlackPlayer";
@@ -51,12 +32,6 @@ public class MemoryGameDAOTests {
         System.out.println("Started test HTTP server on " + port);
 
         serverFacade = new TestServerFacade("localhost", Integer.toString(port));
-
-        existingUser = new TestUser("ExistingUser", "existingUserPassword", "eu@mail.com");
-
-        newUser = new TestUser("NewUser", "newUserPassword", "nu@mail.com");
-
-        createRequest = new TestCreateRequest("testGame");
         gameDAO = new MemoryGameDAO();
         testGame = new ChessGame();
     }

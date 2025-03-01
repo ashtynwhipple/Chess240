@@ -9,7 +9,7 @@ public class StatusException extends Exception{
         this.status = status;
     }
 
-    public int get_status(){
+    public int getStatus(){
         return status;
     }
 

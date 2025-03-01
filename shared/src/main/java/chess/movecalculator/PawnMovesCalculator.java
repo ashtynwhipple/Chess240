@@ -16,95 +16,95 @@ public class PawnMovesCalculator extends PieceMovesCalculator{
         return ( x >= 1 && x < 9 && y >= 1 && y < 9);
     }
 
-    public void addPromotion(ChessPosition position, ChessPosition new_place, List<ChessMove> viable_moves){
+    public void addPromotion(ChessPosition position, ChessPosition newPlace, List<ChessMove> viableMoves){
         for (ChessPiece.PieceType prom: ChessPiece.PieceType.values()){
             if (prom != ChessPiece.PieceType.KING && prom != ChessPiece.PieceType.PAWN){
-                viable_moves.add(new ChessMove(position, new_place, prom));
+                viableMoves.add(new ChessMove(position, newPlace, prom));
             }
         }
     }
 
-    public void addToList(int new_x, int new_y, List<ChessMove> viable_moves){
-        if (validMove(new_x, new_y)) {
-            ChessPosition new_place = new ChessPosition(new_x, new_y);
-            viable_moves.add(new ChessMove(position, new_place, null));
+    public void addToList(int newX, int newY, List<ChessMove> viableMoves){
+        if (validMove(newX, newY)) {
+            ChessPosition newPlace = new ChessPosition(newX, newY);
+            viableMoves.add(new ChessMove(position, newPlace, null));
         }
     }
 
-    public void directionsLoop(int[][] directions, List<ChessMove> viable_moves){
+    public void directionsLoop(int[][] directions, List<ChessMove> viableMoves){
         for (int[] direction : directions) {
 
             int col = position.getColumn() + direction[0];
             int row = position.getRow() + direction[1];
 
             if (isInBounds(row, col) && isOpponent(row, col)) {
-                ChessPosition new_place = new ChessPosition(row, col);
-                viable_moves.add(new ChessMove(position, new_place, null));
+                ChessPosition newPlace = new ChessPosition(row, col);
+                viableMoves.add(new ChessMove(position, newPlace, null));
             }
 
         }
     }
 
     public Collection<ChessMove> getViableMoves(){
-        List<ChessMove> viable_moves = new ArrayList<>();
+        List<ChessMove> viableMoves = new ArrayList<>();
 
         ChessGame.TeamColor color = board.getPiece(position).getTeamColor();
 
-        int new_x;
-        int new_y = position.getColumn();
+        int newX;
+        int newY = position.getColumn();
 
         if (color == ChessGame.TeamColor.WHITE){ //don't add this space if there is something blocking it
-            new_x = position.getRow() + 1;
-            if (validMove(new_x,new_y) && !isOpponent(new_x,new_y)){
-                addToList(new_x,new_y, viable_moves);
+            newX = position.getRow() + 1;
+            if (validMove(newX,newY) && !isOpponent(newX,newY)){
+                addToList(newX,newY, viableMoves);
                 if (position.getRow() == 2){
-                    new_x = position.getRow() + 2;
-                    if (validMove(new_x,new_y) && !isOpponent(new_x,new_y)){
-                        addToList(new_x,new_y, viable_moves);
+                    newX = position.getRow() + 2;
+                    if (validMove(newX,newY) && !isOpponent(newX,newY)){
+                        addToList(newX,newY, viableMoves);
                     }
             }
                 }
         } else{
-            new_x = position.getRow() -1;
-            if (validMove(new_x,new_y) && !isOpponent(new_x,new_y)){
-                addToList(new_x,new_y, viable_moves);
+            newX = position.getRow() -1;
+            if (validMove(newX,newY) && !isOpponent(newX,newY)){
+                addToList(newX,newY, viableMoves);
                 if (position.getRow() == 7 ){
-                    new_x = position.getRow() -2;
-                    if (validMove(new_x,new_y) && !isOpponent(new_x,new_y)){
-                        addToList(new_x,new_y, viable_moves);
+                    newX = position.getRow() -2;
+                    if (validMove(newX,newY) && !isOpponent(newX,newY)){
+                        addToList(newX,newY, viableMoves);
                     }
                 }
             }
         }
 
         //directions
-        int[][] w_directions = {
+        int[][] wDirections = {
                 {1, 1},
                 {-1,1,},
         };
-        int[][] b_directions = {
+        int[][] bDirections = {
                 {1, -1},
                 {-1,-1,},
         };
 
         if(color == ChessGame.TeamColor.WHITE) {
-            directionsLoop(w_directions,viable_moves);
+            directionsLoop(wDirections,viableMoves);
         }else if(color == ChessGame.TeamColor.BLACK) {
-            directionsLoop(b_directions,viable_moves);
+            directionsLoop(bDirections,viableMoves);
         }
 
         List<ChessMove> promotionMoves = new ArrayList<>();
-        for (ChessMove move: viable_moves){
+        for (ChessMove move: viableMoves){
             if (move.getEndPosition().getRow() == 1 || move.getEndPosition().getRow() == 8) {
                 addPromotion(move.getStartPosition(), move.getEndPosition(), promotionMoves);
             }
         }
-        viable_moves.addAll(promotionMoves);
+        viableMoves.addAll(promotionMoves);
 
-        viable_moves.removeIf(move -> move.getEndPosition().getRow() == 1 && move.getPromotionPiece() == null ||
+        viableMoves.removeIf(move -> move.getEndPosition().getRow() == 1 && move.getPromotionPiece() == null ||
                 move.getEndPosition().getRow() == 8 && move.getPromotionPiece() == null);
 
-        return viable_moves;
+        return viableMoves;
     }
 
 }

@@ -2,7 +2,6 @@ package chess.movecalculator;
 
 import chess.ChessBoard;
 import chess.ChessMove;
-import chess.ChessPiece;
 import chess.ChessPosition;
 
 import java.util.ArrayList;
@@ -14,7 +13,7 @@ public class QueenMovesCalculator extends PieceMovesCalculator{
         super(board, position);
     }
 
-    public Collection<ChessMove> get_viable_moves(){
+    public Collection<ChessMove> getViableMoves(){
         List<ChessMove> viable_moves = new ArrayList<>();
 
         int[][] directions = {

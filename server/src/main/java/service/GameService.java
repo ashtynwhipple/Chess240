@@ -1,4 +1,4 @@
-package Service;
+package service;
 import model.AuthData;
 import model.GameData;
 import model.ListGameData;
@@ -28,8 +28,8 @@ public class GameService {
 
     }
 
-    public int createGame(String auth_token, GameData gameData) throws StatusException {
-        if (auth_token == null || gameData == null || authDAO.getUsername(auth_token) == null){
+    public int createGame(String authToken, GameData gameData) throws StatusException {
+        if (authToken == null || gameData == null || authDAO.getUsername(authToken) == null){
             throw new StatusException("Error: unauthorized", 401);
         }
 

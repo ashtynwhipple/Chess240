@@ -1,9 +1,9 @@
 package service;
 import model.AuthData;
 import model.UserData;
-import Service.userservice.LoginService;
-import Service.userservice.LogoutService;
-import Service.userservice.RegisterService;
+import service.userservice.LoginService;
+import service.userservice.LogoutService;
+import service.userservice.RegisterService;
 import dataaccess.*;
 import exception.StatusException;
 import org.junit.jupiter.api.*;
@@ -102,7 +102,7 @@ public class UserServiceTests {
     @Test
     @Order(6)
     @DisplayName("Clear positive")
-    void ClearTestPositive() throws StatusException {
+    void clearTestPositive() throws StatusException {
         registerService.register(testUser);
         loginService.login(testUser);
 

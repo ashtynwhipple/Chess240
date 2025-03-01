@@ -1,7 +1,7 @@
 package handler;
 import model.GameData;
 import model.JoinData;
-import Service.GameService;
+import service.GameService;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
@@ -25,11 +25,11 @@ public class GameHandler {
         String authToken = req.headers("authorization");
 
         try {
-            GameService service_instance = new GameService(authDAO, gameDAO);
+            GameService serviceInstance = new GameService(authDAO, gameDAO);
             res.status(200);
-            return new Gson().toJson(service_instance.listGames(authToken));
+            return new Gson().toJson(serviceInstance.listGames(authToken));
         } catch (StatusException e) {
-            res.status(e.get_status());
+            res.status(e.getStatus());
             return "{ \"message\": \"Error: unauthorized\" }";
         }
 
@@ -44,14 +44,14 @@ public class GameHandler {
         GameData gameData = new Gson().fromJson(req.body(), GameData.class);
 
         try {
-            GameService service_instance = new GameService(authDAO, gameDAO);
+            GameService serviceInstance = new GameService(authDAO, gameDAO);
             String authToken = req.headers("authorization");
             res.status(200);
-            int new_game_ID = service_instance.createGame(authToken, gameData);
+            int newGameID = serviceInstance.createGame(authToken, gameData);
             Gson gson = new Gson();
-            return gson.toJson(Map.of("gameID", new_game_ID));
+            return gson.toJson(Map.of("gameID", newGameID));
         } catch (StatusException e) {
-            res.status(e.get_status());
+            res.status(e.getStatus());
             return "{ \"message\": \"Error: unauthorized\" }";
         }
 
@@ -62,13 +62,13 @@ public class GameHandler {
         JoinData joinData = new Gson().fromJson(req.body(), JoinData.class);
 
         try{
-            GameService service_instance = new GameService(authDAO, gameDAO);
+            GameService serviceInstance = new GameService(authDAO, gameDAO);
             String authToken = req.headers("authorization");
             res.status(200);
-            service_instance.joinGame(authToken, joinData.gameID(), joinData.playerColor());
+            serviceInstance.joinGame(authToken, joinData.gameID(), joinData.playerColor());
             return "{}";
         } catch (StatusException e) {
-            res.status(e.get_status());
+            res.status(e.getStatus());
             return "{ \"message\": \"Error: unauthorized\" }";
         }
 
