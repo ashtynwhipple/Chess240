@@ -91,9 +91,9 @@ public class ChessGame {
             throw new InvalidMoveException("wrong team color");
         }
 
-        Collection<ChessMove> valid_moves = validMoves(move.getStartPosition());
+        Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
 
-        if (valid_moves == null || !valid_moves.contains(move)){
+        if (validMoves == null || !validMoves.contains(move)){
             throw new InvalidMoveException("Move is not Valid");
         }
 

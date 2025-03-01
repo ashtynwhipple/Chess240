@@ -4,9 +4,7 @@ import chess.ChessBoard;
 import chess.ChessMove;
 import chess.ChessPosition;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 public class BishopMovesCalculator extends PieceMovesCalculator{
 
@@ -22,7 +20,7 @@ public class BishopMovesCalculator extends PieceMovesCalculator{
         };
 
     public Collection<ChessMove> getViableMoves(){
-        return bishopQueenGetViableMoves(directions);
+        return bishopQueenRookGetViableMoves(directions);
     }
 
 }

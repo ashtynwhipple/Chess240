@@ -64,10 +64,10 @@ public class GameServiceTests {
     @DisplayName("Positive list Games")
     void listGameTestPositive() throws StatusException {
         AuthData result = registerService.register(user);
-        int ID = gameService.createGame(result.authToken(), testGame);
+        int id = gameService.createGame(result.authToken(), testGame);
 
         HashMap<Integer, GameData> expectedGames = new HashMap<>();
-        expectedGames.put(ID, mockGameDAO.getGame(ID));
+        expectedGames.put(id, mockGameDAO.getGame(id));
 
         Assertions.assertEquals(
                 new ArrayList<>(gameService.listGames(result.authToken()).games()),
@@ -79,10 +79,10 @@ public class GameServiceTests {
     @DisplayName("Negative list Games")
     void listGameTestNegative() throws StatusException {
         AuthData result = registerService.register(user);
-        int ID = gameService.createGame(result.authToken(), testGame);
+        int id = gameService.createGame(result.authToken(), testGame);
 
         HashMap<Integer, GameData> expectedGames = new HashMap<>();
-        expectedGames.put(ID, testGame);
+        expectedGames.put(id, testGame);
 
         Assertions.assertNotEquals(
                 new ArrayList<>(gameService.listGames(result.authToken()).games()),
@@ -94,11 +94,11 @@ public class GameServiceTests {
     @DisplayName("Positive Join Game")
     void joinGameTestPositive() throws StatusException {
         AuthData result = registerService.register(user);
-        int ID = gameService.createGame(result.authToken(), testGame);
+        int id = gameService.createGame(result.authToken(), testGame);
 
-        gameService.joinGame(result.authToken(), ID, "WHITE");
+        gameService.joinGame(result.authToken(), id, "WHITE");
 
-        Assertions.assertEquals(mockGameDAO.getGame(ID).whiteUsername(), mockAuthDAO.getUsername(result.authToken()).username());
+        Assertions.assertEquals(mockGameDAO.getGame(id).whiteUsername(), mockAuthDAO.getUsername(result.authToken()).username());
 
     }
 
@@ -106,11 +106,11 @@ public class GameServiceTests {
     @DisplayName("Negative Join Game")
     void joinGameTestNegative() throws StatusException{
         AuthData result = registerService.register(user);
-        int ID = gameService.createGame(result.authToken(), testGame);
+        int id = gameService.createGame(result.authToken(), testGame);
 
-        gameService.joinGame(result.authToken(), ID, "BLACK");
+        gameService.joinGame(result.authToken(), id, "BLACK");
 
-        Assertions.assertNotEquals(mockGameDAO.getGame(ID).whiteUsername(), mockAuthDAO.getUsername(result.authToken()).username());
+        Assertions.assertNotEquals(mockGameDAO.getGame(id).whiteUsername(), mockAuthDAO.getUsername(result.authToken()).username());
 
     }
 

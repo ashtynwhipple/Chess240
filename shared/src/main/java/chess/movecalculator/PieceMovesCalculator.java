@@ -18,7 +18,7 @@ public abstract class PieceMovesCalculator {
         this.board = board;
         this.position = position;
     }
-    public Collection<ChessMove> bishopQueenGetViableMoves(int[][] directions) {
+    public Collection<ChessMove> bishopQueenRookGetViableMoves(int[][] directions) {
         List<ChessMove> viableMoves = new ArrayList<>();
 
         for (int[] direction : directions) {
@@ -47,6 +47,22 @@ public abstract class PieceMovesCalculator {
         }
         return viableMoves;
     }
+
+    public Collection<ChessMove> getKingKnightViableMoves(int[] dx, int[] dy){
+        List<ChessMove> viableMoves = new ArrayList<>();
+
+        for (int i = 0; i < 8; i++){
+            int newX = position.getRow() + dx[i];
+            int newY = position.getColumn() + dy[i];
+
+            if (validMove(newX, newY)) {
+                ChessPosition newPlace = new ChessPosition(newX, newY);
+                viableMoves.add(new ChessMove(position, newPlace, null));
+            }
+        }
+        return viableMoves;
+    }
+
     public boolean isOpponent(int x, int y){
         ChessPosition placePiecePosition = new ChessPosition(x,y);
         ChessPiece piece = board.getPiece(placePiecePosition);
