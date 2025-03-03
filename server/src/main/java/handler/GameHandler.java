@@ -71,7 +71,5 @@ public class GameHandler {
             res.status(e.getStatus());
             return "{ \"message\": \"Error: unauthorized\" }";
         }
-
     }
-
 }
