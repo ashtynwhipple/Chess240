@@ -12,8 +12,8 @@ public class Server {
 
     public Server(){
         MemoryUserDAO userDAO = new MemoryUserDAO();
-        MemoryAuthDAO authDAO = new MemoryAuthDAO();
-        MemoryGameDAO gameDAO = new MemoryGameDAO();
+        AuthSqlDataAccess authDAO = new AuthSqlDataAccess();
+        GameSqlDataAccess gameDAO = new GameSqlDataAccess();
         this.clear = new ClearHandler(userDAO, authDAO, gameDAO);
         this.userHandler = new UserHandler(userDAO, authDAO);
         this.gameHandler = new GameHandler(authDAO, gameDAO);
