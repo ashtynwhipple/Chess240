@@ -29,6 +29,7 @@ public class AuthSqlDataAccess implements AuthDAO {
             try (var ps = conn.prepareStatement("INSERT INTO authTable (token, username) VALUES (?, ?)")){
                 ps.setString(1, username);
                 ps.setString(2, token);
+                ps.executeUpdate();
             }
         }catch (SQLException | DataAccessException _){
         }
@@ -51,9 +52,8 @@ public class AuthSqlDataAccess implements AuthDAO {
             var ps = conn.prepareStatement("SELECT username FROM authTable WHERE token = ?")) {
             ps.setString(1, token);
             try (var rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return new AuthData(token, rs.getString("username"));
-                }
+                rs.next();
+                return new AuthData(token, rs.getString("username"));
             }
         } catch (SQLException | DataAccessException _) {
         }
