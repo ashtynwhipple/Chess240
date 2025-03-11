@@ -36,7 +36,7 @@ public class UserSqlDataAccess implements UserDAO{
 
     public boolean isEmpty() {
         try (var conn = DatabaseManager.getConnection();
-             var ps = conn.prepareStatement("");
+             var ps = conn.prepareStatement("SELECT COUNT(*) FROM userTable");
              var rs = ps.executeQuery()) {
 
             if (rs.next()){
@@ -63,11 +63,11 @@ public class UserSqlDataAccess implements UserDAO{
     private final String[] createStatements = {
             """
             CREATE TABLE IF NOT EXISTS userTable (
-              `username' varchar(256) NOT NULL,
+              `username` varchar(256) NOT NULL,
               `password` varchar(256) NOT NULL,
-              'email' varchar(256) NOT NULL,
-              PRIMARY KEY (`username`),
-            )
+              `email` varchar(256) NOT NULL,
+              PRIMARY KEY (`username`)
+            );
             """
     };
 

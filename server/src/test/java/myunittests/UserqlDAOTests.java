@@ -7,7 +7,7 @@ import passoff.server.TestServerFacade;
 import server.Server;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class MemoryUserDAOTests {
+public class UserqlDAOTests {
 
     private static TestUser existingUser;
 

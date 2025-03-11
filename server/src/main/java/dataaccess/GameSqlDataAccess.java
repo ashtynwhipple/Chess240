@@ -15,7 +15,7 @@ public class GameSqlDataAccess implements GameDAO{
 
     public void clearGames(){
         try (var conn = DatabaseManager.getConnection()) {
-            try (var statement = conn.prepareStatement("CLEAR game")) {
+            try (var statement = conn.prepareStatement("CLEAR gameTable")) {
                 statement.executeUpdate();
             } catch (SQLException e) {
                 throw new RuntimeException(e);
@@ -122,11 +122,11 @@ public class GameSqlDataAccess implements GameDAO{
             CREATE TABLE IF NOT EXISTS gameTable (
               `gameID` int NOT NULL AUTO_INCREMENT,
               `whiteUsername` varchar(256) NOT NULL,
-              'blackUsername' varchar(256) NOT NULL,
-              'gameName' varchar(256) NOT NULL,
-              'game' TEXT NOT NULL,
-              PRIMARY KEY (`gameID`),
-            )
+              `blackUsername` varchar(256) NOT NULL,
+              `gameName` varchar(256) NOT NULL,
+              `game` TEXT NOT NULL,
+              PRIMARY KEY (`gameID`)
+            );
             """
     };
 

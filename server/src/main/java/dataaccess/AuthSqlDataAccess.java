@@ -1,4 +1,5 @@
 package dataaccess;
+import exception.StatusException;
 import model.AuthData;
 import java.sql.*;
 import java.util.UUID;
@@ -12,7 +13,7 @@ public class AuthSqlDataAccess implements AuthDAO {
 
     public void clearAuth(){
         try (var conn = DatabaseManager.getConnection()) {
-            try (var statement = conn.prepareStatement("CLEAR auth")) {
+            try (var statement = conn.prepareStatement("CLEAR authTable")) {
                 statement.executeUpdate();
             } catch (SQLException e) {
                 throw new RuntimeException(e);
@@ -82,7 +83,7 @@ public class AuthSqlDataAccess implements AuthDAO {
     public void clearAll(){
 
         try (var conn = DatabaseManager.getConnection();
-        var ps = conn.prepareStatement("DELETE FROM auth")){
+        var ps = conn.prepareStatement("DELETE FROM authTable")){
 
             ps.executeUpdate();
 
@@ -97,8 +98,8 @@ public class AuthSqlDataAccess implements AuthDAO {
             CREATE TABLE IF NOT EXISTS authTable (
               `username` varchar(256) NOT NULL,
               `token` varchar(256) NOT NULL,
-              PRIMARY KEY (`token`),
-            )
+              PRIMARY KEY (`token`)
+            );
             """
     };
 

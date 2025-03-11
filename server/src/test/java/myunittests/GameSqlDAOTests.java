@@ -1,17 +1,16 @@
 package myunittests;
+import dataaccess.GameSqlDataAccess;
 import model.GameData;
 import chess.ChessGame;
-import dataaccess.MemoryGameDAO;
 import org.junit.jupiter.api.*;
-import passoff.server.TestServerFacade;
 import server.Server;
 import java.util.Collection;
+import dataaccess.DatabaseManager;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class MemoryGameDAOTests {
+public class GameSqlDAOTests {
 
-    private static MemoryGameDAO gameDAO;
-    private static TestServerFacade serverFacade;
+    private static GameSqlDataAccess gameDAO;
     private static Server server;
     private static final int TEST_GAME_ID = 1;
     private static final String WHITE_USERNAME = "WhitePlayer";
@@ -31,14 +30,14 @@ public class MemoryGameDAOTests {
         var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
 
-        serverFacade = new TestServerFacade("localhost", Integer.toString(port));
-        gameDAO = new MemoryGameDAO();
+//        DatabaseManager.createDatabase();
+        gameDAO = new GameSqlDataAccess();
         testGame = new ChessGame();
     }
 
     @BeforeEach
     public void setup() {
-        serverFacade.clear();
+//        DatabaseManager.createDatabase();
         gameDAO.clearGames();
         gameDAO.createGame(TEST_GAME_ID, WHITE_USERNAME, BLACK_USERNAME, GAME_NAME, testGame);
         testGameData = gameDAO.getGame(TEST_GAME_ID);

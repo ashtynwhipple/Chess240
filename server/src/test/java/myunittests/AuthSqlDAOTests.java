@@ -1,19 +1,20 @@
 package myunittests;
+import dataaccess.AuthSqlDataAccess;
 import model.AuthData;
 import dataaccess.MemoryAuthDAO;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class MemoryAuthDAOTests {
+public class AuthSqlDAOTests {
 
-    private static MemoryAuthDAO authDAO;
+    private static AuthSqlDataAccess authDAO;
     private static final String TEST_USERNAME = "testUser";
     private static AuthData testAuth;
 
     @BeforeAll
     public static void init() {
-        authDAO = new MemoryAuthDAO();
+        authDAO = new AuthSqlDataAccess();
     }
 
     @BeforeEach
