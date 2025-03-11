@@ -67,7 +67,7 @@ public class AuthSqlDataAccess implements AuthDAO {
     public boolean isEmpty(){
 
         try (var conn = DatabaseManager.getConnection();
-            var ps = conn.prepareStatement("");
+            var ps = conn.prepareStatement("SELECT COUNT(*) FROM authTable");
             var rs = ps.executeQuery()) {
 
             if (rs.next()){
