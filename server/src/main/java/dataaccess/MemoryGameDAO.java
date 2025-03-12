@@ -9,10 +9,6 @@ public class MemoryGameDAO implements GameDAO{
 
     public HashMap<Integer, GameData> hash = new HashMap<>();
 
-    public void clearGames(){
-        hash.clear();
-    }
-
     public void createGame(int gameID, String whiteUsername, String blackUsername, String gameName, ChessGame game){
 
         GameData newGame = new GameData(gameID, whiteUsername, blackUsername, gameName, game);

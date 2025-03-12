@@ -3,10 +3,21 @@ import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 import java.sql.SQLException;
 
-public class UserSqlDataAccess implements UserDAO{
+public class UserSqlDataAccess extends BaseSqlDataAccess implements UserDAO{
+
+    private static final String[] createStatements = {
+            """
+            CREATE TABLE IF NOT EXISTS userTable (
+              `username` varchar(256) NOT NULL,
+              `password` varchar(256) NOT NULL,
+              `email` varchar(256) NOT NULL,
+              PRIMARY KEY (`username`)
+            );
+            """
+    };
 
     public UserSqlDataAccess() {
-        configureDatabase();
+        super(createStatements);
     }
 
     public void createUser(String username, String password, String email) {
@@ -63,32 +74,6 @@ public class UserSqlDataAccess implements UserDAO{
             throw new RuntimeException(e);
         }
         }
-
-    private final String[] createStatements = {
-            """
-            CREATE TABLE IF NOT EXISTS userTable (
-              `username` varchar(256) NOT NULL,
-              `password` varchar(256) NOT NULL,
-              `email` varchar(256) NOT NULL,
-              PRIMARY KEY (`username`)
-            );
-            """
-    };
-
-    private void configureDatabase() {
-        try { DatabaseManager.createDatabase(); } catch (DataAccessException e) {
-            throw new RuntimeException(e);
-        }
-        try (var conn = DatabaseManager.getConnection()) {
-            for (var statement : createStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException | DataAccessException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     public boolean verifyUser(String username, String providedClearTextPassword) {
         try (var conn = DatabaseManager.getConnection();

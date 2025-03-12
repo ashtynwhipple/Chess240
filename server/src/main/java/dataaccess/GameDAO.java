@@ -5,8 +5,6 @@ import java.util.Collection;
 
 public interface GameDAO {
 
-    void clearGames();
-
     void createGame(int gameID, String whiteUsername, String blackUsername, String gameName, ChessGame game);
 
     GameData getGame(int gameID);

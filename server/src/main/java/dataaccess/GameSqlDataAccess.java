@@ -6,27 +6,30 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class GameSqlDataAccess implements GameDAO{
+public class GameSqlDataAccess extends BaseSqlDataAccess implements GameDAO{
+
+    private static final String[] createStatements = {
+            """
+            CREATE TABLE IF NOT EXISTS gameTable (
+              `gameID` int NOT NULL AUTO_INCREMENT,
+              `whiteUsername` varchar(256),
+              `blackUsername` varchar(256),
+              `gameName` varchar(256) NOT NULL,
+              `game` TEXT NOT NULL,
+              PRIMARY KEY (`gameID`)
+            );
+            """
+    };
 
     public GameSqlDataAccess() {
-        configureDatabase();
-    }
-
-    public void clearGames(){
-        try (var conn = DatabaseManager.getConnection()) {
-            try (var statement = conn.prepareStatement("TRUNCATE TABLE gameTable")) {
-                statement.executeUpdate();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        } catch (SQLException | DataAccessException e) {
-            throw new RuntimeException(e);
-        }
+        super(createStatements);
     }
 
     public void createGame(int gameID, String whiteUsername, String blackUsername, String gameName, ChessGame game){
         try(var conn = DatabaseManager.getConnection()){
-            try (var ps = conn.prepareStatement("INSERT INTO gameTable (gameID, whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?, ?)")){
+            try (var ps = conn.prepareStatement(
+                    "INSERT INTO gameTable (gameID, whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?, ?)"
+            )){
                 ps.setInt(1, gameID);
                 ps.setString(2, whiteUsername);
                 ps.setString(3, blackUsername);
@@ -47,7 +50,10 @@ public class GameSqlDataAccess implements GameDAO{
                 if (rs.next()) {
                     String gameJson = rs.getString("game");
                     ChessGame game = new Gson().fromJson(gameJson, ChessGame.class);
-                    return new GameData(gameID, rs.getString("whiteUsername"), rs.getString("blackUsername"), rs.getString("gameName"), game);
+                    return new GameData(
+                            gameID, rs.getString(
+                                    "whiteUsername"), rs.getString("blackUsername"), rs.getString("gameName"), game
+                    );
                 }
             }
         } catch (SQLException | DataAccessException e) {
@@ -116,34 +122,6 @@ public class GameSqlDataAccess implements GameDAO{
             ps.setObject(4, new Gson().toJson(newGame.game()));
             ps.setInt(5, gameID);
             ps.executeUpdate();
-        } catch (SQLException | DataAccessException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private final String[] createStatements = {
-            """
-            CREATE TABLE IF NOT EXISTS gameTable (
-              `gameID` int NOT NULL AUTO_INCREMENT,
-              `whiteUsername` varchar(256),
-              `blackUsername` varchar(256),
-              `gameName` varchar(256) NOT NULL,
-              `game` TEXT NOT NULL,
-              PRIMARY KEY (`gameID`)
-            );
-            """
-    };
-
-    private void configureDatabase() {
-        try { DatabaseManager.createDatabase(); } catch (DataAccessException e) {
-            throw new RuntimeException(e);
-        }
-        try (var conn = DatabaseManager.getConnection()) {
-            for (var statement : createStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
         } catch (SQLException | DataAccessException e) {
             throw new RuntimeException(e);
         }
