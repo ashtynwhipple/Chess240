@@ -1,26 +1,14 @@
 package myunittests;
+import dataaccess.UserSqlDataAccess;
 import model.UserData;
-import dataaccess.MemoryUserDAO;
 import org.junit.jupiter.api.*;
-import passoff.model.*;
-import passoff.server.TestServerFacade;
 import server.Server;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UserqlDAOTests {
-
-    private static TestUser existingUser;
-
-    private static TestUser newUser;
-
-    private static TestCreateRequest createRequest;
-
-    private static TestServerFacade serverFacade;
     private static Server server;
 
-    private String existingAuth;
-
-    private static MemoryUserDAO userDAO;
+    private static UserSqlDataAccess userDao;
 
     @AfterAll
     static void stopServer() {
@@ -32,59 +20,65 @@ public class UserqlDAOTests {
         server = new Server();
         var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
-
-        serverFacade = new TestServerFacade("localhost", Integer.toString(port));
-
-        existingUser = new TestUser("ExistingUser", "existingUserPassword", "eu@mail.com");
-
-        newUser = new TestUser("NewUser", "newUserPassword", "nu@mail.com");
-
-        createRequest = new TestCreateRequest("testGame");
-
-        userDAO = new MemoryUserDAO();
-
-
+        userDao = new UserSqlDataAccess();
     }
 
     @BeforeEach
-    public void setup() {
-        serverFacade.clear();
-
-        //one user already logged in
-        TestAuthResult regResult = serverFacade.register(existingUser);
-        existingAuth = regResult.getAuthToken();
-        userDAO.createUser(existingUser.getUsername(), existingUser.getPassword(), existingUser.getEmail());
-
+    void setUp() {
+        userDao.clearAll();
     }
 
     @Test
-    @Order(1)
-    @DisplayName("Create User")
-    public void createUser() {
-        Assertions.assertNotNull(existingAuth, "Auth token should not be null");
-        UserData user = userDAO.getUser(existingAuth);
-        Assertions.assertNotNull(user, "UserData should not be null");
-        Assertions.assertEquals(existingUser.getUsername(), user.username(), "Username should match");
-        Assertions.assertEquals(existingUser.getPassword(), user.password(), "Password should match");
-        Assertions.assertEquals(existingUser.getEmail(), user.email(), "Email should match");
+    void positiveCreateUser() {
+        Assertions.assertDoesNotThrow(() -> userDao.createUser("testUser", "password123", "test@example.com"));
+        UserData user = userDao.getUser("testUser");
+        Assertions.assertNotNull(user);
+        Assertions.assertEquals("testUser", user.username());
+        Assertions.assertEquals("password123", user.password());
+        Assertions.assertEquals("test@example.com", user.email());
     }
 
     @Test
-    @Order(2)
-    @DisplayName("Retrieve User Data")
-    public void retrieveUserData() {
-        UserData retrievedUser = userDAO.getUser(existingAuth);
-        Assertions.assertNotNull(retrievedUser, "Retrieved UserData should not be null");
-        Assertions.assertEquals(existingUser.getUsername(), retrievedUser.username(), "Username should match");
-        Assertions.assertEquals(existingUser.getPassword(), retrievedUser.password(), "Password should match");
-        Assertions.assertEquals(existingUser.getEmail(), retrievedUser.email(), "Email should match");
+    void negativeCreateUser() {
+        userDao.createUser("duplicateUser", "password123", "user@example.com");
+        Assertions.assertThrows(Exception.class, () -> userDao.createUser("duplicateUser", "newPassword", "new@example.com"));
     }
 
     @Test
-    @Order(3)
-    @DisplayName("Check if User Storage is Empty")
-    public void checkEmptyUserStorage() {
-        userDAO.clearAll();
-        Assertions.assertTrue(userDAO.isEmpty(), "User storage should be empty after clearing");
+    void positiveGetUser() {
+        userDao.createUser("existingUser", "securePass", "user@example.com");
+        UserData user = userDao.getUser("existingUser");
+        Assertions.assertNotNull(user);
+        Assertions.assertEquals("existingUser", user.username());
+        Assertions.assertEquals("securePass", user.password());
+        Assertions.assertEquals("user@example.com", user.email());
     }
+
+    @Test
+    void negativeGetUser() {
+        userDao.createUser("duplicateUser", "password123", "user@example.com");
+        Assertions.assertThrows(Exception.class, () -> userDao.createUser("duplicateUser", "newPassword", "new@example.com"));
+    }
+
+    @Test
+    void positiveIsEmpty() {
+        Assertions.assertTrue(userDao.isEmpty());
+    }
+
+    @Test
+    void negativeIsEmpty() {
+        userDao.createUser("testUser", "password123", "test@example.com");
+        Assertions.assertFalse(userDao.isEmpty());
+    }
+
+    @Test
+    void testClearAllUsers() {
+        userDao.createUser("user1", "password1", "user1@example.com");
+        userDao.createUser("user2", "password2", "user2@example.com");
+        Assertions.assertFalse(userDao.isEmpty());
+
+        userDao.clearAll();
+        Assertions.assertTrue(userDao.isEmpty());
+    }
+
 }
