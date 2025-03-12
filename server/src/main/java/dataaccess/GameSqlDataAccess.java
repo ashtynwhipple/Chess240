@@ -84,7 +84,6 @@ public class GameSqlDataAccess implements GameDAO{
 
     public Collection<GameData> listGames() {
         ArrayList<GameData> games = new ArrayList<>();
-        String query = "";
 
         try (var conn = DatabaseManager.getConnection();
              var ps = conn.prepareStatement("SELECT gameID, whiteUsername, blackUsername, gameName, game FROM gameTable")){
