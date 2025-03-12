@@ -34,7 +34,8 @@ public class GameSqlDataAccess implements GameDAO{
                 ps.setString(5, new Gson().toJson(game));
                 ps.executeUpdate();
             }
-        }catch (SQLException | DataAccessException _){
+        }catch (SQLException | DataAccessException e){
+            throw new RuntimeException(e);
         }
     }
 
@@ -111,7 +112,7 @@ public class GameSqlDataAccess implements GameDAO{
             ps.setString(1, newGame.whiteUsername());
             ps.setString(2, newGame.blackUsername());
             ps.setString(3, newGame.gameName());
-            ps.setString(4, new Gson().toJson(newGame.game()));
+            ps.setObject(4, new Gson().toJson(newGame.game()));
             ps.setInt(5, gameID);
             ps.executeUpdate();
         } catch (SQLException | DataAccessException _) {
@@ -122,8 +123,8 @@ public class GameSqlDataAccess implements GameDAO{
             """
             CREATE TABLE IF NOT EXISTS gameTable (
               `gameID` int NOT NULL AUTO_INCREMENT,
-              `whiteUsername` varchar(256) NOT NULL,
-              `blackUsername` varchar(256) NOT NULL,
+              `whiteUsername` varchar(256),
+              `blackUsername` varchar(256),
               `gameName` varchar(256) NOT NULL,
               `game` TEXT NOT NULL,
               PRIMARY KEY (`gameID`)

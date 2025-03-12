@@ -5,6 +5,7 @@ import model.UserData;
 import dataaccess.AuthDAO;
 import dataaccess.UserDAO;
 import exception.StatusException;
+import org.mindrot.jbcrypt.BCrypt;
 
 
 public class RegisterService {
@@ -28,11 +29,9 @@ public class RegisterService {
             throw new StatusException("", 403);
         }
 
-        userDAO.createUser(userdata.username(), userdata.password(), userdata.email());
+        String hashedPassword = BCrypt.hashpw(userdata.password(), BCrypt.gensalt());
 
-//        String auth = String.valueOf(authDAO.createAuth(userdata.username()));
-
-//        return new AuthData(auth, userdata.username());
+        userDAO.createUser(userdata.username(), hashedPassword, userdata.email());
 
         return authDAO.createAuth(userdata.username());
     }

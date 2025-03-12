@@ -1,98 +1,148 @@
 package myunittests;
 import dataaccess.GameSqlDataAccess;
-import model.GameData;
+
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPosition;
+import model.GameData;
 import org.junit.jupiter.api.*;
-import server.Server;
+
 import java.util.Collection;
-import dataaccess.DatabaseManager;
+import java.util.List;
+import java.util.Objects;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class GameSqlDAOTests {
 
-    private static GameSqlDataAccess gameDAO;
-    private static Server server;
-    private static final int TEST_GAME_ID = 1;
-    private static final String WHITE_USERNAME = "WhitePlayer";
-    private static final String BLACK_USERNAME = "BlackPlayer";
-    private static final String GAME_NAME = "TestGame";
-    private static ChessGame testGame;
-    private static GameData testGameData;
-
-    @AfterAll
-    static void stopServer() {
-        server.stop();
-    }
-
-    @BeforeAll
-    public static void init() {
-        server = new Server();
-        var port = server.run(0);
-        System.out.println("Started test HTTP server on " + port);
-
-//        DatabaseManager.createDatabase();
-        gameDAO = new GameSqlDataAccess();
-        testGame = new ChessGame();
-    }
+class GameSqlDAOTests {
+    private GameSqlDataAccess gameDao;
 
     @BeforeEach
-    public void setup() {
-//        DatabaseManager.createDatabase();
-        gameDAO.clearGames();
-        gameDAO.createGame(TEST_GAME_ID, WHITE_USERNAME, BLACK_USERNAME, GAME_NAME, testGame);
-        testGameData = gameDAO.getGame(TEST_GAME_ID);
+    void setUp() {
+        gameDao = new GameSqlDataAccess();
+        gameDao.clearAll(); // Ensure clean DB before each test
     }
 
     @Test
-    @Order(1)
-    @DisplayName("Create and Retrieve Game")
-    public void createAndRetrieveGame() {
-        Assertions.assertNotNull(testGameData, "GameData should not be null");
-        Assertions.assertEquals(TEST_GAME_ID, testGameData.gameID(), "Game ID should match");
-        Assertions.assertEquals(WHITE_USERNAME, testGameData.whiteUsername(), "White username should match");
-        Assertions.assertEquals(BLACK_USERNAME, testGameData.blackUsername(), "Black username should match");
-        Assertions.assertEquals(GAME_NAME, testGameData.gameName(), "Game name should match");
-        Assertions.assertNotNull(testGameData.game(), "ChessGame object should not be null");
+    void positiveCreateGame() {
+        Assertions.assertDoesNotThrow(() -> gameDao.createGame(1, "white", "black", "Name", new ChessGame()));
+        GameData game = gameDao.getGame(1);
+        Assertions.assertNotNull(game);
+        Assertions.assertEquals(1, game.gameID());
+        Assertions.assertEquals("Name", game.gameName());
+        Assertions.assertEquals("white", game.whiteUsername());
+        Assertions.assertEquals("black", game.blackUsername());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        GameSqlDAOTests that = (GameSqlDAOTests) o;
+        return Objects.equals(gameDao, that.gameDao);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(gameDao);
     }
 
     @Test
-    @Order(2)
-    @DisplayName("List Games")
-    public void listGames() {
-        Collection<GameData> games = gameDAO.listGames();
-        Assertions.assertFalse(games.isEmpty(), "Game list should not be empty");
-        Assertions.assertTrue(games.contains(testGameData), "Game list should contain the created game");
+    void negativeCreateGame() {
+        gameDao.createGame(1, "white", "black", "Name", new ChessGame());
+        Assertions.assertThrows(Exception.class, () -> gameDao.createGame(1, "otherWhite", "otherBlack", "Name", new ChessGame()));
     }
 
     @Test
-    @Order(3)
-    @DisplayName("Update Game Data")
-    public void updateGameData() {
-        ChessGame newChessGame = new ChessGame();
-        GameData updatedGameData = new GameData(TEST_GAME_ID, "NewWhite", "NewBlack", "UpdatedGame", newChessGame);
-        gameDAO.updateGame(TEST_GAME_ID, updatedGameData);
-        GameData retrievedGame = gameDAO.getGame(TEST_GAME_ID);
-
-        Assertions.assertNotNull(retrievedGame, "Updated GameData should not be null");
-        Assertions.assertEquals("NewWhite", retrievedGame.whiteUsername(), "Updated white username should match");
-        Assertions.assertEquals("NewBlack", retrievedGame.blackUsername(), "Updated black username should match");
-        Assertions.assertEquals("UpdatedGame", retrievedGame.gameName(), "Updated game name should match");
+    void positiveGetGame() {
+        gameDao.createGame(1, "white", "black", "Name", new ChessGame());
+        GameData game = gameDao.getGame(1);
+        Assertions.assertNotNull(game);
+        Assertions.assertEquals(1, game.gameID());
+        Assertions.assertEquals("Name", game.gameName());
+        Assertions.assertEquals("black", game.blackUsername());
+        Assertions.assertEquals("white", game.whiteUsername());
     }
 
     @Test
-    @Order(4)
-    @DisplayName("Check if Game Storage is Empty")
-    public void checkEmptyGameStorage() {
-        gameDAO.clearGames();
-        Assertions.assertTrue(gameDAO.isEmpty(), "Game storage should be empty after clearing");
+    void negativeGetGame() {
+        GameData game = gameDao.getGame(999);
+        Assertions.assertNull(game);
     }
 
     @Test
-    @Order(5)
-    @DisplayName("Clear All Games")
-    public void clearAllGames() {
-        gameDAO.createGame(2, "ExtraWhite", "ExtraBlack", "ExtraGame", new ChessGame());
-        gameDAO.clearAll();
-        Assertions.assertTrue(gameDAO.isEmpty(), "Game storage should be empty after clear_all()");
+    void positiveIsEmpty() {
+        gameDao.createGame(1, "white", "black", "Name", new ChessGame());
+        Collection<GameData> games = gameDao.listGames();
+        Assertions.assertNotNull(games);
+        Assertions.assertEquals(1, games.size());
     }
+
+    @Test
+    void negativeIsEmpty() {
+        Collection<GameData> games = gameDao.listGames();
+        Assertions.assertNotNull(games);
+        Assertions.assertTrue(games.isEmpty());
+    }
+
+    @Test
+    void positveListGames() {
+        gameDao.createGame(1, "white1", "black1", "Name1", new ChessGame());
+        gameDao.createGame(2, "white2", "black2", "Name2", new ChessGame());
+        Collection<GameData> games = gameDao.listGames();
+        Assertions.assertNotNull(games);
+    }
+
+    @Test
+    void negativeListGames() {
+        Collection<GameData> games = gameDao.listGames();
+        Assertions.assertTrue(games.isEmpty());
+    }
+
+
+    @Test
+    void testClearAllGames() {
+        gameDao.createGame(1, "white1", "black1", "Name1", new ChessGame());
+        gameDao.createGame(2, "white2", "black2", "Name2", new ChessGame());
+        Assertions.assertFalse(gameDao.listGames().isEmpty());
+
+        gameDao.clearAll();
+        Assertions.assertTrue(gameDao.listGames().isEmpty());
+    }
+
+    @Test
+    void positiveUpdateGames() {
+        // Create an initial game
+        gameDao.createGame(1, "white1", "black1", "Name1", new ChessGame());
+
+        ChessGame newGame = new ChessGame();
+        Assertions.assertDoesNotThrow(() ->
+                newGame.makeMove(new ChessMove(new ChessPosition(2, 1), new ChessPosition(4, 1), null))
+        );
+
+        Assertions.assertDoesNotThrow(() ->
+                gameDao.updateGame(1, new GameData(1, "white1", "black1", "Name1", newGame))
+        );
+
+        GameData updatedGame = gameDao.getGame(1);
+        Assertions.assertNotNull(updatedGame);
+        Assertions.assertEquals(newGame.getBoard(), updatedGame.game().getBoard(), "The game state should be updated");
+    }
+
+
+    @Test
+    void negativeUpdateGames(){
+        gameDao.createGame(1, "white1", "black1", "Name1", new ChessGame());
+
+        GameData newGame = new GameData(2, "white1", "black1", "Name1", new ChessGame());
+
+        Assertions.assertDoesNotThrow(() ->
+                newGame.game().makeMove(new ChessMove(new ChessPosition(2, 1), new ChessPosition(4, 1), null))
+        );
+
+        gameDao.updateGame(2, newGame);
+
+        Assertions.assertNotEquals(gameDao.getGame(1).game().getBoard(), newGame.game().getBoard());
+    }
+
+
 }
