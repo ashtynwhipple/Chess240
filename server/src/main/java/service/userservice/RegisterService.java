@@ -5,8 +5,6 @@ import model.UserData;
 import dataaccess.AuthDAO;
 import dataaccess.UserDAO;
 import exception.StatusException;
-import org.mindrot.jbcrypt.BCrypt;
-
 
 public class RegisterService {
 

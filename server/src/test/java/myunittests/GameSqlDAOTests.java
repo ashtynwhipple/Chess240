@@ -6,9 +6,7 @@ import chess.ChessMove;
 import chess.ChessPosition;
 import model.GameData;
 import org.junit.jupiter.api.*;
-
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 
 

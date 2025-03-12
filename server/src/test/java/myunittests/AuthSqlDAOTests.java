@@ -1,7 +1,6 @@
 package myunittests;
 import dataaccess.AuthSqlDataAccess;
 import model.AuthData;
-import dataaccess.MemoryAuthDAO;
 import org.junit.jupiter.api.*;
 
 

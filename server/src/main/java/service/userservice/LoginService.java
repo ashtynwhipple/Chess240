@@ -5,9 +5,6 @@ import model.UserData;
 import dataaccess.AuthDAO;
 import dataaccess.UserDAO;
 import exception.StatusException;
-import org.mindrot.jbcrypt.BCrypt;
-
-import java.util.Objects;
 
 public class LoginService {
 
