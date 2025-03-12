@@ -34,7 +34,7 @@ public class UserqlDAOTests {
         UserData user = userDao.getUser("testUser");
         Assertions.assertNotNull(user);
         Assertions.assertEquals("testUser", user.username());
-        Assertions.assertEquals("password123", user.password());
+        Assertions.assertDoesNotThrow(() -> userDao.verifyUser(user.username(), "password123"));
         Assertions.assertEquals("test@example.com", user.email());
     }
 
@@ -51,7 +51,7 @@ public class UserqlDAOTests {
         UserData user = userDao.getUser("existingUser");
         Assertions.assertNotNull(user);
         Assertions.assertEquals("existingUser", user.username());
-        Assertions.assertEquals("securePass", user.password());
+        Assertions.assertDoesNotThrow(() -> userDao.verifyUser(user.username(), "securePass"));
         Assertions.assertEquals("user@example.com", user.email());
     }
 
