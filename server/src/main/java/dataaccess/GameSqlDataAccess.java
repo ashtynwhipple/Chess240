@@ -1,7 +1,6 @@
 package dataaccess;
 import chess.ChessGame;
 import com.google.gson.Gson;
-import model.AuthData;
 import model.GameData;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -20,7 +19,8 @@ public class GameSqlDataAccess implements GameDAO{
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-        } catch (SQLException | DataAccessException _) {
+        } catch (SQLException | DataAccessException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -50,7 +50,8 @@ public class GameSqlDataAccess implements GameDAO{
                     return new GameData(gameID, rs.getString("whiteUsername"), rs.getString("blackUsername"), rs.getString("gameName"), game);
                 }
             }
-        } catch (SQLException | DataAccessException _) {
+        } catch (SQLException | DataAccessException e) {
+            throw new RuntimeException(e);
         }
         return null;
 
@@ -115,7 +116,8 @@ public class GameSqlDataAccess implements GameDAO{
             ps.setObject(4, new Gson().toJson(newGame.game()));
             ps.setInt(5, gameID);
             ps.executeUpdate();
-        } catch (SQLException | DataAccessException _) {
+        } catch (SQLException | DataAccessException e) {
+            throw new RuntimeException(e);
         }
     }
 

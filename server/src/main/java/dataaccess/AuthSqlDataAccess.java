@@ -1,5 +1,4 @@
 package dataaccess;
-import exception.StatusException;
 import model.AuthData;
 import java.sql.*;
 import java.util.UUID;
@@ -18,7 +17,8 @@ public class AuthSqlDataAccess implements AuthDAO {
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-        } catch (SQLException | DataAccessException _) {
+        } catch (SQLException | DataAccessException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -31,7 +31,8 @@ public class AuthSqlDataAccess implements AuthDAO {
                 ps.setString(2, username);
                 ps.executeUpdate();
             }
-        }catch (SQLException | DataAccessException _){
+        }catch (SQLException | DataAccessException e){
+            throw new RuntimeException(e);
         }
         return new AuthData(token, username);
     }
@@ -42,7 +43,8 @@ public class AuthSqlDataAccess implements AuthDAO {
                 ps.setString(1, token);
                 ps.executeUpdate();
             }
-        }catch (SQLException | DataAccessException _){
+        }catch (SQLException | DataAccessException e){
+            throw new RuntimeException(e);
         }
 
     }
@@ -57,9 +59,9 @@ public class AuthSqlDataAccess implements AuthDAO {
                 }
                 return null;
             }
-        } catch (SQLException | DataAccessException _) {
+        } catch (SQLException | DataAccessException e) {
+            throw new RuntimeException(e);
         }
-        return null;
     }
 
     private String generateToken(){

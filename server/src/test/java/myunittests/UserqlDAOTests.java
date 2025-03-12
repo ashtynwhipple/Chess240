@@ -41,8 +41,14 @@ public class UserqlDAOTests {
     @Test
     void negativeCreateUser() {
         userDao.createUser("duplicateUser", "password123", "user@example.com");
-        userDao.createUser("duplicateUser", "newPassword", "new@example.com");
-        Assertions.assertNotEquals("new@example.com", userDao.getUser("duplicateUser").email());
+
+        Assertions.assertThrows(RuntimeException.class, () ->
+                userDao.createUser("duplicateUser", "newPassword", "new@example.com")
+        );
+
+        UserData user = userDao.getUser("duplicateUser");
+        Assertions.assertNotNull(user);
+        Assertions.assertEquals("user@example.com", user.email());
     }
 
     @Test

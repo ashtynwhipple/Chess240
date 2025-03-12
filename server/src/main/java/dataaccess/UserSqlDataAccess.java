@@ -1,7 +1,6 @@
 package dataaccess;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
-
 import java.sql.SQLException;
 
 public class UserSqlDataAccess implements UserDAO{
@@ -18,7 +17,8 @@ public class UserSqlDataAccess implements UserDAO{
                 ps.setString(3, email);
                 ps.executeUpdate();
             }
-        }catch (SQLException | DataAccessException _){
+        }catch (SQLException | DataAccessException e){
+            throw new RuntimeException(e);
         }
     }
 
@@ -32,7 +32,8 @@ public class UserSqlDataAccess implements UserDAO{
                     return new UserData(username, rs.getString("password"), rs.getString("email"));
                 }
             }
-        } catch (SQLException | DataAccessException _) {
+        } catch (SQLException | DataAccessException e) {
+            throw new RuntimeException(e);
         }
         return null;
     }
