@@ -22,4 +22,9 @@ public class MemoryUserDAO implements UserDAO{
         hash.clear();
     }
 
+    @Override
+    public boolean verifyUser(String username, String providedClearTextPassword) {
+        return false;
+    }
+
 }

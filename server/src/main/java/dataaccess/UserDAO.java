@@ -12,4 +12,6 @@ public interface UserDAO {
 
     void clearAll();
 
+    boolean verifyUser(String username, String providedClearTextPassword);
+
 }

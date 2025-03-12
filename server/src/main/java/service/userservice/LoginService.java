@@ -5,6 +5,7 @@ import model.UserData;
 import dataaccess.AuthDAO;
 import dataaccess.UserDAO;
 import exception.StatusException;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.Objects;
 
@@ -22,7 +23,9 @@ public class LoginService {
 
         if (userdata == null || userdata.username() == null || userDAO.getUser(userdata.username()) == null){
             throw new StatusException("no username found", 401);
-        } else if (!Objects.equals(userdata.password(), userDAO.getUser(userdata.username()).password())){
+//        } else if (!Objects.equals(userdata.password(), userDAO.getUser(userdata.username()).password())){
+//            throw new StatusException("Error password does not match or User DNE", 401);
+        } else if (!userDAO.verifyUser(userDAO.getUser(userdata.username()).username(), userdata.password())){
             throw new StatusException("Error password does not match or User DNE", 401);
         }
 

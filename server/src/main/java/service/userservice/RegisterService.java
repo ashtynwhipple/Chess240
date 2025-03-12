@@ -29,9 +29,9 @@ public class RegisterService {
             throw new StatusException("", 403);
         }
 
-        String hashedPassword = BCrypt.hashpw(userdata.password(), BCrypt.gensalt());
+//        String hashedPassword = BCrypt.hashpw(userdata.password(), BCrypt.gensalt());
 
-        userDAO.createUser(userdata.username(), hashedPassword, userdata.email());
+        userDAO.createUser(userdata.username(), userdata.password(), userdata.email());
 
         return authDAO.createAuth(userdata.username());
     }

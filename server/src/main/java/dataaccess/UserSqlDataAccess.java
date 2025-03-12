@@ -1,5 +1,7 @@
 package dataaccess;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
+
 import java.sql.SQLException;
 
 public class UserSqlDataAccess implements UserDAO{
@@ -12,7 +14,7 @@ public class UserSqlDataAccess implements UserDAO{
         try(var conn = DatabaseManager.getConnection()){
             try (var ps = conn.prepareStatement("INSERT INTO userTable (username, password, email) VALUES (?, ?, ?)")){
                 ps.setString(1, username);
-                ps.setString(2, password);
+                ps.setString(2, BCrypt.hashpw(password, BCrypt.gensalt()));
                 ps.setString(3, email);
                 ps.executeUpdate();
             }
@@ -86,4 +88,23 @@ public class UserSqlDataAccess implements UserDAO{
             throw new RuntimeException(e);
         }
     }
+
+    public boolean verifyUser(String username, String providedClearTextPassword) {
+        try (var conn = DatabaseManager.getConnection();
+             var ps = conn.prepareStatement("SELECT password FROM userTable WHERE username = ?")) {
+            ps.setString(1, username);
+
+            try (var rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    String storedHashedPassword = rs.getString("password");
+                    return BCrypt.checkpw(providedClearTextPassword, storedHashedPassword);
+                }
+            }
+        } catch (SQLException | DataAccessException e) {
+            throw new RuntimeException("Error verifying user", e);
+        }
+        return false;
+    }
+
+
 }
