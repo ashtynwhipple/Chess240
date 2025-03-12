@@ -15,7 +15,7 @@ public class GameSqlDataAccess implements GameDAO{
 
     public void clearGames(){
         try (var conn = DatabaseManager.getConnection()) {
-            try (var statement = conn.prepareStatement("CLEAR gameTable")) {
+            try (var statement = conn.prepareStatement("TRUNCATE TABLE gameTable")) {
                 statement.executeUpdate();
             } catch (SQLException e) {
                 throw new RuntimeException(e);
@@ -31,7 +31,8 @@ public class GameSqlDataAccess implements GameDAO{
                 ps.setString(2, whiteUsername);
                 ps.setString(3, blackUsername);
                 ps.setString(4, gameName);
-                ps.setObject(5, game);
+                ps.setString(5, new Gson().toJson(game));
+                ps.executeUpdate();
             }
         }catch (SQLException | DataAccessException _){
         }
@@ -43,7 +44,9 @@ public class GameSqlDataAccess implements GameDAO{
             ps.setInt(1, gameID);
             try (var rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return new GameData(gameID, rs.getString("whiteUsername"), rs.getString("blackUsername"), rs.getString("gameName"), (ChessGame) rs.getObject("game"));
+                    String gameJson = rs.getString("game");
+                    ChessGame game = new Gson().fromJson(gameJson, ChessGame.class);
+                    return new GameData(gameID, rs.getString("whiteUsername"), rs.getString("blackUsername"), rs.getString("gameName"), game);
                 }
             }
         } catch (SQLException | DataAccessException _) {
@@ -85,7 +88,6 @@ public class GameSqlDataAccess implements GameDAO{
 
         try (var conn = DatabaseManager.getConnection();
              var ps = conn.prepareStatement("SELECT gameID, whiteUsername, blackUsername, gameName, game FROM gameTable")){
-             ps.executeQuery();
             try (var rs = ps.executeQuery()) {
                 while (rs.next()) {
                     int gameID = rs.getInt("gameID");

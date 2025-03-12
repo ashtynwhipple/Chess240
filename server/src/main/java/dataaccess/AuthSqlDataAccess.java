@@ -13,7 +13,7 @@ public class AuthSqlDataAccess implements AuthDAO {
 
     public void clearAuth(){
         try (var conn = DatabaseManager.getConnection()) {
-            try (var statement = conn.prepareStatement("CLEAR authTable")) {
+            try (var statement = conn.prepareStatement("TRUNCATE TABLE authTable")) {
                 statement.executeUpdate();
             } catch (SQLException e) {
                 throw new RuntimeException(e);
@@ -27,8 +27,8 @@ public class AuthSqlDataAccess implements AuthDAO {
 
         try(var conn = DatabaseManager.getConnection()){
             try (var ps = conn.prepareStatement("INSERT INTO authTable (token, username) VALUES (?, ?)")){
-                ps.setString(1, username);
-                ps.setString(2, token);
+                ps.setString(1, token);
+                ps.setString(2, username);
                 ps.executeUpdate();
             }
         }catch (SQLException | DataAccessException _){
@@ -52,8 +52,10 @@ public class AuthSqlDataAccess implements AuthDAO {
             var ps = conn.prepareStatement("SELECT username FROM authTable WHERE token = ?")) {
             ps.setString(1, token);
             try (var rs = ps.executeQuery()) {
-                rs.next();
-                return new AuthData(token, rs.getString("username"));
+                if (rs.next()) {
+                    return new AuthData(token, rs.getString("username"));
+                }
+                return null;
             }
         } catch (SQLException | DataAccessException _) {
         }
