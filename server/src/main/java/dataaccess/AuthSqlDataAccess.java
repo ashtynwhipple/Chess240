@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public class AuthSqlDataAccess extends BaseSqlDataAccess implements AuthDAO {
 
-    private static final String[] createStatements = {
+    private static final String[] CREATE_STATEMENTS = {
             """
             CREATE TABLE IF NOT EXISTS authTable (
               `username` varchar(256) NOT NULL,
@@ -17,7 +17,7 @@ public class AuthSqlDataAccess extends BaseSqlDataAccess implements AuthDAO {
     };
 
     public AuthSqlDataAccess() {
-        super(createStatements);
+        super(CREATE_STATEMENTS);
     }
 
     public AuthData createAuth(String username) {

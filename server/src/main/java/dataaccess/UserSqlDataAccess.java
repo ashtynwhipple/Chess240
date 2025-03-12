@@ -5,7 +5,7 @@ import java.sql.SQLException;
 
 public class UserSqlDataAccess extends BaseSqlDataAccess implements UserDAO{
 
-    private static final String[] createStatements = {
+    private static final String[] CREATE_STATEMENTS = {
             """
             CREATE TABLE IF NOT EXISTS userTable (
               `username` varchar(256) NOT NULL,
@@ -17,7 +17,7 @@ public class UserSqlDataAccess extends BaseSqlDataAccess implements UserDAO{
     };
 
     public UserSqlDataAccess() {
-        super(createStatements);
+        super(CREATE_STATEMENTS);
     }
 
     public void createUser(String username, String password, String email) {

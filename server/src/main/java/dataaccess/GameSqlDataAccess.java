@@ -8,7 +8,7 @@ import java.util.Collection;
 
 public class GameSqlDataAccess extends BaseSqlDataAccess implements GameDAO{
 
-    private static final String[] createStatements = {
+    private static final String[] CREATE_STATEMENTS = {
             """
             CREATE TABLE IF NOT EXISTS gameTable (
               `gameID` int NOT NULL AUTO_INCREMENT,
@@ -22,7 +22,7 @@ public class GameSqlDataAccess extends BaseSqlDataAccess implements GameDAO{
     };
 
     public GameSqlDataAccess() {
-        super(createStatements);
+        super(CREATE_STATEMENTS);
     }
 
     public void createGame(int gameID, String whiteUsername, String blackUsername, String gameName, ChessGame game){

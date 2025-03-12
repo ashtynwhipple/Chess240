@@ -1,5 +1,4 @@
-package myunittests;
-import dataaccess.GameSqlDataAccess;
+package dataaccess;
 
 import chess.ChessGame;
 import chess.ChessMove;

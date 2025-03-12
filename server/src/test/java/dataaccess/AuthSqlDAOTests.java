@@ -1,5 +1,4 @@
-package myunittests;
-import dataaccess.AuthSqlDataAccess;
+package dataaccess;
 import model.AuthData;
 import org.junit.jupiter.api.*;
 
