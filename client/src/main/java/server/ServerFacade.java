@@ -3,6 +3,7 @@ package server;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import model.AuthData;
+import model.GameData;
 import model.UserData;
 
 import java.io.*;
@@ -13,22 +14,23 @@ public class ServerFacade {
 
     private final String serverUrl;
 
-    public ServerFacade(String url) {
-        serverUrl = url;
+    public ServerFacade() {
+        serverUrl = "http://localhost:8080";
     }
 
-    public AuthData login(String username, String password) throws ResponseException {
+    public AuthData login(UserData userData) throws ResponseException {
         var path = "/session";
-        var request = new Object() {
-            final String usernameField = username;
-            final String passwordField = password;
-        };
-        return this.makeRequest("POST", path, request, AuthData.class);
+        return this.makeRequest("POST", path, userData, AuthData.class);
     }
 
     public AuthData register(UserData user) throws ResponseException {
         var path = "/user";
         return this.makeRequest("POST", path, user, AuthData.class);
+    }
+
+    public GameData[] listGames(String authToken) throws ResponseException{
+        var path = "/game";
+        return this.makeRequest("GET", path, authToken, GameData[].class);
     }
 
     public void logout(String authToken) throws ResponseException {

@@ -2,6 +2,7 @@ package ui;
 
 import exception.ResponseException;
 import model.AuthData;
+import model.GameData;
 import server.ServerFacade;
 
 import java.util.Scanner;
@@ -41,7 +42,7 @@ public class PostLoginUI {
                 case "create":
                     break;
                 case "list":
-//                    listGames();
+                    listGames();
                     break;
                 case "join":
 //                    join();
@@ -62,6 +63,16 @@ public class PostLoginUI {
         }
     }
 
+    private void listGames(){
+        try {
+            GameData[] games = server.listGames(authData.authToken());
+            for (GameData game : games) {
+                System.out.println(game);
+            }
+        } catch (ResponseException e){
+            System.out.println("listGames failed: " + e.getMessage());
+        }
+    }
 
     private void logout() {
         try {

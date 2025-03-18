@@ -59,8 +59,6 @@ public class PreLoginUI {
             AuthData authData = server.login(username, password);
             System.out.println("Login successful!");
 
-            // What else do I do here?
-
         } catch (ResponseException e) {
             System.out.println("Login failed: " + e.getMessage());
         }
@@ -83,8 +81,6 @@ public class PreLoginUI {
             UserData user = new UserData(username, password, email);
             AuthData authData = server.register(user);
             System.out.println("Register successful!");
-
-            // What else do I do here?
 
         } catch (ResponseException e) {
             System.out.println("Register failed: " + e.getMessage());
