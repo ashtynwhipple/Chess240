@@ -2,12 +2,11 @@ package server;
 
 import com.google.gson.Gson;
 import exception.ResponseException;
-import model.AuthData;
-import model.GameData;
-import model.UserData;
+import model.*;
 
 import java.io.*;
 import java.net.*;
+import java.util.Collection;
 
 
 public class ServerFacade {
@@ -28,9 +27,24 @@ public class ServerFacade {
         return this.makeRequest("POST", path, user, AuthData.class);
     }
 
-    public GameData[] listGames(String authToken) throws ResponseException{
+    public String createGame(String gameName, String authToken) throws ResponseException{
         var path = "/game";
-        return this.makeRequest("GET", path, authToken, GameData[].class);
+        return this.makeRequest("POST", path, authToken, String.class);
+    }
+
+    public ListGameData listGames(String authToken) throws ResponseException{
+        var path = "/game";
+        return this.makeRequest("GET", path, authToken, ListGameData.class);
+    }
+
+    public void joinGame(JoinData joinData) throws ResponseException{
+        var path = "/game";
+        this.makeRequest("PUT", path, joinData, null);
+    }
+
+    public void observe(int gameID, String authToken) throws ResponseException {
+        var path = String.format("/game/%d/observe", gameID);
+        this.makeRequest("POST", path, authToken, null);
     }
 
     public void logout(String authToken) throws ResponseException {

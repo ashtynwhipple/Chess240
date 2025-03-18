@@ -35,8 +35,6 @@ public class Server {
 
         Spark.delete("/db", clear::clear);
 
-//        Spark.exception(DataAccessException.class, exceptionHandler::exception);
-
         //This line initializes the server and can be removed once you have a functioning endpoint
         Spark.init();
 

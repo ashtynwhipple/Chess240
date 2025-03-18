@@ -55,10 +55,17 @@ public class PreLoginUI {
         System.out.print("Password: ");
         String password = scanner.nextLine();
 
+        System.out.print("Email: ");
+        String email = scanner.nextLine();
+
         try {
-            AuthData authData = server.login(username, password);
+            UserData user = new UserData(username, password, email);
+
+            AuthData authData = server.login(user);
             System.out.println("Login successful!");
 
+            PostLoginUI postLoginUI = new PostLoginUI(authData, server);
+            PostLoginUI.run();
         } catch (ResponseException e) {
             System.out.println("Login failed: " + e.getMessage());
         }
@@ -74,7 +81,7 @@ public class PreLoginUI {
         System.out.println("Password: ");
         String password = scanner.nextLine();
 
-        System.out.println("Password: ");
+        System.out.println("Email: ");
         String email = scanner.nextLine();
 
         try {

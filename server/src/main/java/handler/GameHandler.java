@@ -32,7 +32,6 @@ public class GameHandler {
             res.status(e.getStatus());
             return "{ \"message\": \"Error: unauthorized\" }";
         }
-
     }
 
     public Object createGame(Request req, Response res) throws StatusException {
@@ -49,7 +48,8 @@ public class GameHandler {
             res.status(200);
             int newGameID = serviceInstance.createGame(authToken, gameData);
             Gson gson = new Gson();
-            return gson.toJson(Map.of("gameID", newGameID));
+//            return gson.toJson(Map.of("gameID", newGameID)); // took this off in phase 5
+            return gson.toJson(newGameID);
         } catch (StatusException e) {
             res.status(e.getStatus());
             return "{ \"message\": \"Error: unauthorized\" }";
