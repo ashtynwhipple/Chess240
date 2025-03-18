@@ -30,6 +30,7 @@ public class PostLoginUI {
                     System.out.println("observe <ID> - a game");
                     System.out.println("logout - when you are done");
                     System.out.println("quit - quit playing chess");
+                    System.out.println("help = with possible commands");
                     break;
                 case "create":
                     break;
@@ -53,6 +54,20 @@ public class PostLoginUI {
             }
         }
     }
+
+    private void logout() {
+        try {
+            server.logout(authData.getAuthToken());  // Call the server logout API
+            System.out.println("Successfully logged out.");
+
+            // Transition back to PreLoginUI
+            PreLoginUI preLoginUI = new PreLoginUI(server);
+            preLoginUI.run();
+        } catch (ResponseException e) {
+            System.out.println("Logout failed: " + e.getMessage());
+        }
+    }
+
 
     private void viewProfile() {
         System.out.println("\n--- User Profile ---");
