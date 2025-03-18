@@ -1,20 +1,26 @@
 package ui;
 
+import exception.ResponseException;
 import model.AuthData;
+import server.ServerFacade;
+
 import java.util.Scanner;
 
 public class PostLoginUI {
-    private final Scanner scanner;
-    private final AuthData authData;
+    Scanner scanner;
+    ServerFacade server;
+    AuthData authData;
 
-    public PostLoginUI(AuthData authData) {
+
+    public PostLoginUI(AuthData authData, ServerFacade server) {
         this.scanner = new Scanner(System.in);
+        this.server = server;
         this.authData = authData;
     }
 
     public void run() {
         System.out.println(
-                "\nWelcome, " + authData.username() + "! Type 'help' to get started"
+                "\nWelcome! Type 'help' to get started"
         );
 
         while (true) {
@@ -45,6 +51,7 @@ public class PostLoginUI {
                     break;
                 case "logout":
                     System.out.println("Logging out...");
+                    logout();
                     return;
                 case "quit":
 //                    quit();
@@ -55,12 +62,12 @@ public class PostLoginUI {
         }
     }
 
+
     private void logout() {
         try {
-            server.logout(authData.getAuthToken());  // Call the server logout API
+            server.logout(authData.authToken());
             System.out.println("Successfully logged out.");
 
-            // Transition back to PreLoginUI
             PreLoginUI preLoginUI = new PreLoginUI(server);
             preLoginUI.run();
         } catch (ResponseException e) {
@@ -68,16 +75,4 @@ public class PostLoginUI {
         }
     }
 
-
-    private void viewProfile() {
-        System.out.println("\n--- User Profile ---");
-        System.out.println("Username: " + authData.getUsername());
-        System.out.println("Email: " + authData.getEmail());
-        // You may want to fetch more details from the server
-    }
-
-    private void listItems() {
-        System.out.println("\nFetching items from server...");
-        // Call serverFacade to fetch items here
-    }
 }
