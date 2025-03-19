@@ -3,18 +3,18 @@ package server;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import model.*;
+import org.junit.jupiter.api.function.Executable;
 
 import java.io.*;
 import java.net.*;
-import java.util.Collection;
 
 
 public class ServerFacade {
 
     private final String serverUrl;
 
-    public ServerFacade() {
-        serverUrl = "http://localhost:8080";
+    public ServerFacade(int port) {
+        serverUrl = "http://localhost:" + port;
     }
 
     public AuthData login(UserData userData) throws ResponseException {
@@ -22,7 +22,7 @@ public class ServerFacade {
         return this.makeRequest("POST", path, userData, AuthData.class);
     }
 
-    public AuthData register(UserData user) throws ResponseException {
+    public Executable register(UserData user) throws ResponseException {
         var path = "/user";
         return this.makeRequest("POST", path, user, AuthData.class);
     }

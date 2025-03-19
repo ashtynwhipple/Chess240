@@ -65,7 +65,7 @@ public class PreLoginUI {
             System.out.println("Login successful!");
 
             PostLoginUI postLoginUI = new PostLoginUI(authData, server);
-            PostLoginUI.run();
+            postLoginUI.run();
         } catch (ResponseException e) {
             System.out.println("Login failed: " + e.getMessage());
         }
