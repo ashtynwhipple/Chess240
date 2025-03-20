@@ -30,7 +30,7 @@ public class GameService {
 
     public int createGame(String authToken, GameData gameData) throws StatusException {
         if (authToken == null || gameData == null || authDAO.getUsername(authToken) == null){
-            throw new StatusException("Error: unauthorized", 401);
+            throw new StatusException("unauthorized", 401);
         }
 
         Random random = new Random();
@@ -39,7 +39,7 @@ public class GameService {
         gameDAO.createGame(gameID, null, null, gameData.gameName(), new ChessGame());
 
         if (gameDAO.getGame(gameID) == null || gameDAO.getGame(gameID).gameID() != gameID){
-            throw new StatusException("Error: bad request", 401);
+            throw new StatusException("bad request", 401);
         }
 
         return gameID;
@@ -47,11 +47,11 @@ public class GameService {
 
     public void joinGame(String authToken, int gameID, String color) throws StatusException {
         if (authToken == null){
-            throw new StatusException("Error: unauthorized", 403);
+            throw new StatusException("unauthorized", 403);
         }
 
         if (gameDAO.getGame(gameID) == null){
-            throw new StatusException("Error: bad request", 400);
+            throw new StatusException("bad request", 400);
         }
 
         GameData gamedata = gameDAO.getGame(gameID);

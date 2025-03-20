@@ -45,7 +45,7 @@ public class UserHandler {
             return "{}";
         } catch (StatusException e) {
             res.status(e.getStatus());
-            return "{ \"message\": \"Error: unauthorized\" }";
+            return "{ \"message\": \"Error: " + e.getMessage() + "\" }";
         }
     }
 
@@ -59,7 +59,7 @@ public class UserHandler {
             return new Gson().toJson(serviceInstance.login(loginRequest));
         } catch (StatusException e) {
             res.status(e.getStatus());
-            return "{ \"message\": \"Error: unauthorized\" }";
+            return "{ \"message\": \"Error: " + e.getMessage() + "\" }";
         }
 
     }

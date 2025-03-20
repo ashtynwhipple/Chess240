@@ -30,7 +30,7 @@ public class GameHandler {
             return new Gson().toJson(serviceInstance.listGames(authToken));
         } catch (StatusException e) {
             res.status(e.getStatus());
-            return "{ \"message\": \"Error: unauthorized\" }";
+            return "{ \"message\": \"Error: " + e.getMessage() + "\" }";
         }
     }
 
@@ -52,7 +52,7 @@ public class GameHandler {
             return gson.toJson(newGameID);
         } catch (StatusException e) {
             res.status(e.getStatus());
-            return "{ \"message\": \"Error: unauthorized\" }";
+            return "{ \"message\": \"Error: " + e.getMessage() + "\" }";
         }
 
     }
@@ -69,7 +69,7 @@ public class GameHandler {
             return "{}";
         } catch (StatusException e) {
             res.status(e.getStatus());
-            return "{ \"message\": \"Error: unauthorized\" }";
+            return "{ \"message\": \"Error: " + e.getMessage() + "\" }";
         }
     }
 }
