@@ -48,7 +48,7 @@ public class GameHandler {
             res.status(200);
             int newGameID = serviceInstance.createGame(authToken, gameData);
             Gson gson = new Gson();
-//            return gson.toJson(Map.of("gameID", newGameID)); // took this off in phase 5
+//            return gson.toJson(Map.of("gameID", newGameID)); // took this off phase 5
             return gson.toJson(newGameID);
         } catch (StatusException e) {
             res.status(e.getStatus());

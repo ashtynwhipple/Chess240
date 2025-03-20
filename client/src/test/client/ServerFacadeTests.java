@@ -1,6 +1,8 @@
-package java.client;
+package client;
 
 import exception.ResponseException;
+import model.AuthData;
+import model.GameData;
 import model.JoinData;
 import model.UserData;
 import org.junit.jupiter.api.*;
@@ -11,13 +13,13 @@ import server.ServerFacade;
 public class ServerFacadeTests {
 
     private static Server server;
-    int port;
+    static int port;
     ServerFacade facade;
 
     @BeforeAll
     public static void init() {
         server = new Server();
-        var port = server.run(0);
+        port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
     }
 
@@ -28,13 +30,7 @@ public class ServerFacadeTests {
 
     @BeforeEach
     void setup(){
-        ServerFacade facade = new ServerFacade(port);
-    }
-
-
-    @Test
-    public void sampleTest() {
-        Assertions.assertTrue(true);
+        facade = new ServerFacade(port);
     }
 
     @Test
@@ -63,7 +59,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void createGamePositive() throws ResponseException {
+    public void createGamePositive() {
         String authToken = "validToken";
         Assertions.assertDoesNotThrow(() -> facade.createGame("NewGame", authToken));
     }
@@ -74,7 +70,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void listGamesPositive() throws ResponseException {
+    public void listGamesPositive() {
         String authToken = "validToken";
         Assertions.assertDoesNotThrow(() -> facade.listGames(authToken));
     }
@@ -85,7 +81,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void joinGamePositive() throws ResponseException {
+    public void joinGamePositive(){
         JoinData joinData = new JoinData("validGame", 123);
         Assertions.assertDoesNotThrow(() -> facade.joinGame(joinData));
     }
@@ -97,10 +93,13 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void observePositive() throws ResponseException {
-        int gameID = 1;
-        String authToken = "validToken";
-        Assertions.assertDoesNotThrow(() -> facade.observe(gameID, authToken));
+    public void observePositive() {
+        UserData user = new UserData("myUser", "myPass", "myEmail");
+        Assertions.assertDoesNotThrow(() -> facade.register(user));
+        Assertions.assertDoesNotThrow(() -> facade.login(user));
+        AuthData auth = Assertions.assertDoesNotThrow(() -> facade.login(user));
+        int gameID = Assertions.assertDoesNotThrow(() -> facade.createGame("mygame", auth.authToken()));
+        Assertions.assertDoesNotThrow(() -> facade.observe(gameID, auth.authToken()));
     }
 
     @Test
@@ -110,7 +109,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void logoutPositive() throws ResponseException {
+    public void logoutPositive(){
         String authToken = "validToken";
         Assertions.assertDoesNotThrow(() -> facade.logout(authToken));
     }

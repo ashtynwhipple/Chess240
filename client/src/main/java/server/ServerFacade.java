@@ -1,9 +1,9 @@
 package server;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import model.*;
-import org.junit.jupiter.api.function.Executable;
 
 import java.io.*;
 import java.net.*;
@@ -22,14 +22,15 @@ public class ServerFacade {
         return this.makeRequest("POST", path, userData, AuthData.class);
     }
 
-    public Executable register(UserData user) throws ResponseException {
+    public AuthData register(UserData user) throws ResponseException {
         var path = "/user";
         return this.makeRequest("POST", path, user, AuthData.class);
     }
 
-    public String createGame(String gameName, String authToken) throws ResponseException{
+    public int createGame(String gameName, String authToken) throws ResponseException{
         var path = "/game";
-        return this.makeRequest("POST", path, authToken, String.class);
+        GameData game = new GameData(1, null, null, gameName, new ChessGame());
+        return this.makeRequest("POST", path, game, int.class, authToken);
     }
 
     public ListGameData listGames(String authToken) throws ResponseException{
@@ -44,7 +45,7 @@ public class ServerFacade {
 
     public void observe(int gameID, String authToken) throws ResponseException {
         var path = String.format("/game/%d/observe", gameID);
-        this.makeRequest("POST", path, authToken, null);
+        this.makeRequest("POST", path, authToken, String.class);
     }
 
     public void logout(String authToken) throws ResponseException {
@@ -53,12 +54,16 @@ public class ServerFacade {
     }
 
 
-    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
+    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass, String authToken) throws ResponseException {
         try {
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
+
+            if (authToken != null && !authToken.isEmpty()) {
+                http.setRequestProperty("Authorization", authToken);
+            }
 
             writeBody(request, http);
             http.connect();
@@ -69,6 +74,10 @@ public class ServerFacade {
         } catch (Exception ex) {
             throw new ResponseException(500, ex.getMessage());
         }
+    }
+
+    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
+        return makeRequest(method, path, request, responseClass, null);
     }
 
     private static void writeBody(Object request, HttpURLConnection http) throws IOException {

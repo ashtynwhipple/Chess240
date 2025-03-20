@@ -69,7 +69,7 @@ public class PostLoginUI {
         String gameName = scanner.nextLine();
 
         try {
-            String gameID = server.createGame(gameName, authData.authToken());
+            int gameID = server.createGame(gameName, authData.authToken());
             System.out.println("Created game " + gameName + "with gameID: " + gameID);
         } catch (ResponseException e){
             System.out.println("Could not create game: " + e.getMessage());
