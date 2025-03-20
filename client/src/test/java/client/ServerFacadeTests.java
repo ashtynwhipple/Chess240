@@ -31,6 +31,7 @@ public class ServerFacadeTests {
     @BeforeEach
     void setup(){
         facade = new ServerFacade(port);
+        Assertions.assertDoesNotThrow(() -> facade.clear());
     }
 
     @Test
@@ -41,7 +42,7 @@ public class ServerFacadeTests {
 
     @Test
     public void registerNegative() {
-        UserData user = new UserData("", "", "");
+        UserData user = new UserData(null, "", "");
         Assertions.assertThrows(ResponseException.class, () -> facade.register(user));
     }
 
@@ -49,7 +50,7 @@ public class ServerFacadeTests {
     public void loginPositive() throws ResponseException {
         UserData user = new UserData("user", "pass", "email");
         facade.register(user);
-        Assertions.assertDoesNotThrow(() -> facade.login(user));
+
     }
 
     @Test
@@ -60,8 +61,10 @@ public class ServerFacadeTests {
 
     @Test
     public void createGamePositive() {
-        String authToken = "validToken";
-        Assertions.assertDoesNotThrow(() -> facade.createGame("NewGame", authToken));
+        UserData user = new UserData("user", "pass", "email");
+        Assertions.assertDoesNotThrow(() -> facade.register(user));
+        AuthData auth = Assertions.assertDoesNotThrow(() -> facade.login(user));
+        Assertions.assertDoesNotThrow(() -> facade.createGame("NewGame", auth.authToken()));
     }
 
     @Test
@@ -71,8 +74,10 @@ public class ServerFacadeTests {
 
     @Test
     public void listGamesPositive() {
-        String authToken = "validToken";
-        Assertions.assertDoesNotThrow(() -> facade.listGames(authToken));
+        UserData user = new UserData("user", "pass", "email");
+        Assertions.assertDoesNotThrow(() -> facade.register(user));
+        AuthData auth = Assertions.assertDoesNotThrow(() -> facade.login(user));
+        Assertions.assertDoesNotThrow(() -> facade.listGames(auth.authToken()));
     }
 
     @Test

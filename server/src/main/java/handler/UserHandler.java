@@ -30,7 +30,7 @@ public class UserHandler {
             return new Gson().toJson(serviceInstance.register(registerRequest));
         } catch (StatusException e) {
             res.status(e.getStatus());
-            return "{ \"message\": \"Error: already taken\" }";
+            return "{ \"message\": \"Error: " + e.getMessage() + "\" }";
         }
 
     }

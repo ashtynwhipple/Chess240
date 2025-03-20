@@ -20,14 +20,12 @@ public class RegisterService {
 
 
         if (userdata == null || userdata.username() == null || userdata.password() == null) {
-            throw new StatusException("", 400);
+            throw new StatusException("was not given a username or password", 400);
         }
 
         if (userDAO.getUser(userdata.username()) != null) {
-            throw new StatusException("", 403);
+            throw new StatusException("username already taken", 403);
         }
-
-//        String hashedPassword = BCrypt.hashpw(userdata.password(), BCrypt.gensalt());
 
         userDAO.createUser(userdata.username(), userdata.password(), userdata.email());
 
