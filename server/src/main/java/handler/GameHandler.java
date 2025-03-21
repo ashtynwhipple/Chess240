@@ -1,5 +1,6 @@
 package handler;
 import model.GameData;
+import model.GameResponse;
 import model.JoinData;
 import service.GameService;
 import com.google.gson.Gson;
@@ -8,8 +9,6 @@ import dataaccess.GameDAO;
 import exception.StatusException;
 import spark.Request;
 import spark.Response;
-
-import java.util.Map;
 
 public class GameHandler {
 
@@ -22,10 +21,10 @@ public class GameHandler {
     }
 
     public Object listGames(Request req, Response res){
-        String authToken = req.headers("authorization");
 
         try {
             GameService serviceInstance = new GameService(authDAO, gameDAO);
+            String authToken = req.headers("authorization");
             res.status(200);
             return new Gson().toJson(serviceInstance.listGames(authToken));
         } catch (StatusException e) {
@@ -36,9 +35,9 @@ public class GameHandler {
 
     public Object createGame(Request req, Response res) throws StatusException {
 
-        if (!req.body().contains("\"gameName\":")) {
-            throw new StatusException("Error: bad request", 400);
-        }
+//        if (!req.body().contains("\"gameName\":")) {
+//            throw new StatusException("Error: bad request", 400);
+//        }
 
         GameData gameData = new Gson().fromJson(req.body(), GameData.class);
 
@@ -48,8 +47,11 @@ public class GameHandler {
             res.status(200);
             int newGameID = serviceInstance.createGame(authToken, gameData);
             Gson gson = new Gson();
-//            return gson.toJson(Map.of("gameID", newGameID)); // took this off phase 5
-            return gson.toJson(newGameID);
+//            return gson.toJson(Map.of("gameID", newGameID));
+//            List<Integer> myList = new ArrayList<>();
+//            myList.add(newGameID);
+//            return gson.toJson(myList);
+            return gson.toJson(new GameResponse(newGameID));
         } catch (StatusException e) {
             res.status(e.getStatus());
             return "{ \"message\": \"Error: " + e.getMessage() + "\" }";
@@ -57,7 +59,7 @@ public class GameHandler {
 
     }
 
-    public Object joinGame(Request req, Response res) throws StatusException {
+    public Object joinGame(Request req, Response res){
 
         JoinData joinData = new Gson().fromJson(req.body(), JoinData.class);
 

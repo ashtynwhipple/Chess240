@@ -1,10 +1,7 @@
 package ui;
 
 import exception.ResponseException;
-import model.AuthData;
-import model.GameData;
-import model.JoinData;
-import model.ListGameData;
+import model.*;
 import server.ServerFacade;
 
 import java.util.Collection;
@@ -69,8 +66,8 @@ public class PostLoginUI {
         String gameName = scanner.nextLine();
 
         try {
-            int gameID = server.createGame(gameName, authData.authToken());
-            System.out.println("Created game " + gameName + "with gameID: " + gameID);
+            GameResponse gameRes = server.createGame(gameName, authData.authToken());
+            System.out.println("Created game " + gameName + "with gameID: " + gameRes.gameID());
         } catch (ResponseException e){
             System.out.println("Could not create game: " + e.getMessage());
         }
@@ -79,7 +76,7 @@ public class PostLoginUI {
 
     private void listGames(){
         try {
-            ListGameData games = server.listGames(authData.authToken());
+            ListGameData games = server.listGames(authData);
             for (GameData game : games.games()) {
                 System.out.println(game);
             }
@@ -97,7 +94,7 @@ public class PostLoginUI {
 
         try {
             JoinData joinData = new JoinData(playerColor, gameID);
-            server.joinGame(joinData);
+            server.joinGame(joinData, authData);
             System.out.println("Joined game:" + gameID);
         } catch (ResponseException e){
             System.out.println("Join game failed: " + e.getMessage());

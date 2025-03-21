@@ -13,7 +13,7 @@ public class LogoutService {
     public void logout(String token) throws StatusException {
 
         if (token == null || authDAO.getUsername(token) == null){
-            throw new StatusException("not valid user data or username DNE", 401);
+            throw new StatusException("not valid token or user does not exist", 401);
         }
 
         authDAO.deleteAuth(token);

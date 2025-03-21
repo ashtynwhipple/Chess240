@@ -7,6 +7,7 @@ import model.*;
 
 import java.io.*;
 import java.net.*;
+import java.util.Map;
 
 
 public class ServerFacade {
@@ -27,20 +28,20 @@ public class ServerFacade {
         return this.makeRequest("POST", path, user, AuthData.class);
     }
 
-    public int createGame(String gameName, String authToken) throws ResponseException{
+    public GameResponse createGame(String gameName, String authToken) throws ResponseException{
         var path = "/game";
         GameData game = new GameData(1, null, null, gameName, new ChessGame());
-        return this.makeRequest("POST", path, game, int.class, authToken);
+        return this.makeRequest("POST", path, game, GameResponse.class, authToken);
     }
 
-    public ListGameData listGames(String authToken) throws ResponseException{
+    public ListGameData listGames(AuthData auth) throws ResponseException{
         var path = "/game";
-        return this.makeRequest("GET", path, authToken, ListGameData.class, authToken);
+        return this.makeRequest("GET", path, null, ListGameData.class, auth.authToken());
     }
 
-    public void joinGame(JoinData joinData) throws ResponseException{
+    public void joinGame(JoinData joinData, AuthData authData) throws ResponseException{
         var path = "/game";
-        this.makeRequest("PUT", path, joinData, null);
+        this.makeRequest("PUT", path, joinData, null, authData.authToken());
     }
 
     public void observe(int gameID, String authToken) throws ResponseException {

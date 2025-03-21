@@ -1,13 +1,12 @@
 package client;
 
 import exception.ResponseException;
-import model.AuthData;
-import model.GameData;
-import model.JoinData;
-import model.UserData;
+import model.*;
 import org.junit.jupiter.api.*;
 import server.Server;
 import server.ServerFacade;
+
+import java.util.Map;
 
 
 public class ServerFacadeTests {
@@ -50,7 +49,7 @@ public class ServerFacadeTests {
     public void loginPositive() throws ResponseException {
         UserData user = new UserData("user", "pass", "email");
         facade.register(user);
-
+        Assertions.assertThrows(ResponseException.class, () -> facade.login(user));
     }
 
     @Test
@@ -77,24 +76,35 @@ public class ServerFacadeTests {
         UserData user = new UserData("user", "pass", "email");
         Assertions.assertDoesNotThrow(() -> facade.register(user));
         AuthData auth = Assertions.assertDoesNotThrow(() -> facade.login(user));
-        Assertions.assertDoesNotThrow(() -> facade.listGames(auth.authToken()));
+        Assertions.assertDoesNotThrow(() -> facade.listGames(auth));
     }
 
     @Test
     public void listGamesNegative() {
-        Assertions.assertThrows(ResponseException.class, () -> facade.listGames("invalidToken"));
+        UserData user = new UserData("user", "pass", "email");
+        Assertions.assertDoesNotThrow(() -> facade.register(user));
+        AuthData auth2 = new AuthData("token", "user");
+        Assertions.assertThrows(ResponseException.class, () -> facade.listGames(auth2));
     }
 
     @Test
     public void joinGamePositive(){
-        JoinData joinData = new JoinData("validGame", 123);
-        Assertions.assertDoesNotThrow(() -> facade.joinGame(joinData));
+        UserData user = new UserData("user", "pass", "email");
+        Assertions.assertDoesNotThrow(() -> facade.register(user));
+        AuthData auth = Assertions.assertDoesNotThrow(() -> facade.login(user));
+        GameResponse gameRes = Assertions.assertDoesNotThrow(() -> facade.createGame("NewGame", auth.authToken()));
+        JoinData joinData = new JoinData("NewGame", gameRes.gameID());
+        Assertions.assertDoesNotThrow(() -> facade.joinGame(joinData, auth));
     }
 
     @Test
     public void joinGameNegative() {
+        UserData user = new UserData("myUser", "myPass", "myEmail");
+        Assertions.assertDoesNotThrow(() -> facade.register(user));
+        Assertions.assertDoesNotThrow(() -> facade.login(user));
+        AuthData auth = Assertions.assertDoesNotThrow(() -> facade.login(user));
         JoinData joinData = new JoinData("", 0);
-        Assertions.assertThrows(ResponseException.class, () -> facade.joinGame(joinData));
+        Assertions.assertThrows(ResponseException.class, () -> facade.joinGame(joinData, auth));
     }
 
     @Test
@@ -103,8 +113,8 @@ public class ServerFacadeTests {
         Assertions.assertDoesNotThrow(() -> facade.register(user));
         Assertions.assertDoesNotThrow(() -> facade.login(user));
         AuthData auth = Assertions.assertDoesNotThrow(() -> facade.login(user));
-        int gameID = Assertions.assertDoesNotThrow(() -> facade.createGame("mygame", auth.authToken()));
-        Assertions.assertDoesNotThrow(() -> facade.observe(gameID, auth.authToken()));
+        GameResponse gameRes = Assertions.assertDoesNotThrow(() -> facade.createGame("mygame", auth.authToken()));
+        Assertions.assertDoesNotThrow(() -> facade.observe(gameRes.gameID(), auth.authToken()));
     }
 
     @Test
@@ -115,8 +125,10 @@ public class ServerFacadeTests {
 
     @Test
     public void logoutPositive(){
-        String authToken = "validToken";
-        Assertions.assertDoesNotThrow(() -> facade.logout(authToken));
+        UserData user = new UserData("user", "pass", "email");
+        Assertions.assertDoesNotThrow(() -> facade.register(user));
+        AuthData auth = Assertions.assertDoesNotThrow(() -> facade.login(user));
+        Assertions.assertDoesNotThrow(() -> facade.logout(auth.authToken()));
     }
 
     @Test
