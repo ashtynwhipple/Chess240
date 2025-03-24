@@ -102,6 +102,8 @@ public class PostLoginUI {
     }
 
     private void join(){
+        addGames();
+        listGames();
         Scanner scanner = new Scanner(System.in);
         System.out.print("Color: ");
         String playerColor = scanner.nextLine();
@@ -112,9 +114,35 @@ public class PostLoginUI {
             JoinData joinData = new JoinData(playerColor, gameID);
             server.joinGame(joinData, authData);
             System.out.println("Joined game:" + gameID);
+
+            GameData joinedGame = loopGames(gameID, "joined");
+
+            if (joinedGame != null){
+                printBoard(joinedGame.game().getBoard());
+            } else {
+                System.out.println("Error: Game to join could not be found.");
+            }
+
         } catch (ResponseException e){
             System.out.println("Join game failed: " + e.getMessage());
         }
+    }
+
+    private GameData loopGames(int gameID, String messageForPrint){
+
+        GameData chosenGame;
+
+        for (GameData game : games) {
+            if (game.gameID() == gameID) {
+                String gameName = game.gameName();
+                chosenGame = game;
+                System.out.println("You " + messageForPrint + " " + gameName + " (ID: " + gameID + ")");
+                return chosenGame;
+            } else {
+                System.out.println("Error: Game to not found.");
+            }
+        }
+        return null;
     }
 
     private void observe(){
@@ -130,21 +158,13 @@ public class PostLoginUI {
             server.joinGame(joinData, authData);
 
             addGames();
-            GameData observedGame = null;
 
-            for (GameData game : games) {
-                if (game.gameID() == gameID) {
-                    String gameName = game.gameName();
-                    observedGame = game;
-                    System.out.println("You are observing " + gameName + " (ID: " + gameID + ")");
-                    break;
-                }
-            }
+            GameData observedGame = loopGames(gameID, "are observing");
 
             if (observedGame != null) {
                 printBoard(observedGame.game().getBoard());
             } else {
-                System.out.println("Error: Game not found.");
+                System.out.println("Error: Game to observe could not found.");
             }
 
         } catch (ResponseException e){
