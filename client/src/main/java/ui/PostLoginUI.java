@@ -1,16 +1,20 @@
 package ui;
 
+import chess.ChessBoard;
+import chess.ChessPiece;
+import chess.ChessPosition;
 import exception.ResponseException;
 import model.*;
 import server.ServerFacade;
 
-import java.util.Collection;
-import java.util.Scanner;
+import java.util.*;
 
 public class PostLoginUI {
     Scanner scanner;
     ServerFacade server;
     AuthData authData;
+
+    List<GameData> games;
 
 
     public PostLoginUI(AuthData authData, ServerFacade server) {
@@ -85,6 +89,18 @@ public class PostLoginUI {
         }
     }
 
+    private void addGames() {
+        try {
+            games = new ArrayList<>();
+            ListGameData gameList = server.listGames(authData);
+
+            games.addAll(gameList.games());
+
+        }catch (ResponseException e) {
+            System.out.println("listGames failed: " + e.getMessage());
+        }
+    }
+
     private void join(){
         Scanner scanner = new Scanner(System.in);
         System.out.print("Color: ");
@@ -104,12 +120,33 @@ public class PostLoginUI {
     private void observe(){
         Scanner scanner = new Scanner(System.in);
 
+        listGames();
+
         try {
             System.out.print("Game ID: ");
             int gameID = scanner.nextInt();
 
-            server.observe(gameID, authData.authToken());
-            System.out.println("You are observing game " + gameID);
+            JoinData joinData = new JoinData(null, gameID);
+            server.joinGame(joinData, authData);
+
+            addGames();
+            GameData observedGame = null;
+
+            for (GameData game : games) {
+                if (game.gameID() == gameID) {
+                    String gameName = game.gameName();
+                    observedGame = game;
+                    System.out.println("You are observing " + gameName + " (ID: " + gameID + ")");
+                    break;
+                }
+            }
+
+            if (observedGame != null) {
+                printBoard(observedGame.game().getBoard());
+            } else {
+                System.out.println("Error: Game not found.");
+            }
+
         } catch (ResponseException e){
             System.out.println("Observe failed: " + e.getMessage());
         }
@@ -125,6 +162,22 @@ public class PostLoginUI {
         } catch (ResponseException e) {
             System.out.println("Logout failed: " + e.getMessage());
         }
+    }
+
+    public void printBoard(ChessBoard board) {
+        System.out.println("\n  a b c d e f g h");
+        System.out.println("  ----------------");
+
+        for (int row = 0; row < 8; row++) {
+            System.out.print((8 - row) + "| ");
+            for (int col = 0; col < 8; col++) {
+                ChessPosition position = new ChessPosition(row,col);
+                ChessPiece piece = board.getPiece(position);
+                System.out.print(piece + " ");
+            }
+            System.out.println("|");
+        }
+        System.out.println("  ----------------");
     }
 
 }

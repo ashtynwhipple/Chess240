@@ -12,8 +12,10 @@ public class LogoutService {
 
     public void logout(String token) throws StatusException {
 
-        if (token == null || authDAO.getUsername(token) == null){
-            throw new StatusException("not valid token or user does not exist", 401);
+        if (token == null){
+            throw new StatusException("not valid token", 401);
+        } else if (authDAO.getUsername(token) == null) {
+            throw new StatusException("user does not exist", 401);
         }
 
         authDAO.deleteAuth(token);

@@ -44,14 +44,9 @@ public class ServerFacade {
         this.makeRequest("PUT", path, joinData, null, authData.authToken());
     }
 
-    public void observe(int gameID, String authToken) throws ResponseException {
-        var path = String.format("/game/%d/observe", gameID);
-        this.makeRequest("POST", path, authToken, String.class);
-    }
-
     public void logout(String authToken) throws ResponseException {
         var path = "/session";
-        this.makeRequest("DELETE", path, authToken, null);
+        this.makeRequest("DELETE", path, authToken, Object.class, authToken);
     }
 
     public void clear() throws ResponseException {

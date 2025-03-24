@@ -35,10 +35,6 @@ public class GameHandler {
 
     public Object createGame(Request req, Response res) throws StatusException {
 
-//        if (!req.body().contains("\"gameName\":")) {
-//            throw new StatusException("Error: bad request", 400);
-//        }
-
         GameData gameData = new Gson().fromJson(req.body(), GameData.class);
 
         try {
@@ -47,10 +43,6 @@ public class GameHandler {
             res.status(200);
             int newGameID = serviceInstance.createGame(authToken, gameData);
             Gson gson = new Gson();
-//            return gson.toJson(Map.of("gameID", newGameID));
-//            List<Integer> myList = new ArrayList<>();
-//            myList.add(newGameID);
-//            return gson.toJson(myList);
             return gson.toJson(new GameResponse(newGameID));
         } catch (StatusException e) {
             res.status(e.getStatus());

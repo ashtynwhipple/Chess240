@@ -49,7 +49,7 @@ public class ServerFacadeTests {
     public void loginPositive() throws ResponseException {
         UserData user = new UserData("user", "pass", "email");
         facade.register(user);
-        Assertions.assertThrows(ResponseException.class, () -> facade.login(user));
+        Assertions.assertDoesNotThrow(() -> facade.login(user));
     }
 
     @Test
@@ -93,7 +93,7 @@ public class ServerFacadeTests {
         Assertions.assertDoesNotThrow(() -> facade.register(user));
         AuthData auth = Assertions.assertDoesNotThrow(() -> facade.login(user));
         GameResponse gameRes = Assertions.assertDoesNotThrow(() -> facade.createGame("NewGame", auth.authToken()));
-        JoinData joinData = new JoinData("NewGame", gameRes.gameID());
+        JoinData joinData = new JoinData("WHITE", gameRes.gameID());
         Assertions.assertDoesNotThrow(() -> facade.joinGame(joinData, auth));
     }
 
@@ -108,26 +108,11 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void observePositive() {
-        UserData user = new UserData("myUser", "myPass", "myEmail");
-        Assertions.assertDoesNotThrow(() -> facade.register(user));
-        Assertions.assertDoesNotThrow(() -> facade.login(user));
-        AuthData auth = Assertions.assertDoesNotThrow(() -> facade.login(user));
-        GameResponse gameRes = Assertions.assertDoesNotThrow(() -> facade.createGame("mygame", auth.authToken()));
-        Assertions.assertDoesNotThrow(() -> facade.observe(gameRes.gameID(), auth.authToken()));
-    }
-
-    @Test
-    public void observeNegative() {
-        int gameID = -1;
-        Assertions.assertThrows(ResponseException.class, () -> facade.observe(gameID, "invalidToken"));
-    }
-
-    @Test
     public void logoutPositive(){
         UserData user = new UserData("user", "pass", "email");
         Assertions.assertDoesNotThrow(() -> facade.register(user));
         AuthData auth = Assertions.assertDoesNotThrow(() -> facade.login(user));
+        Assertions.assertDoesNotThrow(() -> facade.createGame("NewGame", auth.authToken()));
         Assertions.assertDoesNotThrow(() -> facade.logout(auth.authToken()));
     }
 
