@@ -71,7 +71,7 @@ public class PostLoginUI {
         String gameName = scanner.nextLine();
 
         try {
-            GameResponse gameRes = server.createGame(gameName, authData.authToken());
+            server.createGame(gameName, authData.authToken());
             System.out.println("Created game " + gameName);
         } catch (ResponseException e){
             System.out.println("Could not create game: " + e.getMessage());
