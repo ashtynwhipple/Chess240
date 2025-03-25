@@ -112,42 +112,28 @@ public class PostLoginUI {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Color: ");
         String playerColor = scanner.nextLine();
-        System.out.print("Game ID: ");
-        int gameID = scanner.nextInt();
+        System.out.print("Game Number: ");
+        int gameNumber = scanner.nextInt();
 
         try {
+
+            if (gameNumber < 1 || gameNumber > games.size()) {
+                System.out.println("Invalid game number. Please enter a valid number from the list.");
+                return;
+            }
+
+            GameData joinedGame = games.get(gameNumber - 1);
+            int gameID = joinedGame.gameID();
+
             JoinData joinData = new JoinData(playerColor, gameID);
             server.joinGame(joinData, authData);
             System.out.println("Joined game:" + gameID);
 
-            GameData joinedGame = loopGames(gameID, "joined");
-
-            if (joinedGame != null){
-                printBoard(joinedGame.game().getBoard(), Objects.equals(playerColor, "WHITE"));
-            } else {
-                System.out.println("Error: Game to join could not be found.");
-            }
+            printBoard(joinedGame.game().getBoard(), Objects.equals(playerColor, "WHITE"));
 
         } catch (ResponseException e){
             System.out.println("Join game failed: " + e.getMessage());
         }
-    }
-
-    private GameData loopGames(int gameID, String messageForPrint){
-
-        GameData chosenGame;
-
-        for (GameData game : games) {
-            if (game.gameID() == gameID) {
-                String gameName = game.gameName();
-                chosenGame = game;
-                System.out.println("You " + messageForPrint + " " + gameName + " (ID: " + gameID + ")");
-                return chosenGame;
-            } else {
-                System.out.println("Error: Game to not found.");
-            }
-        }
-        return null;
     }
 
     private void observe(){
