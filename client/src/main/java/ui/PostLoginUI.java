@@ -144,8 +144,6 @@ public class PostLoginUI {
         System.out.print("Game Number: ");
         int gameNumber = scanner.nextInt();
 
-//            JoinData joinData = new JoinData(null, gameID);
-
         addGames();
 
         if (gameNumber < 1 || gameNumber > games.size()) {
