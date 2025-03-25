@@ -1,6 +1,7 @@
 package ui;
 
 import chess.ChessBoard;
+import chess.ChessGame;
 import chess.ChessPiece;
 import chess.ChessPosition;
 import exception.ResponseException;
@@ -81,8 +82,12 @@ public class PostLoginUI {
     private void listGames(){
         try {
             ListGameData games = server.listGames(authData);
+            int count = 1;
             for (GameData game : games.games()) {
-                System.out.println(game);
+                String whitePlayer = (game.whiteUsername() != null) ? game.whiteUsername() : "open";
+                String blackPlayer = (game.blackUsername() != null) ? game.blackUsername() : "open";
+                System.out.println(count + ". Game Name: " + game.gameName() + " | White User: " + whitePlayer + " | Black User: " + blackPlayer);
+                count++;
             }
         } catch (ResponseException e){
             System.out.println("listGames failed: " + e.getMessage());
@@ -118,7 +123,7 @@ public class PostLoginUI {
             GameData joinedGame = loopGames(gameID, "joined");
 
             if (joinedGame != null){
-                printBoard(joinedGame.game().getBoard());
+                printBoard(joinedGame.game().getBoard(), Objects.equals(playerColor, "WHITE"));
             } else {
                 System.out.println("Error: Game to join could not be found.");
             }
@@ -150,26 +155,26 @@ public class PostLoginUI {
 
         listGames();
 
-        try {
-            System.out.print("Game ID: ");
-            int gameID = scanner.nextInt();
+        System.out.print("Game Number: ");
+        int gameNumber = scanner.nextInt();
 
-            JoinData joinData = new JoinData(null, gameID);
-            server.joinGame(joinData, authData);
+//            JoinData joinData = new JoinData(null, gameID);
 
-            addGames();
+        addGames();
 
-            GameData observedGame = loopGames(gameID, "are observing");
-
-            if (observedGame != null) {
-                printBoard(observedGame.game().getBoard());
-            } else {
-                System.out.println("Error: Game to observe could not found.");
-            }
-
-        } catch (ResponseException e){
-            System.out.println("Observe failed: " + e.getMessage());
+        if (gameNumber < 1 || gameNumber > games.size()) {
+            System.out.println("Invalid game number. Please enter a valid number from the list.");
+            return;
         }
+
+        GameData observedGame = games.get(gameNumber - 1);
+
+        if (observedGame != null) {
+            printBoard(observedGame.game().getBoard(), true); //is it true
+        } else {
+            System.out.println("Error: Game to observe could not found.");
+        }
+
     }
 
     private void logout() {
@@ -184,16 +189,41 @@ public class PostLoginUI {
         }
     }
 
-    public void printBoard(ChessBoard board) {
+    public void printBoard(ChessBoard board, boolean whitePerspective) {
+        String reset = "\u001B[0m";
+        String darkSquare = "\u001B[47m";
+        String lightSquare = "\u001B[40m";
+        String whitePieceColor = "\u001B[31m";
+        String blackPieceColor = "\u001B[34m";
+
         System.out.println("\n  a b c d e f g h");
         System.out.println("  ----------------");
 
         for (int row = 0; row < 8; row++) {
-            System.out.print((8 - row) + "| ");
-            for (int col = 0; col < 8; col++) {
-                ChessPosition position = new ChessPosition(row,col);
+            int printRow = whitePerspective ? (8 - row) : (row + 1);
+            System.out.print(printRow + "| ");
+
+            for (int col = 1; col < 9; col++) {
+                boolean isDark = (row + col) % 2 != 0;
+                String squareColor = isDark ? darkSquare : lightSquare;
+
+                ChessPosition position = new ChessPosition(whitePerspective ? (8 - row) : row, col);
                 ChessPiece piece = board.getPiece(position);
-                System.out.print(piece + " ");
+
+                String pieceSymbol = " ";
+                if (piece != null) {
+                    switch (piece.getPieceType()) {
+                        case PAWN -> pieceSymbol = "P";
+                        case ROOK -> pieceSymbol = "R";
+                        case KNIGHT -> pieceSymbol = "N";
+                        case BISHOP -> pieceSymbol = "B";
+                        case QUEEN -> pieceSymbol = "Q";
+                        case KING -> pieceSymbol = "K";
+                    }
+                }
+
+                String pieceColor = (piece != null && piece.getTeamColor() == ChessGame.TeamColor.WHITE) ? whitePieceColor : blackPieceColor;
+                System.out.print(squareColor + pieceColor + pieceSymbol + reset + " ");
             }
             System.out.println("|");
         }
@@ -201,3 +231,5 @@ public class PostLoginUI {
     }
 
 }
+
+

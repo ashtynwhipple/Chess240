@@ -55,11 +55,8 @@ public class PreLoginUI {
         System.out.print("Password: ");
         String password = scanner.nextLine();
 
-        System.out.print("Email: ");
-        String email = scanner.nextLine();
-
         try {
-            UserData user = new UserData(username, password, email);
+            UserData user = new UserData(username, password, null);
 
             AuthData authData = server.login(user);
             System.out.println("Login successful!");
@@ -88,6 +85,9 @@ public class PreLoginUI {
             UserData user = new UserData(username, password, email);
             AuthData authData = server.register(user);
             System.out.println("Register successful!");
+
+            PostLoginUI postLoginUI = new PostLoginUI(authData, server);
+            postLoginUI.run();
 
         } catch (ResponseException e) {
             System.out.println("Register failed: " + e.getMessage());
