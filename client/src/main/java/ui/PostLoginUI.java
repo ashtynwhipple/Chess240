@@ -72,7 +72,7 @@ public class PostLoginUI {
 
         try {
             GameResponse gameRes = server.createGame(gameName, authData.authToken());
-            System.out.println("Created game " + gameName + "with gameID: " + gameRes.gameID());
+            System.out.println("Created game " + gameName);
         } catch (ResponseException e){
             System.out.println("Could not create game: " + e.getMessage());
         }
@@ -112,8 +112,17 @@ public class PostLoginUI {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Color: ");
         String playerColor = scanner.nextLine().trim().toUpperCase();
+
         System.out.print("Game Number: ");
-        int gameNumber = scanner.nextInt();
+        String gameNumberInput = scanner.nextLine().trim();
+        int gameNumber;
+
+        try {
+            gameNumber = Integer.parseInt(gameNumberInput);
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input. Please enter a valid game number.");
+            return;
+        }
 
         try {
 
@@ -154,7 +163,7 @@ public class PostLoginUI {
         GameData observedGame = games.get(gameNumber - 1);
 
         if (observedGame != null) {
-            printBoard(observedGame.game().getBoard(), true); //is it true
+            printBoard(observedGame.game().getBoard(), true);
         } else {
             System.out.println("Error: Game to observe could not found.");
         }
@@ -180,18 +189,19 @@ public class PostLoginUI {
         String whitePieceColor = "\u001B[31m";
         String blackPieceColor = "\u001B[34m";
 
-        System.out.println("\n  a b c d e f g h");
-        System.out.println("  ----------------");
+        System.out.println("\n   a   b   c   d   e   f   g   h ");
+        System.out.println("  ---------------------------------");
 
         for (int row = 0; row < 8; row++) {
             int printRow = whitePerspective ? (8 - row) : (row + 1);
             System.out.print(printRow + "| ");
 
             for (int col = 1; col < 9; col++) {
+                int printCol = whitePerspective ? (col) : (9 - col);
                 boolean isDark = (row + col) % 2 != 0;
                 String squareColor = isDark ? darkSquare : lightSquare;
 
-                ChessPosition position = new ChessPosition(whitePerspective ? (8 - row) : (1 + row), col);
+                ChessPosition position = new ChessPosition(whitePerspective ? (8 - row) : (1 + row), printCol);
                 ChessPiece piece = board.getPiece(position);
 
                 String pieceSymbol = " ";
@@ -207,11 +217,11 @@ public class PostLoginUI {
                 }
 
                 String pieceColor = (piece != null && piece.getTeamColor() == ChessGame.TeamColor.WHITE) ? whitePieceColor : blackPieceColor;
-                System.out.print(squareColor + pieceColor + pieceSymbol + reset + " ");
+                System.out.print(squareColor + pieceColor + " " + pieceSymbol + " " + reset + " ");
             }
             System.out.println("|");
         }
-        System.out.println("  ----------------");
+        System.out.println("  ---------------------------------");
     }
 
 }

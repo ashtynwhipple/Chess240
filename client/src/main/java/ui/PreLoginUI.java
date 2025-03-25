@@ -75,8 +75,18 @@ public class PreLoginUI {
         System.out.println("Username: ");
         String username = scanner.nextLine();
 
+        if (username.isEmpty()){
+            System.out.println("Register failed: username cannot be null");
+            return;
+        }
+
         System.out.println("Password: ");
         String password = scanner.nextLine();
+
+        if (password.isEmpty()){
+            System.out.println("Register failed: password cannot be null");
+            return;
+        }
 
         System.out.println("Email: ");
         String email = scanner.nextLine();
