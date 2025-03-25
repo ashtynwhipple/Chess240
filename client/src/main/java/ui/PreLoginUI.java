@@ -91,6 +91,11 @@ public class PreLoginUI {
         System.out.println("Email: ");
         String email = scanner.nextLine();
 
+        if (email.isEmpty()){
+            System.out.println("Register failed: email cannot be null");
+            return;
+        }
+
         try {
             UserData user = new UserData(username, password, email);
             AuthData authData = server.register(user);

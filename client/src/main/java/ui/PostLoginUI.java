@@ -189,7 +189,12 @@ public class PostLoginUI {
         String whitePieceColor = "\u001B[31m";
         String blackPieceColor = "\u001B[34m";
 
-        System.out.println("\n   a   b   c   d   e   f   g   h ");
+        if (whitePerspective){
+            System.out.println("\n   a   b   c   d   e   f   g   h ");
+        } else{
+            System.out.println("\n   h   g   f   e   d   c   b   a ");
+        }
+
         System.out.println("  ---------------------------------");
 
         for (int row = 0; row < 8; row++) {
