@@ -111,7 +111,7 @@ public class PostLoginUI {
         listGames();
         Scanner scanner = new Scanner(System.in);
         System.out.print("Color: ");
-        String playerColor = scanner.nextLine();
+        String playerColor = scanner.nextLine().trim().toUpperCase();
         System.out.print("Game Number: ");
         int gameNumber = scanner.nextInt();
 
@@ -129,7 +129,7 @@ public class PostLoginUI {
             server.joinGame(joinData, authData);
             System.out.println("Joined game:" + gameID);
 
-            printBoard(joinedGame.game().getBoard(), Objects.equals(playerColor, "WHITE"));
+            printBoard(joinedGame.game().getBoard(), "WHITE".equals(playerColor));
 
         } catch (ResponseException e){
             System.out.println("Join game failed: " + e.getMessage());
@@ -191,7 +191,7 @@ public class PostLoginUI {
                 boolean isDark = (row + col) % 2 != 0;
                 String squareColor = isDark ? darkSquare : lightSquare;
 
-                ChessPosition position = new ChessPosition(whitePerspective ? (8 - row) : row, col);
+                ChessPosition position = new ChessPosition(whitePerspective ? (8 - row) : (1 + row), col);
                 ChessPiece piece = board.getPiece(position);
 
                 String pieceSymbol = " ";
