@@ -11,15 +11,16 @@ public class GamePlayUI extends BoardAccess {
     private final Scanner scanner;
     private final ServerFacade server;
     private final AuthData authData;
-    private final int gameID;
+    private final int gameNumber;
     private final String role; // "WHITE", "BLACK", or "OBSERVER"
     private boolean running;
 
-    public GamePlayUI(AuthData authData, ServerFacade server, int gameID, String role) {
+    public GamePlayUI(AuthData authData, ServerFacade server, int gameNumber, String role) {
+        super(authData, server);
         this.scanner = new Scanner(System.in);
         this.server = server;
         this.authData = authData;
-        this.gameID = gameID;
+        this.gameNumber = gameNumber;
         this.role = role;
         this.running = true;
     }
@@ -62,13 +63,8 @@ public class GamePlayUI extends BoardAccess {
     }
 
     private void redrawBoard() {
-        try {
-            GameData gameData = server.loadGame(authData, gameID);
-            boolean whitePerspective = role.equals("WHITE") || role.equals("OBSERVER");
-            printBoard(gameData.game().getBoard(), whitePerspective);
-        } catch (ResponseException e) {
-            System.out.println("Failed to redraw board: " + e.getMessage());
-        }
+        boolean whitePerspective = role.equals("WHITE") || role.equals("OBSERVER");
+        printBoard(games.get(gameNumber).game().getBoard(), whitePerspective);
     }
 
     private void leaveGame() {
@@ -88,7 +84,8 @@ public class GamePlayUI extends BoardAccess {
             ChessPosition end = new ChessPosition(8 - (to.charAt(1) - '1'), to.charAt(0) - 'a' + 1);
             ChessMove move = new ChessMove(start, end, null); //how do I deal with promotion pieces here?
 
-            server.makeMove(authData, gameID, move);
+            games.get(gameNumber).game().makeMove(move);
+
             System.out.println("Move made.");
             redrawBoard();
         } catch (Exception e) {
@@ -101,7 +98,7 @@ public class GamePlayUI extends BoardAccess {
         String response = scanner.nextLine().trim().toLowerCase();
         if (response.equals("yes")) {
             try {
-                server.resign(authData, gameID);
+                server.resign(authData, gameNumber);
                 System.out.println("You have resigned.");
                 System.out.println("Type 'help' for more options");
             } catch (ResponseException e) {
@@ -116,8 +113,8 @@ public class GamePlayUI extends BoardAccess {
             String pos = scanner.nextLine();
             ChessPosition position = new ChessPosition(8 - (pos.charAt(1) - '1'), pos.charAt(0) - 'a' + 1);
 
-            List<ChessMove> legalMoves = server.getLegalMoves(authData, gameID, position);
-            GameData gameData = server.loadGame(authData, gameID);
+            GameData gameData = this.games.get(gameNumber);
+            Collection<ChessMove> legalMoves = gameData.game().validMoves(position);
 
             Set<ChessPosition> highlights = new HashSet<>();
             for (ChessMove move : legalMoves) {

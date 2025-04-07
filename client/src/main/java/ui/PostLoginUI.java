@@ -113,7 +113,7 @@ public class PostLoginUI extends BoardAccess {
 
             JoinData joinData = new JoinData(playerColor, gameID);
             server.joinGame(joinData, authData);
-            System.out.println("Joined game:" + gameID);
+            System.out.println("Joined game:" + games.get(gameNumber).gameName());
 
             this.printBoard(joinedGame.game().getBoard(), "WHITE".equals(playerColor));
 
