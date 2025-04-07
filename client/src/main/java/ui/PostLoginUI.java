@@ -5,18 +5,12 @@ import server.ServerFacade;
 
 import java.util.*;
 
-public class PostLoginUI extends DrawBoard{
+public class PostLoginUI extends BoardAccess {
     Scanner scanner;
-    ServerFacade server;
-    AuthData authData;
-
-    List<GameData> games;
-
 
     public PostLoginUI(AuthData authData, ServerFacade server) {
+        super(authData, server);
         this.scanner = new Scanner(System.in);
-        this.server = server;
-        this.authData = authData;
     }
 
     public void run() {
@@ -89,20 +83,8 @@ public class PostLoginUI extends DrawBoard{
         }
     }
 
-    private void addGames() {
-        try {
-            games = new ArrayList<>();
-            ListGameData gameList = server.listGames(authData);
-
-            games.addAll(gameList.games());
-
-        }catch (ResponseException e) {
-            System.out.println("listGames failed: " + e.getMessage());
-        }
-    }
-
     private void join(){
-        addGames();
+        this.addGames();
         listGames();
         Scanner scanner = new Scanner(System.in);
         System.out.print("Color: ");
@@ -133,7 +115,7 @@ public class PostLoginUI extends DrawBoard{
             server.joinGame(joinData, authData);
             System.out.println("Joined game:" + gameID);
 
-            DrawBoard.printBoard(joinedGame.game().getBoard(), "WHITE".equals(playerColor));
+            this.printBoard(joinedGame.game().getBoard(), "WHITE".equals(playerColor));
 
         } catch (ResponseException e){
             System.out.println("Join game failed: " + e.getMessage());
@@ -158,7 +140,7 @@ public class PostLoginUI extends DrawBoard{
         GameData observedGame = games.get(gameNumber - 1);
 
         if (observedGame != null) {
-            DrawBoard.printBoard(observedGame.game().getBoard(), true);
+            this.printBoard(observedGame.game().getBoard(), true);
         } else {
             System.out.println("Error: Game to observe could not found.");
         }

@@ -7,7 +7,7 @@ import server.ServerFacade;
 
 import java.util.*;
 
-public class GamePlayUI extends DrawBoard{
+public class GamePlayUI extends BoardAccess {
     private final Scanner scanner;
     private final ServerFacade server;
     private final AuthData authData;
@@ -131,10 +131,6 @@ public class GamePlayUI extends DrawBoard{
         } catch (Exception e) {
             System.out.println("Could not highlight moves: " + e.getMessage());
         }
-    }
-
-    private void printBoard(ChessBoard board, boolean whitePerspective) {
-        printBoard(board, whitePerspective, Collections.emptySet());
     }
 
 }

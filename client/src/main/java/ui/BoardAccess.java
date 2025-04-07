@@ -1,16 +1,37 @@
 package ui;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
+import exception.ResponseException;
+import model.*;
 
-import java.util.Set;
+import server.ServerFacade;
 
-public class DrawBoard {
+import java.util.*;
 
-    public DrawBoard(){
+public class BoardAccess {
 
+    protected List<GameData> games;
+    protected ServerFacade server;
+    protected AuthData authData;
+
+    public BoardAccess(AuthData authData, ServerFacade server) {
+        this.authData = authData;
+        this.server = server;
+        this.games = new ArrayList<>();
+    }
+
+    public void addGames() {
+        try {
+            ListGameData gameList = server.listGames(authData);
+            games.clear();  // Clear old games first
+            games.addAll(gameList.games());
+        } catch (ResponseException e) {
+            System.out.println("listGames failed: " + e.getMessage());
+        }
+    }
+
+    public void printBoard(ChessBoard board, boolean whitePerspective) {
+        printBoard(board, whitePerspective, Set.of());
     }
 
     public void printBoard(ChessBoard board, boolean whitePerspective, Set<ChessPosition> highlights) {
