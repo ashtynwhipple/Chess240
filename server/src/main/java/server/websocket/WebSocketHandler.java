@@ -1,17 +1,18 @@
 package server.websocket;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
-import dataaccess.DataAccess;
 import exception.ResponseException;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
-import websocket.messages.Action;
+import websocket.commands.Connect;
+import websocket.commands.UserGameCommand;
+import websocket.messages.LoadGame;
 import websocket.messages.Notification;
+import websocket.messages.ServerMessage;
 
 import java.io.IOException;
-import java.util.Timer;
-
 
 @WebSocket
 public class WebSocketHandler {
@@ -20,18 +21,19 @@ public class WebSocketHandler {
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws IOException {
-        Action action = new Gson().fromJson(message, Action.class);
-        switch (action.type()) {
-            case ENTER -> enter(action.visitorName(), session);
-            case EXIT -> exit(action.visitorName());
+        UserGameCommand action = new Gson().fromJson(message, UserGameCommand.class);
+        switch (action.getCommandType()) {
+            case CONNECT -> connect(session, new Gson().fromJson(message, Connect.class));
         }
     }
 
-    private void enter(String visitorName, Session session) throws IOException {
-        connections.add(visitorName, session);
+    private void connect(Session session, Connect action) throws IOException {
+        connections.add(gameID, visitorName, session);
         var message = String.format("%s is in the shop", visitorName);
-        var notification = new Notification(Notification.Type.ARRIVAL, message);
+        var notification = new Notification(message);
         connections.broadcast(visitorName, notification);
+        var loadNotif = new LoadGame(new ChessGame());
+        connections.send(visitorName, loadNotif); // send to only visitor name
     }
 
     private void exit(String visitorName) throws IOException {

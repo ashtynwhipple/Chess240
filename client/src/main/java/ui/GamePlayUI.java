@@ -1,13 +1,20 @@
 package ui;
 
 import chess.*;
+import com.google.gson.Gson;
 import exception.ResponseException;
 import model.*;
+import server.NotificationHandler;
 import server.ServerFacade;
+import websocket.commands.Connect;
+import websocket.commands.UserGameCommand;
+import websocket.messages.LoadGame;
+import websocket.messages.Notification;
+import websocket.messages.ServerMessage;
 
 import java.util.*;
 
-public class GamePlayUI extends BoardAccess {
+public class GamePlayUI extends BoardAccess implements NotificationHandler {
     private final Scanner scanner;
     private final ServerFacade server;
     private final AuthData authData;
@@ -130,4 +137,26 @@ public class GamePlayUI extends BoardAccess {
         }
     }
 
+    @Override
+    public void notify(String message) {
+        ServerMessage notification = new Gson().fromJson(message, ServerMessage.class);
+        switch (notification.getServerMessageType()) {
+            case NOTIFICATION -> printMessage(new Gson().fromJson(message, Notification.class));
+            case LOAD_GAME -> boardHandle(new Gson().fromJson(message, LoadGame.class));
+            case ERROR -> errorHandle(new Gson().fromJson(message, Error.class));
+        }
+    }
+
+    public void errorHandle(Error error){
+        System.out.println(error.getMessage());
+    }
+
+    public void boardHandle(LoadGame loadGame){
+        boolean whitePerspective = role.equals("WHITE") || role.equals("OBSERVER");
+        printBoard(loadGame.getGame().getBoard(), whitePerspective);
+    }
+
+    public void printMessage(Notification notification){
+        System.out.println(notification.getMessage());
+    }
 }

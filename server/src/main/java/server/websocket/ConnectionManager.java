@@ -1,39 +1,73 @@
 package server.websocket;
 
 import org.eclipse.jetty.websocket.api.Session;
-import webSocketMessages.Notification;
+import websocket.messages.Notification;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ConnectionManager {
-    public final ConcurrentHashMap<String, Connection> connections = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Integer, ConcurrentHashMap<String, Connection>> gameConnections = new ConcurrentHashMap<>();
 
-    public void add(String visitorName, Session session) {
+    // Add a connection to a specific game
+    public void add(int gameID, String visitorName, Session session) {
+        gameConnections.putIfAbsent(gameID, new ConcurrentHashMap<>());
         var connection = new Connection(visitorName, session);
-        connections.put(visitorName, connection);
+        gameConnections.get(gameID).put(visitorName, connection);
     }
 
-    public void remove(String visitorName) {
-        connections.remove(visitorName);
+    public void remove(int gameID, String visitorName) {
+        var connections = gameConnections.get(gameID);
+        if (connections != null) {
+            connections.remove(visitorName);
+            if (connections.isEmpty()) {
+                gameConnections.remove(gameID);
+            }
+        }
     }
 
-    public void broadcast(String excludeVisitorName, Notification notification) throws IOException {
-        var removeList = new ArrayList<Connection>();
-        for (var c : connections.values()) {
-            if (c.session.isOpen()) {
-                if (!c.visitorName.equals(excludeVisitorName)) {
-                    c.send(notification.toString());
+    public void broadcast(int gameID, String excludeVisitorName, Notification notification) throws IOException {
+        var connections = gameConnections.get(gameID);
+        if (connections == null) return;
+
+        var removeList = new ArrayList<String>();
+
+        for (var entry : connections.entrySet()) {
+            var name = entry.getKey();
+            var conn = entry.getValue();
+
+            if (conn.session.isOpen()) {
+                if (!name.equals(excludeVisitorName)) {
+                    conn.send(notification.toString());
                 }
             } else {
-                removeList.add(c);
+                removeList.add(name);
             }
         }
 
-        // Clean up any connections that were left open.
-        for (var c : removeList) {
-            connections.remove(c.visitorName);
+        for (var name : removeList) {
+            connections.remove(name);
+        }
+
+
+//    public void send(String message){
+//        connections.get()
+//    }
+    }
+    public void notifyPlayer(int gameID, String visitorName, Notification notification) throws IOException {
+        var connections = gameConnections.get(gameID);
+        if (connections == null) return;
+
+        var connection = connections.get(visitorName);
+        if (connection != null && connection.session.isOpen()) {
+            connection.send(notification.toString());
+        } else if (connection != null) {
+            connections.remove(visitorName);
+            if (connections.isEmpty()) {
+                gameConnections.remove(gameID); // Optional cleanup
+            }
         }
     }
+
 }

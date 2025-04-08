@@ -1,7 +1,9 @@
 package ui;
+import chess.ChessGame;
 import exception.ResponseException;
 import model.*;
 import server.ServerFacade;
+import server.WebSocketFacade;
 
 import java.util.*;
 
@@ -115,7 +117,17 @@ public class PostLoginUI extends BoardAccess {
             server.joinGame(joinData, authData);
             System.out.println("Joined game:" + games.get(gameNumber).gameName());
 
-            this.printBoard(joinedGame.game().getBoard(), "WHITE".equals(playerColor));
+            WebSocketFacade facade = new WebSocketFacade(server.getServerUrl(), null);
+
+            if (Objects.equals(joinData.playerColor(), "WHITE")){
+                facade.connect(authData.authToken(), gameID, ChessGame.TeamColor.WHITE);
+                GamePlayUI gamePlayUI = new GamePlayUI(authData, server, gameNumber, "WHITE");
+                gamePlayUI.run();
+            } else {
+                facade.connect(authData.authToken(), gameID, ChessGame.TeamColor.WHITE);
+                GamePlayUI gamePlayUI = new GamePlayUI(authData, server, gameNumber, "BLACK");
+                gamePlayUI.run();
+            }
 
         } catch (ResponseException e){
             System.out.println("Join game failed: " + e.getMessage());
