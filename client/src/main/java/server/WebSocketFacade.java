@@ -1,20 +1,19 @@
 package server;
 
 import chess.ChessGame;
+import chess.ChessMove;
 import com.google.gson.Gson;
-import model.AuthData;
 import exception.ResponseException;
 import websocket.commands.Connect;
-import websocket.commands.UserGameCommand;
-import websocket.messages.Notification;
-import websocket.messages.ServerMessage;
+import websocket.commands.Leave;
+import websocket.commands.MakeMove;
+import websocket.commands.Resign;
 
 import javax.websocket.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-//need to extend Endpoint for websocket to work properly
 public class WebSocketFacade extends Endpoint {
 
     Session session;
@@ -52,6 +51,33 @@ public class WebSocketFacade extends Endpoint {
             Connect gameCommand = new Connect(authToken, gameID, color);
             this.session.getBasicRemote().sendText(new Gson().toJson(gameCommand));
         } catch (IOException ex) {
+            throw new ResponseException(500, ex.getMessage());
+        }
+    }
+
+    public void leave(String authToken, int gameID) throws ResponseException {
+        try{
+            Leave gameCommand = new Leave(authToken, gameID);
+            this.session.getBasicRemote().sendText(new Gson().toJson(gameCommand));
+        }catch (IOException ex) {
+            throw new ResponseException(500, ex.getMessage());
+        }
+    }
+
+    public void resign(String authToken, int gameID) throws ResponseException {
+        try{
+            Resign gameCommand = new Resign(authToken, gameID);
+            this.session.getBasicRemote().sendText(new Gson().toJson(gameCommand));
+        }catch (IOException ex) {
+            throw new ResponseException(500, ex.getMessage());
+        }
+    }
+
+    public void makeMove(String authToken, int gameID, ChessMove move) throws ResponseException {
+        try{
+            MakeMove gameCommand = new MakeMove(authToken, gameID, move);
+            this.session.getBasicRemote().sendText(new Gson().toJson(gameCommand));
+        }catch (IOException ex) {
             throw new ResponseException(500, ex.getMessage());
         }
     }

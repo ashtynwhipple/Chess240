@@ -6,8 +6,7 @@ import exception.ResponseException;
 import model.*;
 import server.NotificationHandler;
 import server.ServerFacade;
-import websocket.commands.Connect;
-import websocket.commands.UserGameCommand;
+import server.WebSocketFacade;
 import websocket.messages.LoadGame;
 import websocket.messages.Notification;
 import websocket.messages.ServerMessage;
@@ -76,6 +75,12 @@ public class GamePlayUI extends BoardAccess implements NotificationHandler {
 
     private void leaveGame() {
         System.out.println("Leaving game...");
+        try{
+            WebSocketFacade facade = new WebSocketFacade(server.getServerUrl(), null);
+            facade.leave(authData.authToken(), gameNumber);
+        } catch (ResponseException e) {
+            System.out.println("Leave game failed: " + e.getMessage());
+        }
         running = false;
         new PostLoginUI(authData, server).run();
     }
@@ -93,6 +98,13 @@ public class GamePlayUI extends BoardAccess implements NotificationHandler {
 
             games.get(gameNumber).game().makeMove(move);
 
+            try {
+                WebSocketFacade facade = new WebSocketFacade(server.getServerUrl(), null);
+                facade.makeMove(authData.authToken(), gameNumber, move);
+            } catch (ResponseException e) {
+                System.out.println("Notify move failed: " + e.getMessage());
+            }
+
             System.out.println("Move made.");
             redrawBoard();
         } catch (Exception e) {
@@ -105,7 +117,8 @@ public class GamePlayUI extends BoardAccess implements NotificationHandler {
         String response = scanner.nextLine().trim().toLowerCase();
         if (response.equals("yes")) {
             try {
-                server.resign(authData, gameNumber);
+                WebSocketFacade facade = new WebSocketFacade(server.getServerUrl(), null);
+                facade.resign(authData.authToken(), gameNumber);
                 System.out.println("You have resigned.");
                 System.out.println("Type 'help' for more options");
             } catch (ResponseException e) {

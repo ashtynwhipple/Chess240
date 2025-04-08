@@ -1,6 +1,7 @@
 package server.websocket;
 
 import org.eclipse.jetty.websocket.api.Session;
+import websocket.messages.LoadGame;
 import websocket.messages.Notification;
 
 import java.io.IOException;
@@ -49,13 +50,9 @@ public class ConnectionManager {
         for (var name : removeList) {
             connections.remove(name);
         }
-
-
-//    public void send(String message){
-//        connections.get()
-//    }
     }
-    public void notifyPlayer(int gameID, String visitorName, Notification notification) throws IOException {
+
+    public void notifyPlayer(int gameID, String visitorName, LoadGame notification) throws IOException {
         var connections = gameConnections.get(gameID);
         if (connections == null) return;
 

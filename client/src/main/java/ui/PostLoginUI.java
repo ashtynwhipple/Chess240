@@ -151,12 +151,19 @@ public class PostLoginUI extends BoardAccess {
 
         GameData observedGame = games.get(gameNumber - 1);
 
-        if (observedGame != null) {
-            this.printBoard(observedGame.game().getBoard(), true);
-        } else {
-            System.out.println("Error: Game to observe could not found.");
-        }
+        try{
+            WebSocketFacade facade = new WebSocketFacade(server.getServerUrl(), null);
 
+            if (observedGame != null) {
+                facade.connect(authData.authToken(), gameNumber, null);
+                GamePlayUI gamePlayUI = new GamePlayUI(authData, server, gameNumber, "OBSERVER");
+                gamePlayUI.run();
+            } else {
+                System.out.println("Error: Game to observe could not found.");
+            }
+        } catch (ResponseException e){
+            System.out.println("Observe game failed: " + e.getMessage());
+        }
     }
 
     private void logout() {
