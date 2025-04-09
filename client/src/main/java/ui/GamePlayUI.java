@@ -76,7 +76,7 @@ public class GamePlayUI extends BoardAccess implements NotificationHandler {
     private void leaveGame() {
         System.out.println("Leaving game...");
         try{
-            WebSocketFacade facade = new WebSocketFacade(server.getServerUrl(), null);
+            WebSocketFacade facade = new WebSocketFacade(server.getServerUrl(), this);
             facade.leave(authData.authToken(), gameNumber);
         } catch (ResponseException e) {
             System.out.println("Leave game failed: " + e.getMessage());
@@ -96,10 +96,10 @@ public class GamePlayUI extends BoardAccess implements NotificationHandler {
             ChessPosition end = new ChessPosition(8 - (to.charAt(1) - '1'), to.charAt(0) - 'a' + 1);
             ChessMove move = new ChessMove(start, end, null); //how do I deal with promotion pieces here?
 
-            games.get(gameNumber).game().makeMove(move);
+//            games.get(gameNumber).game().makeMove(move);
 
             try {
-                WebSocketFacade facade = new WebSocketFacade(server.getServerUrl(), null);
+                WebSocketFacade facade = new WebSocketFacade(server.getServerUrl(), this);
                 facade.makeMove(authData.authToken(), gameNumber, move);
             } catch (ResponseException e) {
                 System.out.println("Notify move failed: " + e.getMessage());
@@ -117,7 +117,7 @@ public class GamePlayUI extends BoardAccess implements NotificationHandler {
         String response = scanner.nextLine().trim().toLowerCase();
         if (response.equals("yes")) {
             try {
-                WebSocketFacade facade = new WebSocketFacade(server.getServerUrl(), null);
+                WebSocketFacade facade = new WebSocketFacade(server.getServerUrl(), this);
                 facade.resign(authData.authToken(), gameNumber);
                 System.out.println("You have resigned.");
                 System.out.println("Type 'help' for more options");

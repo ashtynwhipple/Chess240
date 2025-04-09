@@ -2,12 +2,13 @@ package ui;
 import chess.ChessGame;
 import exception.ResponseException;
 import model.*;
+import server.NotificationHandler;
 import server.ServerFacade;
 import server.WebSocketFacade;
 
 import java.util.*;
 
-public class PostLoginUI extends BoardAccess {
+public class PostLoginUI extends BoardAccess implements NotificationHandler {
     Scanner scanner;
 
     public PostLoginUI(AuthData authData, ServerFacade server) {
@@ -117,9 +118,7 @@ public class PostLoginUI extends BoardAccess {
             server.joinGame(joinData, authData);
             System.out.println("Joined game:" + games.get(gameNumber).gameName());
 
-            WebSocketFacade facade = new WebSocketFacade(server.getServerUrl(), notification -> {
-                System.out.println("Notification: " + notification);
-            });
+            WebSocketFacade facade = new WebSocketFacade(server.getServerUrl(), this);
 
             if (Objects.equals(joinData.playerColor(), "WHITE")){
                 facade.connect(authData.authToken(), gameID, ChessGame.TeamColor.WHITE);
@@ -154,7 +153,7 @@ public class PostLoginUI extends BoardAccess {
         GameData observedGame = games.get(gameNumber - 1);
 
         try{
-            WebSocketFacade facade = new WebSocketFacade(server.getServerUrl(), null);
+            WebSocketFacade facade = new WebSocketFacade(server.getServerUrl(), this);
 
             if (observedGame != null) {
                 facade.connect(authData.authToken(), gameNumber, null);
@@ -180,6 +179,10 @@ public class PostLoginUI extends BoardAccess {
         }
     }
 
+    @Override
+    public void notify(String notification) {
+
+    }
 }
 
 

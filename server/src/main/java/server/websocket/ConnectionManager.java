@@ -62,7 +62,7 @@ public class ConnectionManager {
         } else if (connection != null) {
             connections.remove(visitorName);
             if (connections.isEmpty()) {
-                gameConnections.remove(gameID); // Optional cleanup
+                gameConnections.remove(gameID);
             }
         }
     }
