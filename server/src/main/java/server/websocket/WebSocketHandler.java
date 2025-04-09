@@ -1,7 +1,6 @@
 package server.websocket;
 
 import chess.ChessGame;
-import chess.ChessMove;
 import com.google.gson.Gson;
 import model.AuthData;
 import org.eclipse.jetty.websocket.api.Session;
@@ -10,8 +9,6 @@ import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import websocket.commands.*;
 import websocket.messages.LoadGame;
 import websocket.messages.Notification;
-import server.Server;
-import service.userservice.*;
 import dataaccess.AuthSqlDataAccess;
 
 import java.io.IOException;
@@ -45,9 +42,7 @@ public class WebSocketHandler {
 
     private void leave(Session session, Leave action) throws IOException {
         int gameID = action.getGameID();
-        AuthSqlDataAccess authSql = new AuthSqlDataAccess();
-        AuthData auth = authSql.getUsername(action.getAuthToken());
-        String visitorName = auth.username();
+        String visitorName = getUsernameFromSQL(action.getAuthToken());
         connections.remove(gameID, visitorName);
         var message = String.format("%s left the game", visitorName);
         var notification = new Notification(message);
@@ -55,9 +50,7 @@ public class WebSocketHandler {
     }
 
     private void makeMove(Session session, MakeMove action) throws IOException {
-        AuthSqlDataAccess authSql = new AuthSqlDataAccess();
-        AuthData auth = authSql.getUsername(action.getAuthToken());
-        String visitorName = auth.username();
+        String visitorName = getUsernameFromSQL(action.getAuthToken());
         int gameID = action.getGameID();
         var message = String.format("%s made a move", visitorName);
         var notification = new Notification(message);
@@ -65,13 +58,17 @@ public class WebSocketHandler {
     }
 
     private void resign(Session session, Resign action) throws IOException {
-        AuthSqlDataAccess authSql = new AuthSqlDataAccess();
-        AuthData auth = authSql.getUsername(action.getAuthToken());
-        String visitorName = auth.username();
+        String visitorName = getUsernameFromSQL(action.getAuthToken());
         int gameID = action.getGameID();
         var message = String.format("%s resigned", visitorName);
         var notification = new Notification(message);
         connections.broadcast(gameID, visitorName, notification);
+    }
+
+    private String getUsernameFromSQL(String authToken){
+        AuthSqlDataAccess authSql = new AuthSqlDataAccess();
+        AuthData auth = authSql.getUsername(authToken);
+        return auth.username();
     }
 
 }

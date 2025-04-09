@@ -9,6 +9,7 @@ import server.ServerFacade;
 import server.WebSocketFacade;
 import websocket.messages.LoadGame;
 import websocket.messages.Notification;
+import websocket.messages.Error;
 import websocket.messages.ServerMessage;
 
 import java.util.*;
@@ -161,7 +162,7 @@ public class GamePlayUI extends BoardAccess implements NotificationHandler {
     }
 
     public void errorHandle(Error error){
-        System.out.println(error.getMessage());
+        System.out.println(error.getErrorMessage());
     }
 
     public void boardHandle(LoadGame loadGame){
