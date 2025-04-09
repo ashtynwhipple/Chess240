@@ -117,14 +117,16 @@ public class PostLoginUI extends BoardAccess {
             server.joinGame(joinData, authData);
             System.out.println("Joined game:" + games.get(gameNumber).gameName());
 
-            WebSocketFacade facade = new WebSocketFacade(server.getServerUrl(), null);
+            WebSocketFacade facade = new WebSocketFacade(server.getServerUrl(), notification -> {
+                System.out.println("Notification: " + notification);
+            });
 
             if (Objects.equals(joinData.playerColor(), "WHITE")){
                 facade.connect(authData.authToken(), gameID, ChessGame.TeamColor.WHITE);
                 GamePlayUI gamePlayUI = new GamePlayUI(authData, server, gameNumber, "WHITE");
                 gamePlayUI.run();
             } else {
-                facade.connect(authData.authToken(), gameID, ChessGame.TeamColor.WHITE);
+                facade.connect(authData.authToken(), gameID, ChessGame.TeamColor.BLACK);
                 GamePlayUI gamePlayUI = new GamePlayUI(authData, server, gameNumber, "BLACK");
                 gamePlayUI.run();
             }
