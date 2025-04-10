@@ -105,12 +105,12 @@ public class GamePlayUI extends BoardAccess implements NotificationHandler {
 
             try {
                 WebSocketFacade facade = new WebSocketFacade(server.getServerUrl(), this);
-                facade.makeMove(authData.authToken(), gameNumber, move);
-                System.out.println("Move made.");
+//                facade.makeMove(authData.authToken(), gameNumber, move); //was this already done?
+//                System.out.println("Move made.");
             } catch (ResponseException e) {
                 System.out.println("Notify move failed: " + e.getMessage());
             }
-            redrawBoard();
+//            redrawBoard();
         } catch (Exception e) {
             System.out.println("Invalid move or error: " + e.getMessage());
         }

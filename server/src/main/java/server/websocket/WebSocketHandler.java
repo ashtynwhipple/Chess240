@@ -4,13 +4,11 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
-import dataaccess.GameSqlDataAccess;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import service.GameService;
-import service.userservice.RegisterService;
 import websocket.commands.*;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGame;
@@ -52,9 +50,7 @@ public class WebSocketHandler{
         var notification = new Notification(message);
         connections.broadcast(gameID, visitorName, notification);
 
-        GameSqlDataAccess gameSQL = new GameSqlDataAccess();
-
-        var loadNotif = new LoadGame(gameSQL.getGame(gameID).game());
+        var loadNotif = new LoadGame(gameService.getGame(gameID).game());
         connections.notifyPlayer(gameID, visitorName, loadNotif);
 
     }
@@ -67,9 +63,11 @@ public class WebSocketHandler{
     private void leave(Session session, Leave action) throws IOException {
         throwErrorIfAuthOrGameIDNotValid(session, action.getAuthToken(), action.getGameID());
         String visitorName = getUsernameFromSQL(action.getAuthToken());
+        GameData game = getGameFromSQL(action.getGameID());
 
         int gameID = action.getGameID();
         connections.remove(gameID, visitorName);
+
         var message = String.format("%s left the game", visitorName);
         var notification = new Notification(message);
         connections.broadcast(gameID, visitorName, notification);
@@ -87,8 +85,8 @@ public class WebSocketHandler{
             return;
         }
 
-        if (gameOver()) {
-            sendError(session, new ErrorMessage("Error: can not make a move, game is over"));
+        if (game.game().gameOver()) {
+            sendError(session, new ErrorMessage("Error: game is over"));
             return;
         }
 
@@ -100,12 +98,12 @@ public class WebSocketHandler{
                 ChessGame.TeamColor opponentColor = userColor == ChessGame.TeamColor.WHITE ? ChessGame.TeamColor.BLACK : ChessGame.TeamColor.WHITE;
 
                 if (game.game().isInCheckmate(opponentColor)) {
-                    notif = new Notification("Checkmate! %s wins!".formatted(visitorName));
-                    gameOver = true;
+                    notif = new Notification("Checkmate!");
+                    game.game().setGameOver(true);
                 }
                 else if (game.game().isInStalemate(opponentColor)) {
                     notif = new Notification("Stalemate caused by %s's move! It's a tie!".formatted(visitorName));
-                    gameOver = true;
+                    game.game().setGameOver(true);
                 }
                 else if (game.game().isInCheck(opponentColor)) {
                     notif = new Notification("A move has been made by %s, %s is now in check!".formatted(visitorName, opponentColor.toString()));
@@ -114,23 +112,37 @@ public class WebSocketHandler{
                     notif = new Notification("A move has been made by %s".formatted(visitorName));
                 }
                 connections.broadcast(game.gameID(), visitorName, notif);
-
                 LoadGame load = new LoadGame(game.game());
                 connections.notifyPlayer(game.gameID(), visitorName, load);
 
-                connections.broadcast();
+//                connections.broadcast(); // how to make game print for everyone else
             }
             else {
                 sendError(session, new ErrorMessage("Error: it is not your turn"));
             }
         } catch (Exception e) {
-            System.out.println("Invalid move or error: " + e.getMessage());
+            sendError(session, new ErrorMessage(e.getMessage()));
         }
     }
 
     private void resign(Session session, Resign action) throws IOException {
         throwErrorIfAuthOrGameIDNotValid(session, action.getAuthToken(), action.getGameID());
         String visitorName = getUsernameFromSQL(action.getAuthToken());
+        GameData game = getGameFromSQL(action.getGameID());
+
+        ChessGame.TeamColor userColor = getTeamColor(visitorName, game);
+
+        if (userColor == null) {
+            sendError(session, new ErrorMessage("Error: You are observing this game"));
+            return;
+        }
+
+        if (game.game().gameOver()) {
+            sendError(session, new ErrorMessage("Error: The game is already over!"));
+            return;
+        }
+
+        game.game().setGameOver(true);
 
         int gameID = action.getGameID();
         var message = String.format("%s resigned", visitorName);
@@ -149,9 +161,11 @@ public class WebSocketHandler{
     private void throwErrorIfAuthOrGameIDNotValid(Session session, String authToken, int gameID) throws IOException {
         if (gameService.authTokenNotValid(authToken)){
             sendError(session, new ErrorMessage("Invalid AuthToken"));
+            return;
         }
         if (gameService.gameIDNotValid(gameID)){
             sendError(session, new ErrorMessage("Invalid GameID"));
+            return;
         }
     }
 
