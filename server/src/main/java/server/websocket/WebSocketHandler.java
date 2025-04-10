@@ -63,14 +63,22 @@ public class WebSocketHandler{
     private void leave(Session session, Leave action) throws IOException {
         throwErrorIfAuthOrGameIDNotValid(session, action.getAuthToken(), action.getGameID());
         String visitorName = getUsernameFromSQL(action.getAuthToken());
-        GameData game = getGameFromSQL(action.getGameID());
 
         int gameID = action.getGameID();
         connections.remove(gameID, visitorName);
+        GameData game = getGameFromSQL(action.getGameID());
+        ChessGame.TeamColor userColor = getTeamColor(visitorName, game);
 
         var message = String.format("%s left the game", visitorName);
         var notification = new Notification(message);
         connections.broadcast(gameID, visitorName, notification);
+
+        if (userColor == ChessGame.TeamColor.WHITE) {
+            GameData newGame =  new GameData(gameID, "open", game.blackUsername(), game.gameName(), game.game());
+            gameService.updateGame(gameID, newGame);
+        } else {
+            gameService.updateGame(gameID, new GameData(gameID, game.whiteUsername(), "open", game.gameName(), game.game()));
+        }
     }
 
     private void makeMove(Session session, MakeMove action) throws IOException {
@@ -93,6 +101,7 @@ public class WebSocketHandler{
         try {
             if (game.game().getTeamTurn().equals(userColor)) {
                 game.game().makeMove(action.getMove());
+                gameService.updateGame(action.getGameID(), game);
 
                 Notification notif;
                 ChessGame.TeamColor opponentColor = userColor == ChessGame.TeamColor.WHITE ? ChessGame.TeamColor.BLACK : ChessGame.TeamColor.WHITE;
@@ -100,20 +109,24 @@ public class WebSocketHandler{
                 if (game.game().isInCheckmate(opponentColor)) {
                     notif = new Notification("Checkmate!");
                     game.game().setGameOver(true);
+                    connections.broadcast(game.gameID(), null, notif);
                 }
                 else if (game.game().isInStalemate(opponentColor)) {
                     notif = new Notification("Stalemate! It's a tie!");
                     game.game().setGameOver(true);
+                    connections.broadcast(game.gameID(), null, notif);
                 }
                 else if (game.game().isInCheck(opponentColor)) {
                     notif = new Notification("A move has been made by %s, %s is now in check!".formatted(visitorName, opponentColor.toString()));
+                    connections.broadcast(game.gameID(), null, notif);
                 }
                 else {
-                    notif = new Notification("A move has been made by %s".formatted(visitorName));
+                    notif = new Notification("A move has been made by %s. The move was %s".formatted(visitorName, action.getMove()));
+                    connections.broadcast(game.gameID(), visitorName, notif);
                 }
-                connections.broadcast(game.gameID(), visitorName, notif);
                 LoadGame load = new LoadGame(game.game());
-                connections.broadcast(game.gameID(), null, load);
+                connections.broadcast(game.gameID(), visitorName, load);
+                connections.notifyPlayer(game.gameID(), visitorName, load);
             }
             else {
                 sendError(session, new ErrorMessage("Error: it is not your turn"));
@@ -127,6 +140,7 @@ public class WebSocketHandler{
         throwErrorIfAuthOrGameIDNotValid(session, action.getAuthToken(), action.getGameID());
         String visitorName = getUsernameFromSQL(action.getAuthToken());
         GameData game = getGameFromSQL(action.getGameID());
+
 
         ChessGame.TeamColor userColor = getTeamColor(visitorName, game);
 
@@ -144,6 +158,7 @@ public class WebSocketHandler{
 
         var message = String.format("%s resigned", visitorName);
         var notification = new Notification(message);
+        gameService.updateGame(action.getGameID(), game);
         connections.broadcast(action.getGameID(), null, notification);
     }
 

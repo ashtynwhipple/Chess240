@@ -28,6 +28,10 @@ public class GameService {
 
     }
 
+    public void updateGame(int gameID, GameData newGame){
+        gameDAO.updateGame(gameID,newGame);
+    }
+
     public boolean authTokenNotValid(String authToken){
         return getAuthData(authToken) == null;
     }
