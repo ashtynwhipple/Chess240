@@ -116,7 +116,7 @@ public class PostLoginUI extends BoardAccess implements NotificationHandler {
 
             JoinData joinData = new JoinData(playerColor, gameID);
             server.joinGame(joinData, authData);
-            System.out.println("Joined game:" + games.get(gameNumber).gameName());
+            System.out.println("Joined game:" + games.get(gameNumber - 1).gameName());
 
             WebSocketFacade facade = new WebSocketFacade(server.getServerUrl(), this);
 

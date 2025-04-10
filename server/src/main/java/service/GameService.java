@@ -20,7 +20,7 @@ public class GameService {
     }
 
     public ListGameData listGames(String authToken) throws StatusException {
-        if (authDAO.getUsername(authToken) == null){
+        if (authTokenNotValid(authToken)){
             throw new StatusException("authToken invalid", 401);
         }
 
@@ -28,8 +28,20 @@ public class GameService {
 
     }
 
+    public boolean authTokenNotValid(String authToken){
+        return getAuthData(authToken) == null;
+    }
+
+    public AuthData getAuthData(String authToken){
+        return authDAO.getUsername(authToken);
+    }
+
+    public boolean gameIDNotValid(int gameID){
+        return gameDAO.getGame(gameID) == null;
+    }
+
     public int createGame(String authToken, GameData gameData) throws StatusException {
-        if (authToken == null || gameData == null || authDAO.getUsername(authToken) == null){
+        if (authToken == null || gameData == null || authTokenNotValid(authToken)){
             throw new StatusException("unauthorized", 401);
         }
 

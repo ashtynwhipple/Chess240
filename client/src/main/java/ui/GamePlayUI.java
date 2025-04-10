@@ -9,7 +9,7 @@ import server.ServerFacade;
 import server.WebSocketFacade;
 import websocket.messages.LoadGame;
 import websocket.messages.Notification;
-import websocket.messages.Error;
+import websocket.messages.ErrorMessage;
 import websocket.messages.ServerMessage;
 
 import java.util.*;
@@ -71,6 +71,12 @@ public class GamePlayUI extends BoardAccess implements NotificationHandler {
 
     private void redrawBoard() {
         boolean whitePerspective = role.equals("WHITE") || role.equals("OBSERVER");
+        GameData gameData = games.get(gameNumber);
+        if (gameData == null) {
+            System.out.println("Error: Invalid game ID. Returning to menu...");
+            running = false;
+            new PostLoginUI(authData, server).run();
+        }
         printBoard(games.get(gameNumber).game().getBoard(), whitePerspective);
     }
 
@@ -102,11 +108,10 @@ public class GamePlayUI extends BoardAccess implements NotificationHandler {
             try {
                 WebSocketFacade facade = new WebSocketFacade(server.getServerUrl(), this);
                 facade.makeMove(authData.authToken(), gameNumber, move);
+                System.out.println("Move made.");
             } catch (ResponseException e) {
                 System.out.println("Notify move failed: " + e.getMessage());
             }
-
-            System.out.println("Move made.");
             redrawBoard();
         } catch (Exception e) {
             System.out.println("Invalid move or error: " + e.getMessage());
@@ -157,12 +162,12 @@ public class GamePlayUI extends BoardAccess implements NotificationHandler {
         switch (notification.getServerMessageType()) {
             case NOTIFICATION -> printMessage(new Gson().fromJson(message, Notification.class));
             case LOAD_GAME -> boardHandle(new Gson().fromJson(message, LoadGame.class));
-            case ERROR -> errorHandle(new Gson().fromJson(message, Error.class));
+            case ERROR -> errorHandle(new Gson().fromJson(message, ErrorMessage.class));
         }
     }
 
-    public void errorHandle(Error error){
-        System.out.println(error.getErrorMessage());
+    public void errorHandle(ErrorMessage errorMessage){
+        System.out.println(errorMessage.getErrorMessage());
     }
 
     public void boardHandle(LoadGame loadGame){
@@ -173,4 +178,5 @@ public class GamePlayUI extends BoardAccess implements NotificationHandler {
     public void printMessage(Notification notification){
         System.out.println(notification.getMessage());
     }
+
 }

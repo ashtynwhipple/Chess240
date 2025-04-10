@@ -20,7 +20,7 @@ public class Server {
         this.clear = new ClearHandler(userDAO, authDAO, gameDAO);
         this.userHandler = new UserHandler(userDAO, authDAO);
         this.gameHandler = new GameHandler(authDAO, gameDAO);
-        webSocketHandler = new WebSocketHandler();
+        webSocketHandler = new WebSocketHandler(authDAO, gameDAO);
     }
 
     public int run(int desiredPort) {

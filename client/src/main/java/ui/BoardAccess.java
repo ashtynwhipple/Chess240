@@ -21,9 +21,15 @@ public class BoardAccess {
     }
 
     public void addGames() {
+
+        if (server == null || authData == null) {
+            System.out.println("Error: Server or auth data not initialized.");
+            return;
+        }
+
         try {
             ListGameData gameList = server.listGames(authData);
-            games.clear();  // Clear old games first
+            games.clear();
             games.addAll(gameList.games());
         } catch (ResponseException e) {
             System.out.println("listGames failed: " + e.getMessage());
