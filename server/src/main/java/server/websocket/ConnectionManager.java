@@ -31,7 +31,7 @@ public class ConnectionManager {
 
     public void broadcast(int gameID, String excludeVisitorName, Object notification) throws IOException {
         var connections = gameConnections.get(gameID);
-        if (connections == null) return;
+        if (connections == null){ return;}
 
         var removeList = new ArrayList<String>();
 
@@ -55,7 +55,9 @@ public class ConnectionManager {
 
     public void notifyPlayer(int gameID, String visitorName, LoadGame notification) throws IOException {
         var connections = gameConnections.get(gameID);
-        if (connections == null) return;
+        if (connections == null) {
+            return;
+        }
 
         var connection = connections.get(visitorName);
         if (connection != null && connection.session.isOpen()) {
