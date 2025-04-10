@@ -66,6 +66,7 @@ public class WebSocketHandler{
 
         int gameID = action.getGameID();
         connections.remove(gameID, visitorName);
+
         GameData game = getGameFromSQL(action.getGameID());
         ChessGame.TeamColor userColor = getTeamColor(visitorName, game);
 
@@ -74,10 +75,11 @@ public class WebSocketHandler{
         connections.broadcast(gameID, visitorName, notification);
 
         if (userColor == ChessGame.TeamColor.WHITE) {
-            GameData newGame =  new GameData(gameID, "open", game.blackUsername(), game.gameName(), game.game());
+            GameData newGame = new GameData(gameID, null, game.blackUsername(), game.gameName(), game.game());
             gameService.updateGame(gameID, newGame);
-        } else {
-            gameService.updateGame(gameID, new GameData(gameID, game.whiteUsername(), "open", game.gameName(), game.game()));
+        } else if (userColor == ChessGame.TeamColor.BLACK) {
+            GameData newGame = new GameData(gameID, game.whiteUsername(), null, game.gameName(), game.game());
+            gameService.updateGame(gameID, newGame);
         }
     }
 
@@ -107,26 +109,26 @@ public class WebSocketHandler{
                 ChessGame.TeamColor opponentColor = userColor == ChessGame.TeamColor.WHITE ? ChessGame.TeamColor.BLACK : ChessGame.TeamColor.WHITE;
 
                 if (game.game().isInCheckmate(opponentColor)) {
-                    notif = new Notification("Checkmate!");
+                    notif = new Notification("Checkmate! %s wins!".formatted(visitorName));
                     game.game().setGameOver(true);
-                    connections.broadcast(game.gameID(), null, notif);
                 }
                 else if (game.game().isInStalemate(opponentColor)) {
-                    notif = new Notification("Stalemate! It's a tie!");
+                    notif = new Notification("Stalemate caused by %s's move! It's a tie!".formatted(visitorName));
                     game.game().setGameOver(true);
-                    connections.broadcast(game.gameID(), null, notif);
                 }
                 else if (game.game().isInCheck(opponentColor)) {
                     notif = new Notification("A move has been made by %s, %s is now in check!".formatted(visitorName, opponentColor.toString()));
-                    connections.broadcast(game.gameID(), null, notif);
                 }
                 else {
-                    notif = new Notification("A move has been made by %s. The move was %s".formatted(visitorName, action.getMove()));
-                    connections.broadcast(game.gameID(), visitorName, notif);
+                    notif = new Notification("A move has been made by %s".formatted(visitorName));
                 }
+                connections.broadcast(game.gameID(), visitorName, notif);
+
+                gameService.updateGame(game.gameID(), game);
+
                 LoadGame load = new LoadGame(game.game());
-                connections.broadcast(game.gameID(), visitorName, load);
-                connections.notifyPlayer(game.gameID(), visitorName, load);
+
+                connections.broadcast(game.gameID(), null, load);
             }
             else {
                 sendError(session, new ErrorMessage("Error: it is not your turn"));
