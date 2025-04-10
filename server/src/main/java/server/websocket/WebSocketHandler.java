@@ -102,7 +102,7 @@ public class WebSocketHandler{
                     game.game().setGameOver(true);
                 }
                 else if (game.game().isInStalemate(opponentColor)) {
-                    notif = new Notification("Stalemate caused by %s's move! It's a tie!".formatted(visitorName));
+                    notif = new Notification("Stalemate! It's a tie!");
                     game.game().setGameOver(true);
                 }
                 else if (game.game().isInCheck(opponentColor)) {
@@ -113,9 +113,7 @@ public class WebSocketHandler{
                 }
                 connections.broadcast(game.gameID(), visitorName, notif);
                 LoadGame load = new LoadGame(game.game());
-                connections.notifyPlayer(game.gameID(), visitorName, load);
-
-//                connections.broadcast(); // how to make game print for everyone else
+                connections.broadcast(game.gameID(), null, load);
             }
             else {
                 sendError(session, new ErrorMessage("Error: it is not your turn"));
@@ -144,10 +142,9 @@ public class WebSocketHandler{
 
         game.game().setGameOver(true);
 
-        int gameID = action.getGameID();
         var message = String.format("%s resigned", visitorName);
         var notification = new Notification(message);
-        connections.broadcast(gameID, visitorName, notification);
+        connections.broadcast(action.getGameID(), null, notification);
     }
 
     private String getUsernameFromSQL(String authToken){

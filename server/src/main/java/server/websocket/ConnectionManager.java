@@ -33,7 +33,7 @@ public class ConnectionManager {
         }
     }
 
-    public void broadcast(int gameID, String excludeVisitorName, Notification notification) throws IOException {
+    public void broadcast(int gameID, String excludeVisitorName, Object notification) throws IOException {
         var connections = gameConnections.get(gameID);
         if (connections == null) return;
 
