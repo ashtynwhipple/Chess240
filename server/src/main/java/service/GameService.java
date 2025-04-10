@@ -40,6 +40,10 @@ public class GameService {
         return gameDAO.getGame(gameID) == null;
     }
 
+    public GameData getGame(int gameID){
+        return gameDAO.getGame(gameID);
+    }
+
     public int createGame(String authToken, GameData gameData) throws StatusException {
         if (authToken == null || gameData == null || authTokenNotValid(authToken)){
             throw new StatusException("unauthorized", 401);

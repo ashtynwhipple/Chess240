@@ -1,9 +1,11 @@
 package server.websocket;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
 import dataaccess.GameSqlDataAccess;
+import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
@@ -77,11 +79,53 @@ public class WebSocketHandler{
 
         throwErrorIfAuthOrGameIDNotValid(session, action.getAuthToken(), action.getGameID());
         String visitorName = getUsernameFromSQL(action.getAuthToken());
+        GameData game = getGameFromSQL(action.getGameID());
 
-        int gameID = action.getGameID();
-        var message = String.format("%s made a move", visitorName);
-        var notification = new Notification(message);
-        connections.broadcast(gameID, visitorName, notification);
+        ChessGame.TeamColor userColor = getTeamColor(visitorName, game);
+        if (userColor == null) {
+            sendError(session, new ErrorMessage("Error: You are observing this game"));
+            return;
+        }
+
+        if (gameOver()) {
+            sendError(session, new ErrorMessage("Error: can not make a move, game is over"));
+            return;
+        }
+
+        try {
+            if (game.game().getTeamTurn().equals(userColor)) {
+                game.game().makeMove(action.getMove());
+
+                Notification notif;
+                ChessGame.TeamColor opponentColor = userColor == ChessGame.TeamColor.WHITE ? ChessGame.TeamColor.BLACK : ChessGame.TeamColor.WHITE;
+
+                if (game.game().isInCheckmate(opponentColor)) {
+                    notif = new Notification("Checkmate! %s wins!".formatted(visitorName));
+                    gameOver = true;
+                }
+                else if (game.game().isInStalemate(opponentColor)) {
+                    notif = new Notification("Stalemate caused by %s's move! It's a tie!".formatted(visitorName));
+                    gameOver = true;
+                }
+                else if (game.game().isInCheck(opponentColor)) {
+                    notif = new Notification("A move has been made by %s, %s is now in check!".formatted(visitorName, opponentColor.toString()));
+                }
+                else {
+                    notif = new Notification("A move has been made by %s".formatted(visitorName));
+                }
+                connections.broadcast(game.gameID(), visitorName, notif);
+
+                LoadGame load = new LoadGame(game.game());
+                connections.notifyPlayer(game.gameID(), visitorName, load);
+
+                connections.broadcast();
+            }
+            else {
+                sendError(session, new ErrorMessage("Error: it is not your turn"));
+            }
+        } catch (Exception e) {
+            System.out.println("Invalid move or error: " + e.getMessage());
+        }
     }
 
     private void resign(Session session, Resign action) throws IOException {
@@ -98,6 +142,10 @@ public class WebSocketHandler{
         return gameService.getAuthData(authToken).username();
     }
 
+    private GameData getGameFromSQL(Integer gameID) {
+        return gameService.getGame(gameID);
+    }
+
     private void throwErrorIfAuthOrGameIDNotValid(Session session, String authToken, int gameID) throws IOException {
         if (gameService.authTokenNotValid(authToken)){
             sendError(session, new ErrorMessage("Invalid AuthToken"));
@@ -105,6 +153,16 @@ public class WebSocketHandler{
         if (gameService.gameIDNotValid(gameID)){
             sendError(session, new ErrorMessage("Invalid GameID"));
         }
+    }
+
+    private ChessGame.TeamColor getTeamColor(String username, GameData game) {
+        if (username.equals(game.whiteUsername())) {
+            return ChessGame.TeamColor.WHITE;
+        }
+        else if (username.equals(game.blackUsername())) {
+            return ChessGame.TeamColor.BLACK;
+        }
+        else return null;
     }
 
 }

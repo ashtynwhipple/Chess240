@@ -103,8 +103,6 @@ public class GamePlayUI extends BoardAccess implements NotificationHandler {
             ChessPosition end = new ChessPosition(8 - (to.charAt(1) - '1'), to.charAt(0) - 'a' + 1);
             ChessMove move = new ChessMove(start, end, null); //how do I deal with promotion pieces here?
 
-//            games.get(gameNumber).game().makeMove(move);
-
             try {
                 WebSocketFacade facade = new WebSocketFacade(server.getServerUrl(), this);
                 facade.makeMove(authData.authToken(), gameNumber, move);
