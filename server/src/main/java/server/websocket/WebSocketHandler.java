@@ -89,8 +89,8 @@ public class WebSocketHandler{
         String visitorName = getUsernameFromSQL(action.getAuthToken());
         GameData game = getGameFromSQL(action.getGameID());
 
-        ChessGame.TeamColor userColor = getTeamColor(visitorName, game);
-        if (userColor == null) {
+        ChessGame.TeamColor visitorColor = getTeamColor(visitorName, game);
+        if (visitorColor == null) {
             sendError(session, new ErrorMessage("Error: You are observing this game"));
             return;
         }
@@ -101,19 +101,19 @@ public class WebSocketHandler{
         }
 
         try {
-            if (game.game().getTeamTurn().equals(userColor)) {
+            if (game.game().getTeamTurn().equals(visitorColor)) {
                 game.game().makeMove(action.getMove());
                 gameService.updateGame(action.getGameID(), game);
 
                 Notification notif;
-                ChessGame.TeamColor opponentColor = userColor == ChessGame.TeamColor.WHITE ? ChessGame.TeamColor.BLACK : ChessGame.TeamColor.WHITE;
+                ChessGame.TeamColor opponentColor = visitorColor == ChessGame.TeamColor.WHITE ? ChessGame.TeamColor.BLACK : ChessGame.TeamColor.WHITE;
 
                 if (game.game().isInCheckmate(opponentColor)) {
                     notif = new Notification("Checkmate! %s wins!".formatted(visitorName));
                     game.game().setGameOver(true);
                 }
                 else if (game.game().isInStalemate(opponentColor)) {
-                    notif = new Notification("Stalemate caused by %s's move! It's a tie!".formatted(visitorName));
+                    notif = new Notification("Stalemate caused by %s! It's a tie!".formatted(visitorName));
                     game.game().setGameOver(true);
                 }
                 else if (game.game().isInCheck(opponentColor)) {
@@ -190,7 +190,7 @@ public class WebSocketHandler{
         else if (username.equals(game.blackUsername())) {
             return ChessGame.TeamColor.BLACK;
         }
-        else return null;
+        else{return null;}
     }
 
 }

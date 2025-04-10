@@ -12,10 +12,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ConnectionManager {
     private final ConcurrentHashMap<Integer, ConcurrentHashMap<String, Connection>> gameConnections = new ConcurrentHashMap<>();
 
-    public ConcurrentHashMap<Integer, ConcurrentHashMap<String, Connection>> getGameConnections() {
-        return gameConnections;
-    }
-
     // Add a connection to a specific game
     public void add(int gameID, String visitorName, Session session) {
         gameConnections.putIfAbsent(gameID, new ConcurrentHashMap<>());

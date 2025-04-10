@@ -11,8 +11,4 @@ public class Connect extends UserGameCommand {
         this.color = color;
     }
 
-    public ChessGame.TeamColor color(){
-        return color;
-    }
-
 }
