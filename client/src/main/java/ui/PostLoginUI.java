@@ -122,11 +122,11 @@ public class PostLoginUI extends BoardAccess implements NotificationHandler {
 
             if (Objects.equals(joinData.playerColor(), "WHITE")){
                 facade.connect(authData.authToken(), gameID, ChessGame.TeamColor.WHITE);
-                GamePlayUI gamePlayUI = new GamePlayUI(authData, server, gameNumber, "WHITE");
+                GamePlayUI gamePlayUI = new GamePlayUI(authData, server, joinedGame, "WHITE");
                 gamePlayUI.run();
             } else {
                 facade.connect(authData.authToken(), gameID, ChessGame.TeamColor.BLACK);
-                GamePlayUI gamePlayUI = new GamePlayUI(authData, server, gameNumber, "BLACK");
+                GamePlayUI gamePlayUI = new GamePlayUI(authData, server, joinedGame, "BLACK");
                 gamePlayUI.run();
             }
 
@@ -157,7 +157,7 @@ public class PostLoginUI extends BoardAccess implements NotificationHandler {
 
             if (observedGame != null) {
                 facade.connect(authData.authToken(), gameNumber, null);
-                GamePlayUI gamePlayUI = new GamePlayUI(authData, server, gameNumber, "OBSERVER");
+                GamePlayUI gamePlayUI = new GamePlayUI(authData, server, observedGame, "OBSERVER");
                 gamePlayUI.run();
             } else {
                 System.out.println("Error: Game to observe could not found.");

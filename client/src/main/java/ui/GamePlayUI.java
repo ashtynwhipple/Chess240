@@ -18,16 +18,16 @@ public class GamePlayUI extends BoardAccess implements NotificationHandler {
     private final Scanner scanner;
     private final ServerFacade server;
     private final AuthData authData;
-    private final int gameNumber;
-    private final String role; // "WHITE", "BLACK", or "OBSERVER"
+    private final String role;
     private boolean running;
+    private final GameData game;
 
-    public GamePlayUI(AuthData authData, ServerFacade server, int gameNumber, String role) {
+    public GamePlayUI(AuthData authData, ServerFacade server, GameData game, String role) {
         super(authData, server);
         this.scanner = new Scanner(System.in);
         this.server = server;
         this.authData = authData;
-        this.gameNumber = gameNumber;
+        this.game = game;
         this.role = role;
         this.running = true;
     }
@@ -64,27 +64,28 @@ public class GamePlayUI extends BoardAccess implements NotificationHandler {
                     highlightLegalMoves();
                     break;
                 default:
-                    System.out.println("Invalid option. Please try again.");
+                    System.out.println("Invalid option. Type 'help' for more options.");
             }
         }
     }
 
     private void redrawBoard() {
         boolean whitePerspective = role.equals("WHITE") || role.equals("OBSERVER");
-        GameData gameData = games.get(gameNumber);
-        if (gameData == null) {
+
+        if (game == null || game.game().getBoard() == null) {
             System.out.println("Error: Invalid game ID. Returning to menu...");
             running = false;
             new PostLoginUI(authData, server).run();
+        } else {
+            printBoard(game.game().getBoard(), whitePerspective);
         }
-        printBoard(games.get(gameNumber).game().getBoard(), whitePerspective);
     }
 
     private void leaveGame() {
         System.out.println("Leaving game...");
         try{
             WebSocketFacade facade = new WebSocketFacade(server.getServerUrl(), this);
-            facade.leave(authData.authToken(), gameNumber);
+            facade.leave(authData.authToken(), game.gameID());
         } catch (ResponseException e) {
             System.out.println("Leave game failed: " + e.getMessage());
         }
@@ -93,27 +94,51 @@ public class GamePlayUI extends BoardAccess implements NotificationHandler {
     }
 
     private void makeMove() {
-        try {
-            System.out.print("From: ");
-            String from = scanner.nextLine();
-            System.out.print("To: ");
-            String to = scanner.nextLine();
 
-            ChessPosition start = new ChessPosition(8 - (from.charAt(1) - '1'), from.charAt(0) - 'a' + 1);
-            ChessPosition end = new ChessPosition(8 - (to.charAt(1) - '1'), to.charAt(0) - 'a' + 1);
-            ChessMove move = new ChessMove(start, end, null); //how do I deal with promotion pieces here?
+        String prompt = "Enter Move:";
+        System.out.printf("\n[%s] >>> ", prompt);
+        Scanner scanner = new Scanner(System.in);
+        String[] input = scanner.nextLine().split(" ");
 
-            try {
-                WebSocketFacade facade = new WebSocketFacade(server.getServerUrl(), this);
-//                facade.makeMove(authData.authToken(), gameNumber, move); //was this already done?
-//                System.out.println("Move made.");
-            } catch (ResponseException e) {
-                System.out.println("Notify move failed: " + e.getMessage());
+        if (input.length >= 3 && input[1].matches("[a-h][1-8]") && input[2].matches("[a-h][1-8]")) {
+            ChessPosition from = new ChessPosition(input[1].charAt(1) - '0', input[1].charAt(0) - ('a'-1));
+            ChessPosition to = new ChessPosition(input[2].charAt(1) - '0',input[2].charAt(0) - ('a'-1));
+
+            ChessPiece.PieceType promotion = null;
+            if (input.length == 4) {
+                promotion = getPieceType(input[3]);
+                if (promotion == null) {
+                    System.out.println("Please provide proper promotion piece name (ex: 'knight')");
+                    printMakeMove();
+                }
             }
-//            redrawBoard();
-        } catch (Exception e) {
-            System.out.println("Invalid move or error: " + e.getMessage());
+
+            try{
+                WebSocketFacade facade = new WebSocketFacade(server.getServerUrl(), this);
+                facade.makeMove(authData.authToken(), game.gameID(), new ChessMove(from, to, promotion));
+            } catch (ResponseException e) {
+                System.out.println("Error: " + e.getMessage());
+            }
+
         }
+        else {
+            printMakeMove();
+        }
+    }
+
+    public ChessPiece.PieceType getPieceType(String name) {
+        return switch (name.toUpperCase()) {
+            case "QUEEN" -> ChessPiece.PieceType.QUEEN;
+            case "BISHOP" -> ChessPiece.PieceType.BISHOP;
+            case "KNIGHT" -> ChessPiece.PieceType.KNIGHT;
+            case "ROOK" -> ChessPiece.PieceType.ROOK;
+            case "PAWN" -> ChessPiece.PieceType.PAWN;
+            default -> null;
+        };
+    }
+
+    private void printMakeMove() {
+        System.out.println("move <from> <to> <promotion_piece> - make a move (Promotion piece should only be used when a move will promote a pawn)");
     }
 
     private void resign() {
@@ -122,7 +147,7 @@ public class GamePlayUI extends BoardAccess implements NotificationHandler {
         if (response.equals("yes")) {
             try {
                 WebSocketFacade facade = new WebSocketFacade(server.getServerUrl(), this);
-                facade.resign(authData.authToken(), gameNumber);
+                facade.resign(authData.authToken(), game.gameID());
                 System.out.println("You have resigned.");
                 System.out.println("Type 'help' for more options");
             } catch (ResponseException e) {
@@ -137,8 +162,7 @@ public class GamePlayUI extends BoardAccess implements NotificationHandler {
             String pos = scanner.nextLine();
             ChessPosition position = new ChessPosition(8 - (pos.charAt(1) - '1'), pos.charAt(0) - 'a' + 1);
 
-            GameData gameData = this.games.get(gameNumber);
-            Collection<ChessMove> legalMoves = gameData.game().validMoves(position);
+            Collection<ChessMove> legalMoves = game.game().validMoves(position);
 
             Set<ChessPosition> highlights = new HashSet<>();
             for (ChessMove move : legalMoves) {
@@ -147,7 +171,7 @@ public class GamePlayUI extends BoardAccess implements NotificationHandler {
             highlights.add(position);
 
             boolean whitePerspective = role.equals("WHITE") || role.equals("OBSERVER");
-            printBoard(gameData.game().getBoard(), whitePerspective, highlights);
+            printBoard(game.game().getBoard(), whitePerspective, highlights);
 
         } catch (Exception e) {
             System.out.println("Could not highlight moves: " + e.getMessage());
