@@ -20,7 +20,7 @@ public class GamePlayUI extends BoardAccess implements NotificationHandler {
     private final AuthData authData;
     private final String role;
     private boolean running;
-    private final GameData game;
+    private GameData game;
     private WebSocketFacade facade = null;
 
 
@@ -37,7 +37,6 @@ public class GamePlayUI extends BoardAccess implements NotificationHandler {
         this.game = game;
         this.role = role;
         this.running = true;
-        redrawBoard();
     }
 
     public void run() {
@@ -62,6 +61,7 @@ public class GamePlayUI extends BoardAccess implements NotificationHandler {
                     System.out.println("highlight legal moves - Show legal moves for a selected piece");
                     break;
                 case "redraw chess board":
+                    redrawBoard();
                     break;
                 case "leave":
                     leaveGame();
@@ -125,9 +125,15 @@ public class GamePlayUI extends BoardAccess implements NotificationHandler {
             }
 
             try{
-                facade.makeMove(authData.authToken(), game.gameID(), new ChessMove(from, to, promotion));
+                ChessGame tempGame = game.game();
+                ChessMove move = new ChessMove(from, to, promotion);
+                facade.makeMove(authData.authToken(), game.gameID(), move);
+                tempGame.makeMove(move);
+                game = new GameData(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName(), tempGame);
             } catch (ResponseException e) {
                 System.out.println("Error: " + e.getMessage());
+            } catch (InvalidMoveException e) {
+                System.out.println(e.getMessage());
             }
 
         }
@@ -207,6 +213,8 @@ public class GamePlayUI extends BoardAccess implements NotificationHandler {
 
     public void boardHandle(LoadGame loadGame){
         boolean whitePerspective = role.equals("WHITE") || role.equals("OBSERVER");
+        ChessGame tempGame = loadGame.getGame();
+        game = new GameData(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName(), tempGame);
         printBoard(loadGame.getGame().getBoard(), whitePerspective);
     }
 

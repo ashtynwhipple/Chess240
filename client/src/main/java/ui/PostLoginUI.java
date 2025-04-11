@@ -1,5 +1,4 @@
 package ui;
-import chess.ChessGame;
 import exception.ResponseException;
 import model.*;
 import server.NotificationHandler;

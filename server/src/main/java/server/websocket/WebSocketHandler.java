@@ -46,7 +46,20 @@ public class WebSocketHandler{
 
         connections.add(gameID, visitorName, session);
 
-        var message = String.format("%s joined the game", visitorName); // user join the game as "color or observer"
+        GameData game = getGameFromSQL(action.getGameID());
+        ChessGame.TeamColor userColor = getTeamColor(visitorName, game);
+
+        var message = "";
+        
+        if (userColor == ChessGame.TeamColor.WHITE){
+            message = String.format("%s joined the game as %s", visitorName, "White"); // user joined the game as "color or observer"
+
+        } else if (userColor == ChessGame.TeamColor.BLACK) {
+            message = String.format("%s joined the game as %s", visitorName, "Black"); // user joined the game as "color or observer"
+        } else{
+            message = String.format("%s joined the game as %s", visitorName, "Observer"); // user joined the game as "color or observer"
+        }
+
         var notification = new Notification(message);
         connections.broadcast(gameID, visitorName, notification);
 
@@ -74,12 +87,14 @@ public class WebSocketHandler{
         var notification = new Notification(message);
         connections.broadcast(gameID, visitorName, notification);
 
-        if (userColor == ChessGame.TeamColor.WHITE) {
-            GameData newGame = new GameData(gameID, null, game.blackUsername(), game.gameName(), game.game());
-            gameService.updateGame(gameID, newGame);
-        } else if (userColor == ChessGame.TeamColor.BLACK) {
-            GameData newGame = new GameData(gameID, game.whiteUsername(), null, game.gameName(), game.game());
-            gameService.updateGame(gameID, newGame);
+        if (userColor != null) {
+            if (userColor == ChessGame.TeamColor.WHITE) {
+                GameData newGame = new GameData(gameID, null, game.blackUsername(), game.gameName(), game.game());
+                gameService.updateGame(gameID, newGame);
+            } else if (userColor == ChessGame.TeamColor.BLACK) {
+                GameData newGame = new GameData(gameID, game.whiteUsername(), null, game.gameName(), game.game());
+                gameService.updateGame(gameID, newGame);
+            }
         }
     }
 
@@ -161,7 +176,7 @@ public class WebSocketHandler{
         var message = String.format("%s resigned", visitorName);
         var notification = new Notification(message);
         gameService.updateGame(action.getGameID(), game);
-        connections.broadcast(action.getGameID(), null, notification);
+        connections.broadcast(action.getGameID(), visitorName, notification);
     }
 
     private String getUsernameFromSQL(String authToken){
