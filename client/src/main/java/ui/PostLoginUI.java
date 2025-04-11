@@ -118,15 +118,15 @@ public class PostLoginUI extends BoardAccess implements NotificationHandler {
             server.joinGame(joinData, authData);
             System.out.println("Joined game:" + games.get(gameNumber - 1).gameName());
 
-            WebSocketFacade facade = new WebSocketFacade(server.getServerUrl(), this);
+//            WebSocketFacade facade = new WebSocketFacade(server.getServerUrl(), this);
 
             if (Objects.equals(joinData.playerColor(), "WHITE")){
-                facade.connect(authData.authToken(), gameID, ChessGame.TeamColor.WHITE);
-                GamePlayUI gamePlayUI = new GamePlayUI(authData, server, joinedGame, "WHITE");
+//                facade.connect(authData.authToken(), gameID, ChessGame.TeamColor.WHITE);
+                GamePlayUI gamePlayUI = new GamePlayUI(authData, server, joinedGame, "WHITE", server.getServerUrl());
                 gamePlayUI.run();
             } else {
-                facade.connect(authData.authToken(), gameID, ChessGame.TeamColor.BLACK);
-                GamePlayUI gamePlayUI = new GamePlayUI(authData, server, joinedGame, "BLACK");
+//                facade.connect(authData.authToken(), gameID, ChessGame.TeamColor.BLACK);
+                GamePlayUI gamePlayUI = new GamePlayUI(authData, server, joinedGame, "BLACK", server.getServerUrl());
                 gamePlayUI.run();
             }
 
@@ -156,8 +156,8 @@ public class PostLoginUI extends BoardAccess implements NotificationHandler {
             WebSocketFacade facade = new WebSocketFacade(server.getServerUrl(), this);
 
             if (observedGame != null) {
-                facade.connect(authData.authToken(), gameNumber, null);
-                GamePlayUI gamePlayUI = new GamePlayUI(authData, server, observedGame, "OBSERVER");
+//                facade.connect(authData.authToken(), gameNumber, null);
+                GamePlayUI gamePlayUI = new GamePlayUI(authData, server, observedGame, "OBSERVER", server.getServerUrl());
                 gamePlayUI.run();
             } else {
                 System.out.println("Error: Game to observe could not found.");

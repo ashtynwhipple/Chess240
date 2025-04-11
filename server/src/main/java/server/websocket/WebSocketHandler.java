@@ -46,7 +46,7 @@ public class WebSocketHandler{
 
         connections.add(gameID, visitorName, session);
 
-        var message = String.format("%s is in the game", visitorName);
+        var message = String.format("%s joined the game", visitorName); // user join the game as "color or observer"
         var notification = new Notification(message);
         connections.broadcast(gameID, visitorName, notification);
 

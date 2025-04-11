@@ -21,11 +21,18 @@ public class GamePlayUI extends BoardAccess implements NotificationHandler {
     private final String role;
     private boolean running;
     private final GameData game;
+    private WebSocketFacade facade = null;
 
-    public GamePlayUI(AuthData authData, ServerFacade server, GameData game, String role) {
+
+    public GamePlayUI(AuthData authData, ServerFacade server, GameData game, String role, String url) {
         super(authData, server);
         this.scanner = new Scanner(System.in);
         this.server = server;
+        try {
+            this.facade = new WebSocketFacade(url, this);
+        }catch (ResponseException e){
+            System.out.println(e.getMessage());
+        }
         this.authData = authData;
         this.game = game;
         this.role = role;
@@ -35,6 +42,11 @@ public class GamePlayUI extends BoardAccess implements NotificationHandler {
 
     public void run() {
         System.out.println("\nEntered Game! Type 'help' for available commands.");
+        try {
+            facade.connect(authData.authToken(), game.gameID(), ChessGame.TeamColor.BLACK);
+        }catch (ResponseException e){
+            System.out.println(e.getMessage());
+        }
 
         while (running) {
             String command = scanner.nextLine().trim().toLowerCase();
@@ -50,7 +62,6 @@ public class GamePlayUI extends BoardAccess implements NotificationHandler {
                     System.out.println("highlight legal moves - Show legal moves for a selected piece");
                     break;
                 case "redraw chess board":
-                    redrawBoard();
                     break;
                 case "leave":
                     leaveGame();
@@ -85,7 +96,6 @@ public class GamePlayUI extends BoardAccess implements NotificationHandler {
     private void leaveGame() {
         System.out.println("Leaving game...");
         try{
-            WebSocketFacade facade = new WebSocketFacade(server.getServerUrl(), this);
             facade.leave(authData.authToken(), game.gameID());
         } catch (ResponseException e) {
             System.out.println("Leave game failed: " + e.getMessage());
@@ -115,10 +125,7 @@ public class GamePlayUI extends BoardAccess implements NotificationHandler {
             }
 
             try{
-                WebSocketFacade facade = new WebSocketFacade(server.getServerUrl(), this);
                 facade.makeMove(authData.authToken(), game.gameID(), new ChessMove(from, to, promotion));
-                System.out.println("Move Made");
-                redrawBoard();
             } catch (ResponseException e) {
                 System.out.println("Error: " + e.getMessage());
             }
@@ -153,7 +160,6 @@ public class GamePlayUI extends BoardAccess implements NotificationHandler {
         String response = scanner.nextLine().trim().toLowerCase();
         if (response.equals("yes")) {
             try {
-                WebSocketFacade facade = new WebSocketFacade(server.getServerUrl(), this);
                 facade.resign(authData.authToken(), game.gameID());
                 System.out.println("You have resigned.");
                 leaveGame();
