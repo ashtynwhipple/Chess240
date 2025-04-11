@@ -30,6 +30,7 @@ public class GamePlayUI extends BoardAccess implements NotificationHandler {
         this.game = game;
         this.role = role;
         this.running = true;
+        redrawBoard();
     }
 
     public void run() {
@@ -116,6 +117,8 @@ public class GamePlayUI extends BoardAccess implements NotificationHandler {
             try{
                 WebSocketFacade facade = new WebSocketFacade(server.getServerUrl(), this);
                 facade.makeMove(authData.authToken(), game.gameID(), new ChessMove(from, to, promotion));
+                System.out.println("Move Made");
+                redrawBoard();
             } catch (ResponseException e) {
                 System.out.println("Error: " + e.getMessage());
             }
@@ -142,6 +145,10 @@ public class GamePlayUI extends BoardAccess implements NotificationHandler {
     }
 
     private void resign() {
+        if (Objects.equals(role, "OBSERVER")){
+            System.out.print("Error: You are only observing the game");
+            return;
+        }
         System.out.print("Are you sure you want to resign? (yes/no): ");
         String response = scanner.nextLine().trim().toLowerCase();
         if (response.equals("yes")) {
@@ -149,7 +156,7 @@ public class GamePlayUI extends BoardAccess implements NotificationHandler {
                 WebSocketFacade facade = new WebSocketFacade(server.getServerUrl(), this);
                 facade.resign(authData.authToken(), game.gameID());
                 System.out.println("You have resigned.");
-                System.out.println("Type 'help' for more options");
+                leaveGame();
             } catch (ResponseException e) {
                 System.out.println("Resign failed: " + e.getMessage());
             }
@@ -160,7 +167,7 @@ public class GamePlayUI extends BoardAccess implements NotificationHandler {
         try {
             System.out.print("Position to check (e.g. e2): ");
             String pos = scanner.nextLine();
-            ChessPosition position = new ChessPosition(8 - (pos.charAt(1) - '1'), pos.charAt(0) - 'a' + 1);
+            ChessPosition position = new ChessPosition(pos.charAt(1) - '0', pos.charAt(0) - 'a' + 1);
 
             Collection<ChessMove> legalMoves = game.game().validMoves(position);
 
